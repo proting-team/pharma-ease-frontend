@@ -1,84 +1,60 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-// import HelloWorld from './components/HelloWorld.vue'
+import { RouterView, RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="flex h-screen bg-white font-sans text-gray-800">
+    
+    <aside class="w-64 bg-[#11764B] text-white flex flex-col">
+      <div class="h-16 flex items-center px-6 mt-4 mb-4">
+        <h1 class="text-xl font-bold flex items-center gap-2">
+          <span class="text-2xl">⚡</span> Pharma Ease
+        </h1>
+      </div>
 
-    <div class="wrapper">
+      <nav class="flex-1 px-4 space-y-2">
+        <RouterLink to="/" class="block px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors">
+          Dashboard
+        </RouterLink>
+        <RouterLink to="/supplier" class="block px-4 py-3 rounded-lg bg-[#21a870] font-semibold transition-colors">
+          Suppliers
+        </RouterLink>
+        </nav>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+      <div class="p-4 text-xs text-center text-green-200 opacity-70 border-t border-green-800">
+        © 2026 Pharma Ease v1.0.0
+      </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      
+      <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-end px-8 shadow-sm">
+        <div class="flex items-center gap-6">
+          <button class="text-gray-400 hover:text-gray-600">
+            🔔 </button>
+          
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#11764B] text-white flex items-center justify-center font-bold">
+              MF
+            </div>
+            <div class="text-sm">
+              <p class="font-bold text-gray-700">Miss Felicia Ritchie MD</p>
+              <p class="text-xs text-gray-500">Owner</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-white p-8">
+        
+        <RouterView />
+        
+      </main>
     </div>
-  </header>
 
-  <RouterView />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
+<style>
+/* Biarkan kosong, semua styling sudah di-handle Tailwind */
 </style>
