@@ -9,8 +9,8 @@ export type Datum = {
     id?:                  string;
     supplierName?:        string;
     phoneNumber?:         string;
-    contactPerson?:       null;
-    contactPersonNumber?: null;
+    contactPerson?:      string | null;
+    contactPersonNumber?: string | null;
     status?:              string;
     address?:             string;
     createdAt?:           Date;

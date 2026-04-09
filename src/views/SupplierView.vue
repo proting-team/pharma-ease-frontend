@@ -1,28 +1,37 @@
 <template>
   <div class="w-full">
-    
+
     <div class="mb-6">
       <h2 class="text-3xl font-bold text-gray-900">Suppliers List</h2>
       <p class="text-gray-500 text-sm mt-1">List dari para pemasok obat pada Apotek Lamtama</p>
     </div>
 
+    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+      {{ error }}
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      
+
       <div class="p-5 border-b border-gray-200 flex justify-between items-center bg-white">
         <h3 class="text-lg font-semibold text-gray-800">Supplier Management</h3>
-        
+
         <div class="flex items-center gap-4">
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </span>
-            <input type="text" placeholder="Search suppliers..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B] w-64 transition-shadow" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search suppliers..."
+              class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B] w-64 transition-shadow"
+            />
           </div>
-          
-          <button @click="isModalOpen = true" class="bg-[#11764B] hover:bg-[#158e5a] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
+
+          <button @click="openAddModal" class="bg-[#11764B] hover:bg-[#158e5a] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Add Supplier
-            </button>
+          </button>
         </div>
       </div>
 
@@ -39,107 +48,330 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 bg-white">
-            
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 font-medium text-gray-900">1</td>
-              <td class="px-6 py-4 font-semibold text-gray-800">dolores</td>
-              <td class="px-6 py-4 text-gray-600">Dr. Lorenza Marks</td>
-              <td class="px-6 py-4 text-gray-600">1-605-687-5824</td>
-              <td class="px-6 py-4 text-gray-500 truncate max-w-xs">3843 Garrison Lakes Apt. 637 Williamsonview, HI 77...</td>
+            <tr v-if="loading">
+              <td colspan="6" class="px-6 py-8 text-center text-gray-500">Loading...</td>
+            </tr>
+            <tr v-else-if="filteredSuppliers.length === 0">
+              <td colspan="6" class="px-6 py-8 text-center text-gray-500">No suppliers found</td>
+            </tr>
+            <tr
+              v-for="(supplier, index) in filteredSuppliers"
+              :key="supplier.id"
+              class="hover:bg-gray-50 transition-colors"
+            >
+              <td class="px-6 py-4 font-medium text-gray-900">{{ showingStart + index }}</td>
+              <td class="px-6 py-4 font-semibold text-gray-800">{{ supplier.supplierName }}</td>
+              <td class="px-6 py-4 text-gray-600">{{ supplier.contactPerson || '-' }}</td>
+              <td class="px-6 py-4 text-gray-600">{{ supplier.phoneNumber }}</td>
+              <td class="px-6 py-4 text-gray-500 truncate max-w-xs">{{ supplier.address }}</td>
               <td class="px-6 py-4 flex justify-center gap-3">
-                <button class="text-orange-400 hover:text-orange-600 transition-colors">
+                <button @click="openEditModal(supplier)" class="text-orange-400 hover:text-orange-600 transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                 </button>
-                <button class="text-red-400 hover:text-red-600 transition-colors">
+                <button @click="handleDelete(supplier.id)" class="text-red-400 hover:text-red-600 transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
               </td>
             </tr>
-
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 font-medium text-gray-900">2</td>
-              <td class="px-6 py-4 font-semibold text-gray-800">eos</td>
-              <td class="px-6 py-4 text-gray-600">Otha Mayer</td>
-              <td class="px-6 py-4 text-gray-600">626-828-1985</td>
-              <td class="px-6 py-4 text-gray-500 truncate max-w-xs">382 Ariel Via Suite 182 Brekkestad, WA 82312-5059</td>
-              <td class="px-6 py-4 flex justify-center gap-3">
-                <button class="text-orange-400 hover:text-orange-600 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                </button>
-                <button class="text-red-400 hover:text-red-600 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                </button>
-              </td>
-            </tr>
-
           </tbody>
         </table>
       </div>
 
       <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-white">
-        <span class="text-sm text-gray-500">Showing 1 to 15 of 35 results</span>
+        <span class="text-sm text-gray-500">
+          Showing {{ showingStart }} to {{ showingEnd }} of {{ totalItems }} results
+        </span>
         <div class="flex items-center gap-1">
-          <button class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors">&lt;</button>
-          <button class="px-3 py-1 border border-gray-300 rounded bg-gray-100 text-gray-800 font-medium">1</button>
-          <button class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors">2</button>
-          <button class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors">3</button>
-          <button class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors">&gt;</button>
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            &lt;
+          </button>
+
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="goToPage(page)"
+            :class="[
+              'px-3 py-1 border border-gray-300 rounded transition-colors',
+              currentPage === page ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-gray-50'
+            ]"
+          >
+            {{ page }}
+          </button>
+
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            &gt;
+          </button>
         </div>
       </div>
 
     </div>
   </div>
+
   <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
-      
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-        
         <div class="flex justify-between items-center p-5 border-b border-gray-100">
-          <h3 class="font-bold text-lg text-gray-800">Add New Supplier</h3>
-          <button @click="isModalOpen = false" class="text-gray-400 hover:text-gray-700 transition-colors">
+          <h3 class="font-bold text-lg text-gray-800">{{ isEditMode ? 'Edit Supplier' : 'Add New Supplier' }}</h3>
+          <button @click="closeModal" class="text-gray-400 hover:text-gray-700 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
 
-        <div class="p-5 space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
-            <input type="text" placeholder="e.g., PT. Farma Jaya" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
+        <form @submit.prevent="handleSubmit">
+          <div class="p-5 space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
-              <input type="text" placeholder="e.g., Budi Santoso" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+              <label class="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
+              <input
+                v-model="form.supplierName"
+                type="text"
+                placeholder="e.g., PT. Farma Jaya"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                required
+              />
             </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                <input
+                  v-model="form.contactPerson"
+                  type="text"
+                  placeholder="e.g., Budi Santoso"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input
+                  v-model="form.phoneNumber"
+                  type="text"
+                  placeholder="e.g., 08123456789"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                  required
+                />
+              </div>
+            </div>
+
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input type="text" placeholder="e.g., 08123456789" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+              <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <textarea
+                v-model="form.address"
+                rows="3"
+                placeholder="Full address..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B] resize-none"
+                required
+              ></textarea>
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-            <textarea rows="3" placeholder="Full address..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+          <div class="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+            <button type="button" @click="closeModal" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="px-4 py-2 bg-[#11764B] hover:bg-[#158e5a] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+            >
+              {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Supplier' : 'Save Supplier') }}
+            </button>
           </div>
-        </div>
-
-        <div class="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-          <button @click="isModalOpen = false" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-            Cancel
-          </button>
-          <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
-            Save Supplier
-          </button>
-        </div>
+        </form>
 
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import type { Datum } from '@/api/models/interfaces/suppliers.interface'
 
-// Variabel untuk mengontrol modal terbuka/tertutup
-// false = tertutup, true = terbuka
+// --- MODAL STATE ---
 const isModalOpen = ref(false)
+const isEditMode = ref(false)
+const isSubmitting = ref(false)
+const editingId = ref<string | null>(null)
+
+// --- MOCK DATA ---
+// Using type assertion since interface has contactPerson as null (should be string)
+const mockSuppliers = ref([
+  { id: '1', supplierName: 'PT. Pharma Jaya', contactPerson: 'Dr. Budi Santoso', phoneNumber: '081234567890', address: 'Jl. Merdeka No. 123, Jakarta' },
+  { id: '2', supplierName: 'CV. Medika Utama', contactPerson: 'Siti Aminah', phoneNumber: '082345678901', address: 'Jl. Sudirman No. 456, Bandung' },
+  { id: '3', supplierName: 'PT. Sehat Selalu', contactPerson: 'Ir. Joko Wibowo', phoneNumber: '083456789012', address: 'Jl. Gatot Subroto No. 789, Surabaya' },
+  { id: '4', supplierName: 'UD. Obat Rasa', contactPerson: 'Dewi Lestari', phoneNumber: '084567890123', address: 'Jl. Ahmad Yani No. 321, Semarang' },
+  { id: '5', supplierName: 'PT. Farmasi Indonesia', contactPerson: 'Prof. Ahmad Fauzi', phoneNumber: '085678901234', address: 'Jl. Asia Afrika No. 654, Makassar' },
+  { id: '6', supplierName: 'CV. Healthcare Plus', contactPerson: 'Rina Marlina', phoneNumber: '086789012345', address: 'Jl. Dago No. 987, Yogyakarta' },
+  { id: '7', supplierName: 'PT. Kimia Farma', contactPerson: 'Dr. Hendra Wijaya', phoneNumber: '087890123456', address: 'Jl. Braga No. 147, Medan' },
+  { id: '8', supplierName: 'UD. Sumber Obat', contactPerson: 'Maya Syahara', phoneNumber: '088901234567', address: 'Jl. Asia Pasific No. 258, Palembang' },
+  { id: '9', supplierName: 'PT. Indo Pharma', contactPerson: 'Ir. Gunawan', phoneNumber: '089012345678', address: 'Jl. Veteran No. 369, Malang' },
+  { id: '10', supplierName: 'CV. Apotek Kita', contactPerson: 'Lisa Permata', phoneNumber: '090123456789', address: 'Jl. Imam Bonjol No. 741, Bali' },
+  { id: '11', supplierName: 'PT. Royal Pharma', contactPerson: 'Dr. Anwar Hasan', phoneNumber: '091234567890', address: 'Jl. Asia Afrika No. 852, Bandung' },
+  { id: '12', supplierName: 'UD. Obat Herbal', contactPerson: 'Sari Dewi', phoneNumber: '092345678901', address: 'Jl. Merdeka No. 159, Jakarta' },
+  { id: '13', supplierName: 'PT. Global Medika', contactPerson: 'Ir. Wahyudi', phoneNumber: '093456789012', address: 'Jl. Sudirman No. 753, Surabaya' },
+  { id: '14', supplierName: 'CV. Obat Ceria', contactPerson: 'Nina Kartika', phoneNumber: '094567890123', address: 'Jl. Gatot Subroto No. 951, Semarang' },
+  { id: '15', supplierName: 'PT. Sentosa Farma', contactPerson: 'Dr. Rudi Hermawan', phoneNumber: '095678901234', address: 'Jl. Dago No. 357, Yogyakarta' },
+] as Datum[])
+
+// --- DATA STATE ---
+const suppliers = ref<Datum[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
+const searchQuery = ref('')
+
+// --- FORM STATE ---
+const form = ref({
+  supplierName: '',
+  contactPerson: '',
+  phoneNumber: '',
+  address: '',
+})
+
+// --- PAGINATION STATE ---
+const itemsPerPage = ref(10)
+const currentPage = ref(1)
+
+// --- METHODS ---
+const fetchSuppliers = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300))
+    suppliers.value = [...mockSuppliers.value]
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Failed to fetch suppliers'
+  } finally {
+    loading.value = false
+  }
+}
+
+const generateId = () => {
+  return String(Date.now())
+}
+
+const openAddModal = () => {
+  isEditMode.value = false
+  editingId.value = null
+  form.value = { supplierName: '', contactPerson: '', phoneNumber: '', address: '' }
+  isModalOpen.value = true
+}
+
+const openEditModal = (supplier: Datum) => {
+  isEditMode.value = true
+  editingId.value = supplier.id ?? null
+  form.value = {
+    supplierName: supplier.supplierName ?? '',
+    contactPerson: supplier.contactPerson ?? '',
+    phoneNumber: supplier.phoneNumber ?? '',
+    address: supplier.address ?? '',
+  }
+  isModalOpen.value = true
+}
+
+const closeModal = () => {
+  isModalOpen.value = false
+  isEditMode.value = false
+  editingId.value = null
+}
+
+const handleSubmit = async () => {
+  isSubmitting.value = true
+  error.value = null
+  try {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300))
+    if (isEditMode.value && editingId.value) {
+      const index = suppliers.value.findIndex(s => s.id === editingId.value)
+      if (index !== -1) {
+        const updated = { ...suppliers.value[index] }
+        updated.supplierName = form.value.supplierName
+        updated.contactPerson = form.value.contactPerson || null
+        updated.phoneNumber = form.value.phoneNumber
+        updated.address = form.value.address
+        suppliers.value[index] = updated as Datum
+      }
+    } else {
+      const newSupplier: Datum = {
+        id: generateId(),
+        supplierName: form.value.supplierName,
+        contactPerson: form.value.contactPerson || null,
+        phoneNumber: form.value.phoneNumber,
+        address: form.value.address,
+      }
+      suppliers.value.unshift(newSupplier)
+    }
+    closeModal()
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Failed to save supplier'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const handleDelete = async (id: string | undefined) => {
+  if (!id) return
+  if (!confirm('Are you sure you want to delete this supplier?')) return
+  error.value = null
+  try {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300))
+    suppliers.value = suppliers.value.filter(s => s.id !== id)
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Failed to delete supplier'
+  }
+}
+
+// --- COMPUTED PROPERTIES ---
+const allFilteredSuppliers = computed((): Datum[] => {
+  if (!searchQuery.value) return suppliers.value
+  const query = searchQuery.value.toLowerCase()
+  return suppliers.value.filter(s =>
+    s.supplierName?.toLowerCase().includes(query) ||
+    (s.contactPerson ?? '').toLowerCase().includes(query) ||
+    s.phoneNumber?.includes(query)
+  )
+})
+
+const paginatedSuppliers = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return allFilteredSuppliers.value.slice(start, end)
+})
+
+const filteredSuppliers = computed(() => paginatedSuppliers.value)
+
+const totalItems = computed(() => allFilteredSuppliers.value.length)
+const totalPages = computed(() => Math.max(1, Math.ceil(totalItems.value / itemsPerPage.value)))
+
+const showingStart = computed(() => {
+  if (totalItems.value === 0) return 0
+  return (currentPage.value - 1) * itemsPerPage.value + 1
+})
+
+const showingEnd = computed(() => {
+  return Math.min(currentPage.value * itemsPerPage.value, totalItems.value)
+})
+
+// --- PAGINATION FUNCTIONS ---
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+const goToPage = (page: number) => {
+  currentPage.value = page
+}
+
+// --- LIFECYCLE ---
+onMounted(() => {
+  fetchSuppliers()
+})
 </script>
