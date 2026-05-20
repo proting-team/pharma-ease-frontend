@@ -257,7 +257,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Datum, Meta } from '../api/models/interfaces/users.interface'
+import type { Datum, Meta } from '../api-services/models/interfaces/users.interface'
 const users = ref<Datum[]>([])
 const meta = ref<Meta | undefined>(undefined)
 
