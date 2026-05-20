@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import AddMedicineModal from '../components/AddMedicineModal.vue'
+import AddMedicineModal from '../../components/AddMedicineModal.vue'
 
 const isModalOpen = ref(false)
 

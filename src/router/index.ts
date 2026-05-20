@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../pages/HomeView.vue'
 import AuditLogView from '../pages/AuditLogView.vue'
-import MedicineStorageView from '../pages/MedicineStorageView.vue'
-import MedicineCategoryView from '../pages/MedicineCategoryView.vue'
+import MedicineStorageView from '../pages/medicine/MedicineStorageView.vue'
+import MedicineCategoryView from '../pages/medicine/MedicineCategoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +44,31 @@ const router = createRouter({
       path: '/medicines/categories',
       name: 'medicine-categories',
       component: MedicineCategoryView
+    },
+    {
+      path: '/cashier',
+      name: 'cashier',
+      component: () => import('../pages/CashierPOSView.vue')
+    },
+    {
+      path: '/purchase-orders',
+      name: 'purchase-orders',
+      component: () => import('../pages/PurchaseOrdersView.vue')
+    },
+    {
+      path: '/reports/medicine',
+      name: 'medicine-report',
+      component: () => import('../pages/medicine/MedicineReportView.vue')
+    },
+    {
+      path: '/reports/operational',
+      name: 'operational-report',
+      component: () => import('../pages/reports/OperationalReportView.vue')
+    },
+    {
+      path: '/reports/financial',
+      name: 'financial-report',
+      component: () => import('../pages/reports/FinancialReportView.vue')
     }
   ],
 })
