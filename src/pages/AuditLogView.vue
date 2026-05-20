@@ -38,15 +38,40 @@
           </select>
         </div>
 
-        <button class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-          </svg>
-          Export Log
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </button>
+        <div class="relative group">
+          <button class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export Log
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <div class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div class="py-1">
+              <button @click="exportPDF" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <span>Export as PDF</span>
+              </button>
+              <button @click="exportExcel" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>Export as Excel</span>
+              </button>
+              <button @click="exportCSV" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer">
+                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>Export as CSV</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="overflow-x-auto">
@@ -125,6 +150,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 // Tipe data untuk struktur log
 interface AuditLog {
@@ -229,6 +257,92 @@ const goToPage = (page: number) => {
 watch([searchQuery, selectedAction, selectedModule], () => {
   currentPage.value = 1
 })
+
+// --- EXPORT FUNCTIONS ---
+const getExportFilename = (extension: string) => {
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  return `audit-log-${dateStr}.${extension}`;
+};
+
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+const exportCSV = () => {
+  const headers = ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details', 'IP Address'];
+  const rows = filteredLogs.value.map(log => [
+    log.timestamp,
+    log.user,
+    log.role,
+    log.action,
+    log.module,
+    log.details,
+    log.ip,
+  ]);
+
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+  ].join('\n');
+
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  downloadBlob(blob, getExportFilename('csv'));
+};
+
+const exportExcel = () => {
+  const headers = ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details', 'IP Address'];
+  const data = [
+    headers,
+    ...filteredLogs.value.map(log => [log.timestamp, log.user, log.role, log.action, log.module, log.details, log.ip]),
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Audit Log');
+  XLSX.writeFile(wb, getExportFilename('xlsx'));
+};
+
+const exportPDF = () => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text('Audit Log Report', 14, 20);
+
+  doc.setFontSize(10);
+  doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 28);
+  doc.text(`Total Records: ${filteredLogs.value.length}`, 14, 34);
+
+  const headers = [['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details', 'IP Address']];
+  const rows = filteredLogs.value.map(log => [
+    log.timestamp,
+    log.user,
+    log.role,
+    log.action,
+    log.module,
+    log.details,
+    log.ip,
+  ]);
+
+  (doc as any).autoTable({
+    head: headers,
+    body: rows,
+    startY: 40,
+    styles: { fontSize: 8, cellPadding: 2 },
+    headStyles: { fillColor: [22, 163, 74], textColor: 255, fontStyle: 'bold' },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+    margin: { top: 10 },
+  });
+
+  doc.save(getExportFilename('pdf'));
+};
 
 // --- FUNCTION: Action badge color ---
 const getActionBadgeClass = (action: string) => {
