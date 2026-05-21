@@ -1,4 +1,4 @@
-import type { Datum } from './models/interfaces/suppliers.interface'
+import type { Datum } from '../models/interfaces/suppliers.interface'
 
 const API_BASE = '/api/suppliers'
 
