@@ -1,20 +1,34 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { RouterView, RouterLink, useRoute } from 'vue-router'
+import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
 
+import { useAuthStore } from '@/stores/auth'
+
+const router = useRouter()
 const reportsOpen = ref(false)
 const route = useRoute()
+const authStore = useAuthStore()
 
 const isReportsActive = computed(() => route.path.startsWith('/reports/'))
+const isLoginPage = computed(() => route.name === 'login')
 
 // Auto-open reports dropdown if on a reports page
 if (isReportsActive.value) {
   reportsOpen.value = true
 }
+
+function handleLogout() {
+  authStore.logout()
+  router.push({ name: 'login' })
+}
 </script>
 
 <template>
-  <div class="flex h-screen bg-white font-sans text-gray-800">
+  <!-- Login page: full-screen without sidebar -->
+  <RouterView v-if="isLoginPage" />
+
+  <!-- Main app layout: with sidebar & header -->
+  <div v-else class="flex h-screen bg-white font-sans text-gray-800">
 
     <aside class="w-64 bg-[#11764B] text-white flex flex-col">
       <div class="h-16 flex items-center px-6 mt-4 mb-4">
@@ -138,12 +152,17 @@ if (isReportsActive.value) {
 
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#11764B] text-white flex items-center justify-center font-bold">
-              MF
+              {{ authStore.userInitials }}
             </div>
             <div class="text-sm">
-              <p class="font-bold text-gray-700">Miss Felicia Ritchie MD</p>
-              <p class="text-xs text-gray-500">Owner</p>
+              <p class="font-bold text-gray-700">{{ authStore.userName }}</p>
+              <p class="text-xs text-gray-500 capitalize">{{ authStore.userRole }}</p>
             </div>
+            <button @click="handleLogout" class="ml-2 text-gray-400 hover:text-red-500 transition-colors" title="Logout">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+            </button>
           </div>
         </div>
       </header>
