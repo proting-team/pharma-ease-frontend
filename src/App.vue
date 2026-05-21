@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
+import { ActivityIcon } from 'lucide-vue-next'
 
 const router = useRouter()
 const reportsOpen = ref(false)
@@ -31,13 +32,14 @@ function handleLogout() {
   <div v-else class="flex h-screen bg-white font-sans text-gray-800">
 
     <aside class="w-64 bg-[#11764B] text-white flex flex-col">
-      <div class="h-16 flex items-center px-6 mt-4 mb-4">
+      <div class="px-6 pt-6 pb-4 border-b border-white/20">
         <h1 class="text-xl font-bold flex items-center gap-2">
-          <span class="text-2xl">⚡</span> Pharma Ease
+          <ActivityIcon class="h-7 w-7 text-white" stroke-width="2.5" />
+          Pharma Ease
         </h1>
       </div>
 
-      <nav class="flex-1 px-4 space-y-2">
+      <nav class="flex-1 px-4 pt-4 space-y-2">
         <RouterLink to="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
