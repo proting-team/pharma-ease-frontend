@@ -6,6 +6,10 @@
             <p class="text-gray-500 text-sm mt-1">Kelola data pegawai dan hak akses sistem Apotek Lamtama</p>
         </div>
 
+        <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line">
+            {{ error }}
+        </div>
+
         <transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0 -translate-y-2"
             enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-200"
             leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
@@ -39,7 +43,7 @@
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </span>
-                        <input v-model="searchQuery" @keyup.enter="fetchUsers" type="text" placeholder="Search users..."
+                        <input v-model="searchQuery" type="text" placeholder="Search users..."
                             class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B] w-64 transition-shadow" />
                     </div>
 
@@ -69,7 +73,9 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
-
+                        <tr v-if="loading">
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500">Loading...</td>
+                        </tr>
                         <tr v-for="(item, index) in users" :key="item.id" class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-gray-900">{{ calculateNumber(index) }}</td>
                             <td class="px-6 py-4">
@@ -80,12 +86,12 @@
                             <td class="px-6 py-4">
                                 <span :class="[
                                     'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize',
-                                    item.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-gray-50 text-gray-700 border-gray-200'
+                                    item.role === 'ADMIN' ? 'bg-purple-50 text-purple-700 border-purple-200' : 'bg-gray-50 text-gray-700 border-gray-200'
                                 ]">
                                     {{ item.role }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-gray-600 capitalize">{{ item.shift || '-' }}</td>
+                            <td class="px-6 py-4 text-gray-600 capitalize">{{ displayShift(item.shift) }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ formatMoney(item.salary) }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ formatDate(item.startDate) }}</td>
                             <td class="px-6 py-4 flex justify-center gap-3">
@@ -108,7 +114,7 @@
                             </td>
                         </tr>
 
-                        <tr v-if="users.length === 0">
+                        <tr v-if="!loading && users.length === 0">
                             <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <svg class="h-8 w-8 opacity-50" fill="none" stroke="currentColor"
@@ -129,11 +135,11 @@
             <div v-if="meta" class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-white">
                 <span class="text-sm text-gray-500">Showing page {{ meta.currentPage }} of {{ meta.lastPage }}</span>
                 <div class="flex items-center gap-1">
-                    <button :disabled="!meta.prev"
+                    <button :disabled="!meta.prev" @click="goToPage(meta.prev)"
                         class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50">&lt;</button>
                     <button class="px-3 py-1 border border-gray-300 rounded bg-gray-100 text-gray-800 font-medium">{{
                         meta.currentPage }}</button>
-                    <button :disabled="!meta.next"
+                    <button :disabled="!meta.next" @click="goToPage(meta.next)"
                         class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50">&gt;</button>
                 </div>
             </div>
@@ -157,6 +163,11 @@
             </div>
 
             <div class="p-5 overflow-y-auto">
+                <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm whitespace-pre-line">
+                    <strong class="block mb-1">Error:</strong>
+                    {{ error }}
+                </div>
+
                 <form id="userForm" @submit.prevent="submitForm">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -186,8 +197,8 @@
                             <input v-model="form.password" type="password" placeholder="Min. 6 characters"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
                                 :required="!isEditMode" />
-                            <p v-if="isEditMode" class="text-xs text-gray-500 mt-1">Leave empty to keep current password
-                            </p>
+                            <p class="text-xs text-amber-600 mt-1">Min. 4 karakter, minimal 2 huruf besar &amp; 3 angka (contoh: JhonDoe-123)</p>
+                            <p v-if="isEditMode" class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password</p>
                         </div>
 
                         <div>
@@ -196,7 +207,7 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
                                 required>
                                 <option value="" disabled>Select Role</option>
-                                <option v-for="role in rolesList" :key="role" :value="role">{{ role }}</option>
+                                <option v-for="role in rolesList" :key="role.value" :value="role.value">{{ role.label }}</option>
                             </select>
                         </div>
 
@@ -205,7 +216,7 @@
                             <select v-model="form.shift"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]">
                                 <option value="">None</option>
-                                <option v-for="shift in shiftsList" :key="shift" :value="shift">{{ shift }}</option>
+                                <option v-for="shift in shiftsList" :key="shift.value" :value="shift.value">{{ shift.label }}</option>
                             </select>
                         </div>
 
@@ -231,7 +242,7 @@
 
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                            <textarea v-model="form.alamat" rows="3" placeholder="Full address..."
+                            <textarea v-model="form.address" rows="3" placeholder="Full address..."
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B] resize-none"
                                 required></textarea>
                         </div>
@@ -245,9 +256,9 @@
                     class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
                     Cancel
                 </button>
-                <button form="userForm" type="submit"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
-                    {{ isEditMode ? 'Update User' : 'Save User' }}
+                <button form="userForm" type="submit" :disabled="isSubmitting"
+                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors">
+                    {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update User' : 'Save User') }}
                 </button>
             </div>
 
@@ -256,20 +267,106 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import type { Datum, Meta } from '../api-services/models/interfaces/users.interface'
+import { employeeApi } from '@/api-services/repositories/employeeApi'
+
 const users = ref<Datum[]>([])
 const meta = ref<Meta | undefined>(undefined)
+const loading = ref(false)
+const error = ref<string | null>(null)
 
 const searchQuery = ref('')
 const isModalOpen = ref(false)
 const isEditMode = ref(false)
+const editingId = ref<string | null>(null)
+const isSubmitting = ref(false)
 
-const rolesList = ['admin', 'cashier', 'pharmacist']
-const shiftsList = ['morning', 'afternoon', 'night']
+// Helper to extract error message from axios/backend responses
+function getErrorMessage(e: unknown, fallback: string): string {
+  console.error('[UserManagement] API Error:', e)
+
+  if (e && typeof e === 'object' && 'response' in e) {
+    const axiosErr = e as {
+      response?: {
+        data?: Record<string, unknown>;
+        status?: number;
+        config?: { url?: string; method?: string };
+      }
+    }
+    const data = axiosErr.response?.data
+    if (!data) return fallback
+
+    // Log full response body for debugging
+    console.log('[UserManagement] Error response body:', JSON.stringify(data, null, 2))
+
+    // NestJS validation errors (class-validator format: { message: string[], error: string, statusCode: number })
+    if (Array.isArray(data.message)) {
+      return (data.message as string[]).map((m: string) => `• ${m}`).join('\n')
+    }
+
+    // NestJS/Multer/HTTP error with string message
+    if (typeof data.message === 'string') {
+      return `[${axiosErr.response?.status ?? 'Error'}] ${data.message}`
+    }
+
+    // NestJS custom errors array (e.g. { errors: [...] })
+    if (Array.isArray(data.errors) && data.errors.length > 0) {
+      const first = data.errors[0]
+      if (typeof first === 'object' && 'property' in first) {
+        return (data.errors as Array<{ property: string; errors: string[] }>)
+          .map((err) => `• ${err.property}: ${err.errors.join(', ')}`)
+          .join('\n')
+      }
+      return (data.errors as string[]).join('\n')
+    }
+
+    // Generic response
+    return `[${axiosErr.response?.status ?? ''}] ${JSON.stringify(data)}`
+  }
+
+  if (e instanceof Error) {
+    return `${e.name}: ${e.message}`
+  }
+
+  return fallback
+}
+
+// Enum mappings between frontend display and backend enums
+const rolesList = [
+  { value: 'ADMIN', label: 'Admin' },
+  { value: 'CASHIER', label: 'Cashier' },
+  { value: 'PHARMACIST', label: 'Pharmacist' },
+  { value: 'OWNER', label: 'Owner' },
+]
+
+const shiftsList = [
+  { value: 'DAY', label: 'Morning' },
+  { value: 'EVENING', label: 'Afternoon' },
+  { value: 'NIGHT', label: 'Night' },
+]
+
+const displayShift = (shift?: string) => {
+  const map: Record<string, string> = {
+    DAY: 'Morning',
+    EVENING: 'Afternoon',
+    NIGHT: 'Night',
+  }
+  return shift ? (map[shift] || shift) : '-'
+}
 
 // Form State
-const form = ref<Partial<Datum>>({})
+const form = ref({
+  name: '',
+  empId: '',
+  email: '',
+  password: '',
+  role: '',
+  shift: '',
+  salary: 0,
+  dateOfBirth: '',
+  address: '',
+})
 const formDateInput = ref('')
 
 const flashMessage = ref({ show: false, text: '', type: 'success' })
@@ -294,30 +391,53 @@ const formatDate = (date?: Date | string) => {
     return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-const fetchUsers = async () => {
+const fetchUsers = async (resetPage = false) => {
+    loading.value = true
+    error.value = null
     try {
-        // Test
-        users.value = [
-            { id: '1', name: 'Rakha Fatih', empId: 'EMP-001', email: 'rakha@lamtama.com', role: 'admin', shift: 'morning', salary: 5000000, startDate: new Date('2025-01-10') },
-            { id: '2', name: 'Habib Akbar', empId: 'EMP-002', email: 'habib@lamtama.com', role: 'cashier', shift: 'afternoon', salary: 3500000, startDate: new Date('2025-02-15') }
-        ]
-        meta.value = { currentPage: 1, lastPage: 1, perPage: 10, total: 2, prev: null, next: null }
-    } catch (error) {
-        showFlash('Failed to load users', 'error')
+        if (resetPage && meta.value) {
+            meta.value.currentPage = 1
+        }
+        const page = meta.value?.currentPage ?? 1
+        const perPage = meta.value?.perPage ?? 10
+        const result = await employeeApi.getAll(page, perPage, searchQuery.value || undefined)
+        users.value = result.data ?? []
+        meta.value = result.meta ?? undefined
+    } catch (e) {
+        error.value = getErrorMessage(e, 'Failed to load users')
+    } finally {
+        loading.value = false
     }
+}
+
+const goToPage = (page: number | null) => {
+    if (!page) return
+    if (meta.value) meta.value.currentPage = page
+    fetchUsers()
 }
 
 // Form
 const openAddModal = () => {
     isEditMode.value = false
-    form.value = { name: '', empId: '', email: '', password: '', role: '', shift: '', salary: 0, alamat: null }
+    form.value = { name: '', empId: '', email: '', password: '', role: '', shift: '', salary: 0, dateOfBirth: '', address: '' }
     formDateInput.value = ''
     isModalOpen.value = true
 }
 
 const openEditModal = (item: Datum) => {
     isEditMode.value = true
-    form.value = { ...item, password: '' }
+    editingId.value = item.id ?? null
+    form.value = {
+        name: item.name ?? '',
+        empId: item.empId ?? '',
+        email: item.email ?? '',
+        password: '',
+        role: item.role ?? '',
+        shift: item.shift ?? '',
+        salary: item.salary ?? 0,
+        dateOfBirth: item.dateOfBirth ? new Date(item.dateOfBirth).toISOString().split('T')[0] : '',
+        address: item.alamat ?? '',
+    }
 
     if (item.startDate) {
         const d = new Date(item.startDate)
@@ -328,21 +448,50 @@ const openEditModal = (item: Datum) => {
 
 const closeModal = () => {
     isModalOpen.value = false
+    isEditMode.value = false
+    editingId.value = null
+    error.value = null
 }
 
 const submitForm = async () => {
-    form.value.startDate = new Date(formDateInput.value)
-
+    isSubmitting.value = true
+    error.value = null
     try {
-        if (isEditMode.value) {
+        const payload: Record<string, unknown> = {
+            name: form.value.name,
+            empId: form.value.empId,
+            email: form.value.email,
+            role: form.value.role,
+            salary: form.value.salary,
+            status: 'ACTIVE',
+            startDate: new Date(formDateInput.value).toISOString(),
+            dateOfBirth: form.value.dateOfBirth ? new Date(form.value.dateOfBirth).toISOString() : undefined,
+            address: form.value.address,
+        }
+        // Default shift to DAY if not selected (backend requires it)
+        payload.shift = form.value.shift || 'DAY'
+
+        if (isEditMode.value && editingId.value) {
+            const updatePayload: Record<string, unknown> = { ...payload }
+            if (form.value.password) {
+                updatePayload.password = form.value.password
+            }
+            console.log('[UserManagement] PATCH payload:', JSON.stringify(updatePayload, null, 2))
+            await employeeApi.update(editingId.value, updatePayload)
             showFlash('User updated successfully!', 'success')
         } else {
+            const createPayload = { ...payload, password: form.value.password }
+            console.log('[UserManagement] POST payload:', JSON.stringify(createPayload, null, 2))
+            await employeeApi.create(createPayload)
             showFlash('New user added successfully!', 'success')
         }
         closeModal()
         fetchUsers()
-    } catch (error) {
+    } catch (e) {
         showFlash('Failed to save user.', 'error')
+        error.value = getErrorMessage(e, 'Failed to save user.')
+    } finally {
+        isSubmitting.value = false
     }
 }
 
@@ -350,13 +499,25 @@ const deleteUser = async (id?: string) => {
     if (!id) return
     if (!confirm('Are you sure you want to delete this user?')) return
 
+    error.value = null
     try {
+        await employeeApi.delete(id)
         showFlash('User deleted successfully!', 'success')
         fetchUsers()
-    } catch (error) {
+    } catch (e) {
         showFlash('Failed to delete user.', 'error')
+        error.value = getErrorMessage(e, 'Failed to delete user.')
     }
 }
+
+// Debounced live search — tunggu 400ms setelah user berhenti ngetik
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+watch(searchQuery, () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+        fetchUsers(true)
+    }, 400)
+})
 
 onMounted(() => {
     fetchUsers()

@@ -6,15 +6,16 @@ export type Suppliers = {
 }
 
 export type Datum = {
-    id?:                  string;
-    supplierName?:        string;
-    phoneNumber?:         string;
-    contactPerson?:      string | null;
-    contactPersonNumber?: string | null;
-    status?:              string;
-    address?:             string;
-    createdAt?:           Date;
-    updatedAt?:           Date;
+    id?:            string;
+    companyName?:   string;
+    phoneNumber?:   string;
+    contactName?:   string | null;
+    supplierEmail?: string | null;
+    status?:        string;
+    address?:       string;
+    licenseNumber?: string;
+    createdAt?:     string;
+    updatedAt?:     string;
 }
 
 export type Meta = {
@@ -22,6 +23,6 @@ export type Meta = {
     lastPage?:    number;
     currentPage?: number;
     perPage?:     number;
-    prev?:        null;
-    next?:        null;
+    prev?:        number | null;
+    next?:        number | null;
 }

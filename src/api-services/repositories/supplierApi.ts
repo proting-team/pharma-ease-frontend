@@ -1,56 +1,42 @@
-import type { Datum } from '../models/interfaces/suppliers.interface'
-
-const API_BASE = '/api/suppliers'
+import apiClient from '../providers/providers'
+import type { Datum, Suppliers } from '../models/interfaces/suppliers.interface'
 
 export interface CreateSupplierPayload {
-  supplierName: string
-  contactPerson?: string
+  companyName: string
   phoneNumber: string
+  contactName?: string
+  supplierEmail?: string
+  status?: string
   address: string
+  licenseNumber: string
 }
 
-export interface UpdateSupplierPayload extends Partial<CreateSupplierPayload> {
-  status?: string
-}
+export interface UpdateSupplierPayload extends Partial<CreateSupplierPayload> {}
 
 export const supplierApi = {
-  async getAll(): Promise<Datum[]> {
-    const response = await fetch(API_BASE)
-    if (!response.ok) throw new Error('Failed to fetch suppliers')
-    const data = await response.json()
-    return data.data ?? []
+  async getAll(page = 1, perPage = 10): Promise<Suppliers> {
+    const response = await apiClient.get('/suppliers', {
+      params: { page, perPage },
+    })
+    return response.data as Suppliers
   },
 
   async getById(id: string): Promise<Datum> {
-    const response = await fetch(`${API_BASE}/${id}`)
-    if (!response.ok) throw new Error('Failed to fetch supplier')
-    return response.json()
+    const response = await apiClient.get(`/suppliers/${id}`)
+    return response.data as Datum
   },
 
   async create(payload: CreateSupplierPayload): Promise<Datum> {
-    const response = await fetch(API_BASE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (!response.ok) throw new Error('Failed to create supplier')
-    return response.json()
+    const response = await apiClient.post('/suppliers', payload)
+    return response.data as Datum
   },
 
   async update(id: string, payload: UpdateSupplierPayload): Promise<Datum> {
-    const response = await fetch(`${API_BASE}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (!response.ok) throw new Error('Failed to update supplier')
-    return response.json()
+    const response = await apiClient.patch(`/suppliers/${id}`, payload)
+    return response.data as Datum
   },
 
   async delete(id: string): Promise<void> {
-    const response = await fetch(`${API_BASE}/${id}`, {
-      method: 'DELETE',
-    })
-    if (!response.ok) throw new Error('Failed to delete supplier')
+    await apiClient.delete(`/suppliers/${id}`)
   },
 }
