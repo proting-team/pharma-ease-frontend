@@ -187,6 +187,49 @@ const validateForm = (): boolean => {
 
   errors.value = newErrors
   return Object.keys(newErrors).length === 0
+}  // Helper untuk extract error message dari berbagai format error backend
+function extractErrorMessage(err: any): string {
+  if (!err) return 'Login failed. Please check your credentials.'
+
+  // Network error (koneksi terputus, server down)
+  if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+    return 'Cannot connect to server. Please make sure the backend is running.'
+  }
+
+  // Timeout
+  if (err.code === 'ECONNABORTED') {
+    return 'Connection timed out. Please try again.'
+  }
+
+  const data = err.response?.data
+  if (!data) return err.message || 'Login failed. Please check your credentials.'
+
+  // Format 1: NestJS validation error - { message: "Input Validation is Failed", errors: [{ property, errors }] }
+  if (data.errors && Array.isArray(data.errors)) {
+    // Ambil pesan error pertama yang ditemukan
+    const firstError = data.errors[0]
+    if (firstError?.errors?.length > 0) {
+      return firstError.errors[0]
+    }
+    return data.message || 'Input validation failed'
+  }
+
+  // Format 2: NestJS HTTP exception - { statusCode: 401, message: "credential is not valid", error: "Unauthorized" }
+  if (data.statusCode && typeof data.message === 'string') {
+    return data.message
+  }
+
+  // Format 3: Array of messages (kadang NestJS balikin array)
+  if (Array.isArray(data.message)) {
+    return data.message[0] || 'Login failed'
+  }
+
+  // Format 4: Custom error message
+  if (typeof data.message === 'string') {
+    return data.message
+  }
+
+  return err.message || 'Login failed. Please check your credentials.'
 }
 
 // Fungsi handle submit login
@@ -207,8 +250,7 @@ const handleLogin = async () => {
       router.push({ name: 'home' })
     }, 500)
   } catch (err: any) {
-    errorMessage.value = err?.message || 'Login failed. Please check your credentials.'
-    setTimeout(() => { errorMessage.value = '' }, 4000)
+    errorMessage.value = extractErrorMessage(err)
   } finally {
     isLoading.value = false
   }

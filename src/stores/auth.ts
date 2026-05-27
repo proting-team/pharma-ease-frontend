@@ -1,10 +1,36 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { LoginRequest, LoginResponse } from '@/api-services/models/interfaces/auth.interface'
+import type { LoginRequest } from '@/api-services/models/interfaces/auth.interface'
+import { authApi } from '@/api-services/repositories/authApi'
+
+interface JwtPayload {
+  email?: string
+  role?: string
+  sub?: string
+  [key: string]: unknown
+}
+
+/** Decode JWT payload (base64) without verification — for display purposes only */
+function decodeJwtPayload(token: string): JwtPayload | null {
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) return null
+    return JSON.parse(atob(parts[1] ?? '')) as JwtPayload
+  } catch {
+    return null
+  }
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('auth_token'))
-  const user = ref<LoginResponse['user'] | null>(null)
+  const user = ref<{
+    id: string
+    name: string
+    email: string
+    role: string
+    shift: string
+    profileAvatar: string | null
+  } | null>(null)
 
   // Load user from localStorage on init
   const storedUser = localStorage.getItem('auth_user')
@@ -30,28 +56,33 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   async function login(credentials: LoginRequest): Promise<void> {
-    // TODO: Ganti dengan panggilan API nyata
-    // const response = await authApi.login(credentials)
-    // Simulasi login untuk development
-    const mockResponse: LoginResponse = {
-      status: 200,
-      message: 'Login successful',
-      token: 'mock_token_' + Date.now(),
-      user: {
-        id: '1',
-        name: 'Miss Felicia Ritchie MD',
-        email: credentials.email,
-        role: 'owner',
-        shift: 'morning',
+    const response = await authApi.login(credentials)
+
+    token.value = response.data.access_token
+
+    // Some backend versions may not return the full user object.
+    // Fallback: decode JWT to get email/role/sub, then build a user stub.
+    if (response.data.user) {
+      user.value = response.data.user
+    } else {
+      const payload = decodeJwtPayload(response.data.access_token)
+      const email = payload?.email ?? credentials.email
+      const role = payload?.role ?? ''
+      const sub = payload?.sub ?? ''
+      const fallbackName = email.split('@')[0] ?? email
+
+      user.value = {
+        id: sub,
+        name: fallbackName,
+        email,
+        role,
+        shift: '',
         profileAvatar: null,
-      },
+      }
     }
 
-    token.value = mockResponse.token
-    user.value = mockResponse.user
-
-    localStorage.setItem('auth_token', mockResponse.token)
-    localStorage.setItem('auth_user', JSON.stringify(mockResponse.user))
+    localStorage.setItem('auth_token', response.data.access_token)
+    localStorage.setItem('auth_user', JSON.stringify(user.value))
   }
 
   function logout(): void {
