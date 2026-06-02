@@ -11,7 +11,7 @@ export interface CreateSupplierPayload {
   licenseNumber: string
 }
 
-export interface UpdateSupplierPayload extends Partial<CreateSupplierPayload> {}
+export type UpdateSupplierPayload = Partial<CreateSupplierPayload>
 
 export const supplierApi = {
   async getAll(page = 1, perPage = 10): Promise<Suppliers> {

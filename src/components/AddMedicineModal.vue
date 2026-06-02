@@ -1,12 +1,12 @@
 <template>
   <div
     v-if="isOpen"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity p-4"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity p-4"
   >
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]">
 
       <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
-        <h3 class="text-lg font-bold text-gray-800">Add New Medicine</h3>
+        <h3 class="text-lg font-bold text-gray-800">{{ medicineToEdit ? 'Edit Medicine' : 'Add New Medicine' }}</h3>
         <button
           @click="closeModal"
           class="text-gray-400 hover:text-red-500 transition-colors"
@@ -79,7 +79,7 @@
             >
               <option value="" disabled>Select Supplier</option>
               <option v-for="sup in suppliers" :key="sup.id" :value="sup.id">
-                {{ sup.supplierName }}
+                {{ sup.companyName }}
               </option>
             </select>
           </div>
@@ -140,35 +140,42 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          {{ isSubmitting ? 'Saving...' : 'Save Medicine' }}
+          {{ isSubmitting ? 'Saving...' : (medicineToEdit ? 'Update Medicine' : 'Save Medicine') }}
         </button>
       </div>
 
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
 import { medicineApi } from '@/api-services/repositories/medicineApi'
-import { httpClient } from '@/api-services/providers/providers'
+import httpClient from '@/api-services/providers/providers'
 
-// 1. Dapatkan sinyal isOpen dari parent dan siapkan fungsi pemancar sinyal (emit)
 const props = defineProps<{
   isOpen: boolean
+  medicineToEdit?: any
 }>()
 
 const emit = defineEmits(['close', 'refresh'])
 
-// 2. State UI
 const isSubmitting = ref(false)
 const errorMsg = ref<string | null>(null)
 
-// 3. State Data Referensi Dropdown (Categories & Suppliers)
-const categories = ref<any[]>([])
-const suppliers = ref<any[]>([])
+interface DropdownCategory {
+  id: string
+  categoryName: string
+}
 
-// 4. Form Payload Object (Sesuaikan dengan CreateMedicinePayload di medicineApi)
+interface DropdownSupplier {
+  id: string
+  companyName: string
+}
+
+// Terapkan interface tersebut ke ref
+const categories = ref<DropdownCategory[]>([])
+const suppliers = ref<DropdownSupplier[]>([])
+
 const form = reactive({
   medicineName: '',
   sku: '',
@@ -180,7 +187,6 @@ const form = reactive({
   supplierId: ''
 })
 
-// Fungsi Reset Form
 const resetForm = () => {
   form.medicineName = ''
   form.sku = ''
@@ -198,59 +204,73 @@ const closeModal = () => {
   emit('close')
 }
 
-// 5. Fungsi Fetch Data Dropdown
-// Dipanggil setiap kali modal terbuka agar datanya selalu up to date
+import { medicineCategoryApi } from '@/api-services/repositories/medicineCategoryApi'
+import { supplierApi } from '@/api-services/repositories/supplierApi'
+
 const fetchDropdownData = async () => {
   try {
-    // Kita menembak langsung ke endpoint API menggunakan httpClient dari providers
-    // (Ubah path URL di bawah ini jika endpoint bawaan timmu berbeda)
     const [catResponse, supResponse] = await Promise.all([
-      httpClient('/medicine-data/categories').catch(() => ({ data: [] })),
-      // Path di bawah mengikuti struktur folder supplier di NestJS-mu
-      httpClient('/user-manage/suppliers').catch(() => ({ data: [] }))
+      medicineCategoryApi.getAll(1, 100).catch(() => ({ data: [] })),
+      supplierApi.getAll(1, 100).catch(() => ({ data: [] }))
     ])
 
-    categories.value = catResponse.data || []
-    suppliers.value = supResponse.data || []
+    categories.value = (catResponse.data || []).map((cat: any) => ({
+      id: cat.id || '',
+      categoryName: cat.categoryName || ''
+    }))
+    suppliers.value = (supResponse.data || []).map((sup: any) => ({
+      id: sup.id || '',
+      companyName: sup.companyName || ''
+    }))
   } catch (error) {
     console.error("Gagal menarik data untuk dropdown", error)
   }
 }
 
-// Pantau jika modal dibuka (isOpen berubah jadi true), tarik data Category & Supplier!
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     fetchDropdownData()
+    if (props.medicineToEdit) {
+      form.medicineName = props.medicineToEdit.medicineName || ''
+      form.sku = props.medicineToEdit.sku || ''
+      form.description = props.medicineToEdit.description || ''
+      form.stock = props.medicineToEdit.stock || 0
+      form.price = props.medicineToEdit.price || 0
+      form.expiredDate = props.medicineToEdit.expiredDate ? (new Date(props.medicineToEdit.expiredDate).toISOString().split('T')[0] || '') : ''
+      form.categoryId = props.medicineToEdit.categoryId || ''
+      form.supplierId = props.medicineToEdit.supplierId || ''
+    } else {
+      resetForm()
+    }
   }
 })
 
-// 6. Fungsi Submit Data
 const handleSubmit = async () => {
   isSubmitting.value = true
   errorMsg.value = null
 
   try {
-    // Format tanggal ke bentuk ISO-8601 (NestJS Prisma biasanya minta format ini: YYYY-MM-DDTHH:mm:ss.sssZ)
     const formattedDate = new Date(form.expiredDate).toISOString()
 
     const payload = {
       ...form,
       expiredDate: formattedDate,
-      // Pastikan stock dan price dikirim sebagai angka murni, bukan string
       stock: Number(form.stock),
       price: Number(form.price),
     }
 
-    // Tembak API Create!
-    await medicineApi.create(payload)
+    if (props.medicineToEdit && props.medicineToEdit.id) {
+      await medicineApi.update(props.medicineToEdit.id, payload)
+    } else {
+      await medicineApi.create(payload)
+    }
 
-    // Jika sukses: Tutup modal dan minta halaman utama (MedicineStorageView) refresh tabel
     closeModal()
     emit('refresh')
 
-  } catch (error: any) {
-    // Tangkap pesan error panjang dari class-validator NestJS
-    if (error.message && typeof error.message === 'string') {
+  } catch (error: unknown) {
+    // Kita harus mengecek tipe error-nya sebelum bisa membaca .message
+    if (error instanceof Error) {
        errorMsg.value = error.message
     } else {
        errorMsg.value = 'Failed to create medicine. Please check your inputs.'

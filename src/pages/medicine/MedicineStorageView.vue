@@ -34,7 +34,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
           </button>
 
-          <button @click="isModalOpen = true" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+          <button @click="openAddModal" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
             + Add New Medicine
           </button>
 
@@ -76,14 +76,14 @@
               <td class="px-6 py-4 text-sm text-gray-600">{{ item.supplier?.supplierName || '-' }}</td>
               <td class="px-6 py-4 text-sm text-gray-600 font-semibold">{{ item.stock }}</td>
               <td class="px-6 py-4 text-sm">
-                <span :class="getStockBadgeClass(item.stock || 0)" class="px-3 py-1 rounded-full text-xs font-medium">
+                <span :class="getStockBadgeClass(item.stock || 0)" class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap">
                   {{ getStockLabel(item.stock || 0) }}
                 </span>
               </td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(item.expiredDate) }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ formatCurrency(item.price || 0) }}</td>
               <td class="px-6 py-4 text-sm text-right space-x-3">
-                <button class="text-orange-400 hover:text-orange-600">
+                <button @click="openEditModal(item)" class="text-orange-400 hover:text-orange-600">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                 </button>
                 <button @click="handleDelete(item.id)" class="text-red-400 hover:text-red-600">
@@ -106,7 +106,7 @@
       </div>
     </div>
 
-    <AddMedicineModal :is-open="isModalOpen" @close="isModalOpen = false" @refresh="fetchMedicines" />
+    <AddMedicineModal :is-open="isModalOpen" :medicine-to-edit="selectedMedicine" @close="closeModal" @refresh="fetchMedicines" />
   </div>
 </template>
 
@@ -121,6 +121,7 @@ const isModalOpen = ref(false)
 const medicines = ref<Datum[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+const selectedMedicine = ref<Datum | null>(null)
 
 // State Pagination & Search
 const currentPage = ref(1)
@@ -129,6 +130,21 @@ const totalItems = ref(0)
 const searchQuery = ref('')
 let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
+const openEditModal = (item: Datum) => {
+  selectedMedicine.value = item
+  isModalOpen.value = true
+}
+
+const openAddModal = () => {
+  selectedMedicine.value = null
+  isModalOpen.value = true
+}
+
+const closeModal = () => {
+  isModalOpen.value = false
+  selectedMedicine.value = null
+}
+
 // --- FUNGSI API ---
 const fetchMedicines = async () => {
   loading.value = true
@@ -136,7 +152,6 @@ const fetchMedicines = async () => {
   try {
     const response = await medicineApi.getAll(currentPage.value, itemsPerPage.value, searchQuery.value)
 
-    // Asumsikan payload data dari API tersimpan dalam property "data"
     medicines.value = response.data || []
 
     if (response.meta) {

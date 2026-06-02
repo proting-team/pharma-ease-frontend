@@ -241,10 +241,12 @@ const handleLogin = async () => {
   successMessage.value = ''
 
   try {
-    await authStore.login({
-      email: form.value.email,
-      password: form.value.password,
-    })
+    const payload = {
+      email: form.value.email.trim(),
+      password: form.value.password.trim(),
+    }
+    
+    await authStore.login(payload)
     successMessage.value = 'Login successful! Redirecting...'
     setTimeout(() => {
       router.push({ name: 'home' })
