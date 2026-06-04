@@ -302,7 +302,7 @@ const fetchUsers = async () => {
             { id: '2', name: 'Habib Akbar', empId: 'EMP-002', email: 'habib@lamtama.com', role: 'cashier', shift: 'afternoon', salary: 3500000, startDate: new Date('2025-02-15') }
         ]
         meta.value = { currentPage: 1, lastPage: 1, perPage: 10, total: 2, prev: null, next: null }
-    } catch (error) {
+    } catch {
         showFlash('Failed to load users', 'error')
     }
 }
@@ -341,7 +341,7 @@ const submitForm = async () => {
         }
         closeModal()
         fetchUsers()
-    } catch (error) {
+    } catch {
         showFlash('Failed to save user.', 'error')
     }
 }
@@ -353,7 +353,7 @@ const deleteUser = async (id?: string) => {
     try {
         showFlash('User deleted successfully!', 'success')
         fetchUsers()
-    } catch (error) {
+    } catch {
         showFlash('Failed to delete user.', 'error')
     }
 }

@@ -151,7 +151,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 // Tipe data untuk struktur log
@@ -331,7 +331,7 @@ const exportPDF = () => {
     log.ip,
   ]);
 
-  (doc as any).autoTable({
+  autoTable(doc, {
     head: headers,
     body: rows,
     startY: 40,
