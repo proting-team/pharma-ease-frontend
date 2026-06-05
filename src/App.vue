@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
+// import { useAuthStore } from './stores/auth'
 
 import { useAuthStore } from '@/stores/auth'
 import { ActivityIcon } from 'lucide-vue-next'
 
 const router = useRouter()
 const reportsOpen = ref(false)
+const userManagementOpen = ref(false)
+const profileDropdownOpen = ref(false)
 const route = useRoute()
 const authStore = useAuthStore()
 
 const isReportsActive = computed(() => route.path.startsWith('/reports/'))
-const isLoginPage = computed(() => route.name === 'login')
+const isUserManagementActive = computed(() => route.path === '/supplier' || route.path === '/user-management')
+const isLoginPage = computed(() => route.path === '/login')
 
 // Auto-open reports dropdown if on a reports page
 if (isReportsActive.value) {
@@ -48,36 +52,20 @@ function handleLogout() {
           Dashboard
         </RouterLink>
 
-        <RouterLink to="/supplier" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
-          exact-active-class="bg-[#21a870] font-semibold">
-          <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
-          </svg>
-          Suppliers
-        </RouterLink>
-
-        <RouterLink to="/user-management" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
-          exact-active-class="bg-[#21a870] font-semibold">
-          <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-          </svg>
-          User Management
-        </RouterLink>
-
-        <RouterLink to="/audit-log" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
-          exact-active-class="bg-[#21a870] font-semibold">
-          <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-          </svg>
-          Audit Log
-        </RouterLink>
-
         <RouterLink to="/medicines" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
           </svg>
           Medicine Inventory
+        </RouterLink>
+
+        <RouterLink to="/purchase-orders" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+          exact-active-class="bg-[#21a870] font-semibold">
+          <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+          Medicine Resupply
         </RouterLink>
 
         <RouterLink to="/cashier" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
@@ -88,13 +76,38 @@ function handleLogout() {
           Cashier / POS
         </RouterLink>
 
-        <RouterLink to="/purchase-orders" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
-          exact-active-class="bg-[#21a870] font-semibold">
-          <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-          </svg>
-          Purchase Orders
-        </RouterLink>
+        <div>
+          <button @click="userManagementOpen = !userManagementOpen"
+            class="flex items-center w-full px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+            :class="{ 'bg-[#21a870] font-semibold': isUserManagementActive }">
+            <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+            </svg>
+            User Management
+            <svg class="w-4 h-4 ml-auto transition-transform duration-200"
+              :class="{ 'rotate-180': userManagementOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <transition name="dropdown">
+            <div v-if="userManagementOpen" class="ml-4 mt-1 space-y-1 border-l border-green-600/30 pl-3">
+              <RouterLink to="/supplier" class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
+                exact-active-class="bg-[#21a870] font-semibold">
+                <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                </svg>
+                Supplier Management
+              </RouterLink>
+              <RouterLink to="/user-management" class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
+                exact-active-class="bg-[#21a870] font-semibold">
+                <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Employee Management
+              </RouterLink>
+            </div>
+          </transition>
+        </div>
 
         <div>
           <button @click="reportsOpen = !reportsOpen"
@@ -111,14 +124,6 @@ function handleLogout() {
           </button>
           <transition name="dropdown">
             <div v-if="reportsOpen" class="ml-4 mt-1 space-y-1 border-l border-green-600/30 pl-3">
-              <RouterLink to="/reports/medicine"
-                class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
-                exact-active-class="bg-[#21a870] font-semibold">
-                <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                Medicine Report
-              </RouterLink>
               <RouterLink to="/reports/operational"
                 class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
                 exact-active-class="bg-[#21a870] font-semibold">
@@ -138,6 +143,14 @@ function handleLogout() {
             </div>
           </transition>
         </div>
+
+        <RouterLink to="/audit-log" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+          exact-active-class="bg-[#21a870] font-semibold">
+          <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+          </svg>
+          Audit Log
+        </RouterLink>
       </nav>
 
       <div class="p-4 text-xs text-center text-green-200 opacity-70 border-t border-green-800">
@@ -150,7 +163,8 @@ function handleLogout() {
       <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-end px-8 shadow-sm">
         <div class="flex items-center gap-6">
           <button class="text-gray-400 hover:text-gray-600">
-            🔔 </button>
+            🔔
+          </button>
 
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-[#11764B] text-white flex items-center justify-center font-bold">
@@ -170,9 +184,7 @@ function handleLogout() {
       </header>
 
       <main class="flex-1 overflow-x-hidden overflow-y-auto bg-white p-8">
-
         <RouterView />
-
       </main>
     </div>
 

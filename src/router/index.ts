@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+// import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '../stores/auth'
 import HomeView from '../pages/HomeView.vue'
 import AuditLogView from '../pages/AuditLogView.vue'
 import MedicineStorageView from '../pages/medicine/MedicineStorageView.vue'
@@ -12,7 +13,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../pages/LoginView.vue'),
-      meta: { requiresAuth: false },
+      meta: { guestOnly: true }
     },
     {
       path: '/',
@@ -27,78 +28,78 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../pages/AboutView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/supplier',
       name: 'supplier',
       component: () => import('../pages/SupplierView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/user-management', 
       name: 'user-management',
       component: () => import('../pages/UserManagementView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/audit-log',
       name: 'audit-log',
       component: AuditLogView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/medicines',
       name: 'medicines',
       component: MedicineStorageView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/medicines/categories',
       name: 'medicine-categories',
       component: MedicineCategoryView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/cashier',
       name: 'cashier',
       component: () => import('../pages/CashierPOSView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/purchase-orders',
       name: 'purchase-orders',
       component: () => import('../pages/PurchaseOrdersView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/reports/medicine',
       name: 'medicine-report',
       component: () => import('../pages/medicine/MedicineReportView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/reports/operational',
       name: 'operational-report',
       component: () => import('../pages/reports/OperationalReportView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/reports/financial',
       name: 'financial-report',
       component: () => import('../pages/reports/FinancialReportView.vue'),
-      meta: { requiresAuth: true },
-    },
+      meta: { requiresAuth: true }
+    }
   ],
 })
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-
-  if (to.meta.requiresAuth !== false && !authStore.isAuthenticated) {
-    next({ name: 'login' })
-  } else if (to.name === 'login' && authStore.isAuthenticated) {
-    next({ name: 'home' })
+  
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/login')
+  } else if (to.meta.guestOnly && authStore.isAuthenticated) {
+    next('/')
   } else {
     next()
   }

@@ -270,6 +270,7 @@
 import { ref, watch, onMounted } from 'vue'
 import type { Datum, Meta } from '../api-services/models/interfaces/users.interface'
 import { employeeApi } from '@/api-services/repositories/employeeApi'
+import type { CreateEmployeePayload, UpdateEmployeePayload } from '@/api-services/repositories/employeeApi'
 
 const users = ref<Datum[]>([])
 const meta = ref<Meta | undefined>(undefined)
@@ -410,7 +411,7 @@ const fetchUsers = async (resetPage = false) => {
     }
 }
 
-const goToPage = (page: number | null) => {
+const goToPage = (page: number | null | undefined) => {
     if (!page) return
     if (meta.value) meta.value.currentPage = page
     fetchUsers()
@@ -435,7 +436,7 @@ const openEditModal = (item: Datum) => {
         role: item.role ?? '',
         shift: item.shift ?? '',
         salary: item.salary ?? 0,
-        dateOfBirth: item.dateOfBirth ? new Date(item.dateOfBirth).toISOString().split('T')[0] : '',
+        dateOfBirth: item.dateOfBirth ? String(new Date(item.dateOfBirth).toISOString().split('T')[0]) : '',
         address: item.alamat ?? '',
     }
 
@@ -457,22 +458,21 @@ const submitForm = async () => {
     isSubmitting.value = true
     error.value = null
     try {
-        const payload: Record<string, unknown> = {
+        const payload = {
             name: form.value.name,
             empId: form.value.empId,
             email: form.value.email,
             role: form.value.role,
             salary: form.value.salary,
             status: 'ACTIVE',
+            shift: form.value.shift || 'DAY',
             startDate: new Date(formDateInput.value).toISOString(),
             dateOfBirth: form.value.dateOfBirth ? new Date(form.value.dateOfBirth).toISOString() : undefined,
             address: form.value.address,
         }
-        // Default shift to DAY if not selected (backend requires it)
-        payload.shift = form.value.shift || 'DAY'
 
         if (isEditMode.value && editingId.value) {
-            const updatePayload: Record<string, unknown> = { ...payload }
+            const updatePayload: UpdateEmployeePayload = { ...payload }
             if (form.value.password) {
                 updatePayload.password = form.value.password
             }
@@ -480,7 +480,7 @@ const submitForm = async () => {
             await employeeApi.update(editingId.value, updatePayload)
             showFlash('User updated successfully!', 'success')
         } else {
-            const createPayload = { ...payload, password: form.value.password }
+            const createPayload: CreateEmployeePayload = { ...payload, password: form.value.password }
             console.log('[UserManagement] POST payload:', JSON.stringify(createPayload, null, 2))
             await employeeApi.create(createPayload)
             showFlash('New user added successfully!', 'success')

@@ -1,12 +1,35 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import apiClient from '../providers/providers'
 import type { Datum, Suppliers } from '../models/interfaces/suppliers.interface'
 
 export interface CreateSupplierPayload {
   companyName: string
   phoneNumber: string
-  contactName?: string
-  supplierEmail?: string
-  status?: string
+  contactName: string
+  supplierEmail: string
+  status: string
   address: string
   licenseNumber: string
 }

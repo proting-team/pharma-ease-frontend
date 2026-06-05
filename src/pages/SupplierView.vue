@@ -149,6 +149,7 @@
                   type="text"
                   placeholder="e.g., Budi Santoso"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                  required
                 />
               </div>
               <div>
@@ -171,6 +172,7 @@
                   type="email"
                   placeholder="e.g., supplier@example.com"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                  required
                 />
               </div>
               <div>
@@ -342,8 +344,8 @@ const handleSubmit = async () => {
       await supplierApi.create({
         companyName: form.value.companyName,
         phoneNumber: form.value.phoneNumber,
-        contactName: form.value.contactName || undefined,
-        supplierEmail: form.value.supplierEmail || undefined,
+        contactName: form.value.contactName,
+        supplierEmail: form.value.supplierEmail,
         address: form.value.address,
         licenseNumber: form.value.licenseNumber,
         status: form.value.status,
