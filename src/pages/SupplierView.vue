@@ -5,7 +5,7 @@
       <p class="text-gray-500 text-sm mt-1">List dari para pemasok obat pada Apotek Lamtama</p>
     </div>
 
-    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line">
       {{ error }}
     </div>
 
@@ -42,8 +42,8 @@
           <thead class="bg-gray-50 text-gray-700 font-semibold border-b border-gray-200">
             <tr>
               <th class="px-6 py-4 w-16">No</th>
-              <th class="px-6 py-4">Supplier Name</th>
-              <th class="px-6 py-4">Contact Person</th>
+              <th class="px-6 py-4">Company Name</th>
+              <th class="px-6 py-4">Contact Name</th>
               <th class="px-6 py-4">Phone</th>
               <th class="px-6 py-4">Address</th>
               <th class="px-6 py-4 text-center">Actions</th>
@@ -62,8 +62,8 @@
               class="hover:bg-gray-50 transition-colors"
             >
               <td class="px-6 py-4 font-medium text-gray-900">{{ showingStart + index }}</td>
-              <td class="px-6 py-4 font-semibold text-gray-800">{{ supplier.supplierName }}</td>
-              <td class="px-6 py-4 text-gray-600">{{ supplier.contactPerson || '-' }}</td>
+              <td class="px-6 py-4 font-semibold text-gray-800">{{ supplier.companyName }}</td>
+              <td class="px-6 py-4 text-gray-600">{{ supplier.contactName || '-' }}</td>
               <td class="px-6 py-4 text-gray-600">{{ supplier.phoneNumber }}</td>
               <td class="px-6 py-4 text-gray-500 truncate max-w-xs">{{ supplier.address }}</td>
               <td class="px-6 py-4 flex justify-center gap-3">
@@ -131,9 +131,9 @@
         <form @submit.prevent="handleSubmit">
           <div class="p-5 space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Supplier Name</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
               <input
-                v-model="form.supplierName"
+                v-model="form.companyName"
                 type="text"
                 placeholder="e.g., PT. Farma Jaya"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
@@ -143,12 +143,13 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
                 <input
-                  v-model="form.contactPerson"
+                  v-model="form.contactName"
                   type="text"
                   placeholder="e.g., Budi Santoso"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                  required
                 />
               </div>
               <div>
@@ -163,15 +164,49 @@
               </div>
             </div>
 
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Supplier Email</label>
+                <input
+                  v-model="form.supplierEmail"
+                  type="email"
+                  placeholder="e.g., supplier@example.com"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                  required
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                <input
+                  v-model="form.licenseNumber"
+                  type="text"
+                  placeholder="e.g., LIC-001"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+                  required
+                />
+              </div>
+            </div>
+
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
               <textarea
                 v-model="form.address"
-                rows="3"
-                placeholder="Full address..."
+                rows="2"
+                placeholder="Full address (min. 7 characters)..."
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B] resize-none"
                 required
               ></textarea>
+            </div>
+
+            <div v-if="isEditMode">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                v-model="form.status"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#11764B] focus:border-[#11764B]"
+              >
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
             </div>
           </div>
 
@@ -194,8 +229,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import type { Datum } from '@/api-services/models/interfaces/suppliers.interface'
+import { ref, computed, onMounted, watch } from 'vue'
+import type { Datum, Meta } from '@/api-services/models/interfaces/suppliers.interface'
+import { supplierApi } from '@/api-services/repositories/supplierApi'
+
+// Helper to extract error message from axios/backend responses
+function getErrorMessage(e: unknown, fallback: string): string {
+  if (e && typeof e === 'object' && 'response' in e) {
+    const data = (e as { response?: { data?: { message?: string; errors?: Array<{ property: string; errors: string[] }> } } }).response?.data
+    if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+      return data.errors.map((err) =>
+        `• ${err.property}: ${err.errors.join(', ')}`
+      ).join('\n')
+    }
+    return data?.message || fallback
+  }
+  return e instanceof Error ? e.message : fallback
+}
 
 // --- MODAL STATE ---
 const isModalOpen = ref(false)
@@ -203,37 +253,22 @@ const isEditMode = ref(false)
 const isSubmitting = ref(false)
 const editingId = ref<string | null>(null)
 
-// --- MOCK DATA ---
-const mockSuppliers = ref([
-  { id: '1', supplierName: 'PT. Pharma Jaya', contactPerson: 'Dr. Budi Santoso', phoneNumber: '081234567890', address: 'Jl. Merdeka No. 123, Jakarta' },
-  { id: '2', supplierName: 'CV. Medika Utama', contactPerson: 'Siti Aminah', phoneNumber: '082345678901', address: 'Jl. Sudirman No. 456, Bandung' },
-  { id: '3', supplierName: 'PT. Sehat Selalu', contactPerson: 'Ir. Joko Wibowo', phoneNumber: '083456789012', address: 'Jl. Gatot Subroto No. 789, Surabaya' },
-  { id: '4', supplierName: 'UD. Obat Rasa', contactPerson: 'Dewi Lestari', phoneNumber: '084567890123', address: 'Jl. Ahmad Yani No. 321, Semarang' },
-  { id: '5', supplierName: 'PT. Farmasi Indonesia', contactPerson: 'Prof. Ahmad Fauzi', phoneNumber: '085678901234', address: 'Jl. Asia Afrika No. 654, Makassar' },
-  { id: '6', supplierName: 'CV. Healthcare Plus', contactPerson: 'Rina Marlina', phoneNumber: '086789012345', address: 'Jl. Dago No. 987, Yogyakarta' },
-  { id: '7', supplierName: 'PT. Kimia Farma', contactPerson: 'Dr. Hendra Wijaya', phoneNumber: '087890123456', address: 'Jl. Braga No. 147, Medan' },
-  { id: '8', supplierName: 'UD. Sumber Obat', contactPerson: 'Maya Syahara', phoneNumber: '088901234567', address: 'Jl. Asia Pasific No. 258, Palembang' },
-  { id: '9', supplierName: 'PT. Indo Pharma', contactPerson: 'Ir. Gunawan', phoneNumber: '089012345678', address: 'Jl. Veteran No. 369, Malang' },
-  { id: '10', supplierName: 'CV. Apotek Kita', contactPerson: 'Lisa Permata', phoneNumber: '090123456789', address: 'Jl. Imam Bonjol No. 741, Bali' },
-  { id: '11', supplierName: 'PT. Royal Pharma', contactPerson: 'Dr. Anwar Hasan', phoneNumber: '091234567890', address: 'Jl. Asia Afrika No. 852, Bandung' },
-  { id: '12', supplierName: 'UD. Obat Herbal', contactPerson: 'Sari Dewi', phoneNumber: '092345678901', address: 'Jl. Merdeka No. 159, Jakarta' },
-  { id: '13', supplierName: 'PT. Global Medika', contactPerson: 'Ir. Wahyudi', phoneNumber: '093456789012', address: 'Jl. Sudirman No. 753, Surabaya' },
-  { id: '14', supplierName: 'CV. Obat Ceria', contactPerson: 'Nina Kartika', phoneNumber: '094567890123', address: 'Jl. Gatot Subroto No. 951, Semarang' },
-  { id: '15', supplierName: 'PT. Sentosa Farma', contactPerson: 'Dr. Rudi Hermawan', phoneNumber: '095678901234', address: 'Jl. Dago No. 357, Yogyakarta' },
-] as Datum[])
-
 // --- DATA STATE ---
 const suppliers = ref<Datum[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const searchQuery = ref('')
+const meta = ref<Meta | null>(null)
 
 // --- FORM STATE ---
 const form = ref({
-  supplierName: '',
-  contactPerson: '',
+  companyName: '',
+  contactName: '',
   phoneNumber: '',
+  supplierEmail: '',
   address: '',
+  licenseNumber: '',
+  status: 'ACTIVE',
 })
 
 // --- PAGINATION STATE ---
@@ -245,23 +280,28 @@ const fetchSuppliers = async () => {
   loading.value = true
   error.value = null
   try {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    suppliers.value = [...mockSuppliers.value]
+    const result = await supplierApi.getAll(currentPage.value, itemsPerPage.value)
+    suppliers.value = result.data ?? []
+    meta.value = result.meta ?? null
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to fetch suppliers'
+    error.value = getErrorMessage(e, 'Failed to fetch suppliers')
   } finally {
     loading.value = false
   }
 }
 
-const generateId = () => {
-  return String(Date.now())
-}
-
 const openAddModal = () => {
   isEditMode.value = false
   editingId.value = null
-  form.value = { supplierName: '', contactPerson: '', phoneNumber: '', address: '' }
+  form.value = {
+    companyName: '',
+    contactName: '',
+    phoneNumber: '',
+    supplierEmail: '',
+    address: '',
+    licenseNumber: '',
+    status: 'ACTIVE',
+  }
   isModalOpen.value = true
 }
 
@@ -269,10 +309,13 @@ const openEditModal = (supplier: Datum) => {
   isEditMode.value = true
   editingId.value = supplier.id ?? null
   form.value = {
-    supplierName: supplier.supplierName ?? '',
-    contactPerson: supplier.contactPerson ?? '',
+    companyName: supplier.companyName ?? '',
+    contactName: supplier.contactName ?? '',
     phoneNumber: supplier.phoneNumber ?? '',
+    supplierEmail: supplier.supplierEmail ?? '',
     address: supplier.address ?? '',
+    licenseNumber: supplier.licenseNumber ?? '',
+    status: supplier.status ?? 'ACTIVE',
   }
   isModalOpen.value = true
 }
@@ -287,30 +330,32 @@ const handleSubmit = async () => {
   isSubmitting.value = true
   error.value = null
   try {
-    await new Promise(resolve => setTimeout(resolve, 300))
     if (isEditMode.value && editingId.value) {
-      const index = suppliers.value.findIndex(s => s.id === editingId.value)
-      if (index !== -1) {
-        const updated = { ...suppliers.value[index] }
-        updated.supplierName = form.value.supplierName
-        updated.contactPerson = form.value.contactPerson || null
-        updated.phoneNumber = form.value.phoneNumber
-        updated.address = form.value.address
-        suppliers.value[index] = updated as Datum
-      }
-    } else {
-      const newSupplier: Datum = {
-        id: generateId(),
-        supplierName: form.value.supplierName,
-        contactPerson: form.value.contactPerson || null,
+      await supplierApi.update(editingId.value, {
+        companyName: form.value.companyName,
+        contactName: form.value.contactName || undefined,
         phoneNumber: form.value.phoneNumber,
+        supplierEmail: form.value.supplierEmail || undefined,
         address: form.value.address,
-      }
-      suppliers.value.unshift(newSupplier)
+        licenseNumber: form.value.licenseNumber,
+        status: form.value.status,
+      })
+    } else {
+      await supplierApi.create({
+        companyName: form.value.companyName,
+        phoneNumber: form.value.phoneNumber,
+        contactName: form.value.contactName,
+        supplierEmail: form.value.supplierEmail,
+        address: form.value.address,
+        licenseNumber: form.value.licenseNumber,
+        status: form.value.status,
+      })
     }
     closeModal()
+    // Refresh the list to reflect changes
+    await fetchSuppliers()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to save supplier'
+    error.value = getErrorMessage(e, 'Failed to save supplier')
   } finally {
     isSubmitting.value = false
   }
@@ -321,34 +366,34 @@ const handleDelete = async (id: string | undefined) => {
   if (!confirm('Are you sure you want to delete this supplier?')) return
   error.value = null
   try {
-    await new Promise(resolve => setTimeout(resolve, 300))
-    suppliers.value = suppliers.value.filter(s => s.id !== id)
+    await supplierApi.delete(id)
+    // Refresh the list after deletion
+    await fetchSuppliers()
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to delete supplier'
+    error.value = getErrorMessage(e, 'Failed to delete supplier')
   }
 }
 
 // --- COMPUTED PROPERTIES ---
-const allFilteredSuppliers = computed((): Datum[] => {
+const filteredSuppliers = computed((): Datum[] => {
   if (!searchQuery.value) return suppliers.value
   const query = searchQuery.value.toLowerCase()
   return suppliers.value.filter(s =>
-    s.supplierName?.toLowerCase().includes(query) ||
-    (s.contactPerson ?? '').toLowerCase().includes(query) ||
+    s.companyName?.toLowerCase().includes(query) ||
+    (s.contactName ?? '').toLowerCase().includes(query) ||
     s.phoneNumber?.includes(query)
   )
 })
 
-const paginatedSuppliers = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return allFilteredSuppliers.value.slice(start, end)
+const totalItems = computed(() => {
+  // When searching, use local filtered count; otherwise use API meta
+  if (searchQuery.value) return filteredSuppliers.value.length
+  return meta.value?.total ?? filteredSuppliers.value.length
 })
-
-const filteredSuppliers = computed(() => paginatedSuppliers.value)
-
-const totalItems = computed(() => allFilteredSuppliers.value.length)
-const totalPages = computed(() => Math.max(1, Math.ceil(totalItems.value / itemsPerPage.value)))
+const totalPages = computed(() => {
+  if (searchQuery.value) return Math.max(1, Math.ceil(totalItems.value / itemsPerPage.value))
+  return meta.value?.lastPage ?? Math.max(1, Math.ceil(totalItems.value / itemsPerPage.value))
+})
 
 const showingStart = computed(() => {
   if (totalItems.value === 0) return 0
@@ -356,21 +401,38 @@ const showingStart = computed(() => {
 })
 
 const showingEnd = computed(() => {
+  if (meta.value) {
+    return Math.min(currentPage.value * itemsPerPage.value, totalItems.value)
+  }
   return Math.min(currentPage.value * itemsPerPage.value, totalItems.value)
 })
 
 // --- PAGINATION FUNCTIONS ---
 const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
 }
 
 const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
 }
 
 const goToPage = (page: number) => {
   currentPage.value = page
 }
+
+// Reset to page 1 when searching
+watch(searchQuery, () => {
+  currentPage.value = 1
+})
+
+// Re-fetch when page changes
+watch(currentPage, () => {
+  fetchSuppliers()
+})
 
 // --- LIFECYCLE ---
 onMounted(() => {

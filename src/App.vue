@@ -1,44 +1,49 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from './stores/auth'
+// import { useAuthStore } from './stores/auth'
 
+import { useAuthStore } from '@/stores/auth'
+import { ActivityIcon } from 'lucide-vue-next'
+
+const router = useRouter()
 const reportsOpen = ref(false)
 const userManagementOpen = ref(false)
 const profileDropdownOpen = ref(false)
 const route = useRoute()
-const router = useRouter()
 const authStore = useAuthStore()
 
 const isReportsActive = computed(() => route.path.startsWith('/reports/'))
 const isUserManagementActive = computed(() => route.path === '/supplier' || route.path === '/user-management')
+const isLoginPage = computed(() => route.path === '/login')
 
 // Auto-open reports dropdown if on a reports page
 if (isReportsActive.value) {
   reportsOpen.value = true
 }
-if (isUserManagementActive.value) {
-  userManagementOpen.value = true
-}
 
-const handleSignOut = () => {
-  profileDropdownOpen.value = false
+function handleLogout() {
   authStore.logout()
-  router.push('/login')
+  router.push({ name: 'login' })
 }
 </script>
 
 <template>
-  <div v-if="authStore.isAuthenticated" class="flex h-screen bg-white font-sans text-gray-800">
+  <!-- Login page: full-screen without sidebar -->
+  <RouterView v-if="isLoginPage" />
+
+  <!-- Main app layout: with sidebar & header -->
+  <div v-else class="flex h-screen bg-white font-sans text-gray-800">
 
     <aside class="w-64 bg-[#11764B] text-white flex flex-col">
-      <div class="h-16 flex items-center px-6 mt-4 mb-4">
+      <div class="px-6 pt-6 pb-4 border-b border-white/20">
         <h1 class="text-xl font-bold flex items-center gap-2">
-          <span class="text-2xl">⚡</span> Pharma Ease
+          <ActivityIcon class="h-7 w-7 text-white" stroke-width="2.5" />
+          Pharma Ease
         </h1>
       </div>
 
-      <nav class="flex-1 px-4 space-y-2">
+      <nav class="flex-1 px-4 pt-4 space-y-2">
         <RouterLink to="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,31 +166,19 @@ const handleSignOut = () => {
             🔔
           </button>
 
-          <div class="relative">
-            <button @click="profileDropdownOpen = !profileDropdownOpen" class="flex items-center gap-3 hover:bg-gray-50 p-1.5 rounded-lg transition-colors text-left focus:outline-none cursor-pointer">
-              <div class="w-10 h-10 rounded-full bg-[#11764B] text-white flex items-center justify-center font-bold">
-                {{ authStore.user?.avatarInitials ?? 'MF' }}
-              </div>
-              <div class="text-sm">
-                <p class="font-bold text-gray-700">{{ authStore.user?.name ?? 'Miss Felicia Ritchie MD' }}</p>
-                <p class="text-xs text-gray-500">{{ authStore.user?.role ?? 'Owner' }}</p>
-              </div>
-              <svg class="w-4 h-4 text-gray-500 transition-transform duration-200" :class="{ 'rotate-180': profileDropdownOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#11764B] text-white flex items-center justify-center font-bold">
+              {{ authStore.userInitials }}
+            </div>
+            <div class="text-sm">
+              <p class="font-bold text-gray-700">{{ authStore.userName }}</p>
+              <p class="text-xs text-gray-500 capitalize">{{ authStore.userRole }}</p>
+            </div>
+            <button @click="handleLogout" class="ml-2 text-gray-400 hover:text-red-500 transition-colors" title="Logout">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
               </svg>
             </button>
-
-            <!-- Dropdown Menu -->
-            <transition name="dropdown">
-              <div v-if="profileDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-1.5 z-50">
-                <button @click="handleSignOut" class="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors flex items-center gap-2 font-medium cursor-pointer">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  Sign Out
-                </button>
-              </div>
-            </transition>
           </div>
         </div>
       </header>
@@ -195,9 +188,6 @@ const handleSignOut = () => {
       </main>
     </div>
 
-  </div>
-  <div v-else>
-    <RouterView />
   </div>
 </template>
 

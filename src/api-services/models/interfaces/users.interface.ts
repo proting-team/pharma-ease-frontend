@@ -11,17 +11,17 @@ export type Datum = {
     empId?:         string;
     email?:         string;
     password?:      string;
-    phoneNumber?:   null;
+    phoneNumber?:   string | null;
     role?:          string;
     shift?:         string;
     status?:        string;
-    dateOfBirth?:   null;
-    alamat?:        null;
-    profileAvatar?: null | string;
+    dateOfBirth?:   string | null;
+    alamat?:        string | null;
+    profileAvatar?: string | null;
     salary?:        number;
-    startDate?:     Date;
-    createdAt?:     Date;
-    updatedAt?:     Date;
+    startDate?:     string | Date;
+    createdAt?:     string | Date;
+    updatedAt?:     string | Date;
 }
 
 export type Meta = {
@@ -29,6 +29,6 @@ export type Meta = {
     lastPage?:    number;
     currentPage?: number;
     perPage?:     number;
-    prev?:        null;
-    next?:        null;
+    prev?:        number | null;
+    next?:        number | null;
 }
