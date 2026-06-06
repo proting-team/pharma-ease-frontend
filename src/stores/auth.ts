@@ -58,14 +58,15 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials: LoginRequest): Promise<void> {
     const response = await authApi.login(credentials)
 
-    token.value = response.data.access_token
+    const accessToken = response.data.access_token || response.data.accessToken || ''
+    token.value = accessToken
 
     // Some backend versions may not return the full user object.
     // Fallback: decode JWT to get email/role/sub, then build a user stub.
     if (response.data.user) {
       user.value = response.data.user
     } else {
-      const payload = decodeJwtPayload(response.data.access_token)
+      const payload = decodeJwtPayload(accessToken)
       const email = payload?.email ?? credentials.email
       const role = payload?.role ?? ''
       const sub = payload?.sub ?? ''
@@ -81,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
 
-    localStorage.setItem('auth_token', response.data.access_token)
+    localStorage.setItem('auth_token', accessToken)
     localStorage.setItem('auth_user', JSON.stringify(user.value))
   }
 

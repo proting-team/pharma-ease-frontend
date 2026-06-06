@@ -188,6 +188,7 @@ const validateForm = (): boolean => {
   errors.value = newErrors
   return Object.keys(newErrors).length === 0
 }  // Helper untuk extract error message dari berbagai format error backend
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function extractErrorMessage(err: any): string {
   if (!err) return 'Login failed. Please check your credentials.'
 
@@ -249,7 +250,7 @@ const handleLogin = async () => {
     setTimeout(() => {
       router.push({ name: 'home' })
     }, 500)
-  } catch (err: any) {
+  } catch (err) {
     errorMessage.value = extractErrorMessage(err)
   } finally {
     isLoading.value = false
