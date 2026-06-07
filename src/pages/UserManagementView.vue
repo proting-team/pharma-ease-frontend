@@ -135,11 +135,11 @@
             <div v-if="meta" class="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-white">
                 <span class="text-sm text-gray-500">Showing page {{ meta.currentPage }} of {{ meta.lastPage }}</span>
                 <div class="flex items-center gap-1">
-                    <button :disabled="!meta.prev" @click="goToPage(meta.prev)"
+                    <button :disabled="!meta.prev" @click="goToPage(meta.prev ?? null)"
                         class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50">&lt;</button>
                     <button class="px-3 py-1 border border-gray-300 rounded bg-gray-100 text-gray-800 font-medium">{{
                         meta.currentPage }}</button>
-                    <button :disabled="!meta.next" @click="goToPage(meta.next)"
+                    <button :disabled="!meta.next" @click="goToPage(meta.next ?? null)"
                         class="px-3 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50">&gt;</button>
                 </div>
             </div>
@@ -436,8 +436,8 @@ const openEditModal = (item: Datum) => {
         role: item.role ?? '',
         shift: item.shift ?? '',
         salary: item.salary ?? 0,
-        dateOfBirth: item.dateOfBirth ? String(new Date(item.dateOfBirth).toISOString().split('T')[0]) : '',
-        address: item.alamat ?? '',
+        dateOfBirth: item.dateOfBirth ? (new Date(item.dateOfBirth).toISOString().split('T')[0] || '') : '',
+        address: ((item as any).address ?? (item as any).alamat ?? '') as string,
     }
 
     if (item.startDate) {

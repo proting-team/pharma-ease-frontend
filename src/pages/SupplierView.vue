@@ -332,22 +332,22 @@ const handleSubmit = async () => {
   try {
     if (isEditMode.value && editingId.value) {
       await supplierApi.update(editingId.value, {
-        companyName: form.value.companyName,
-        contactName: form.value.contactName || undefined,
-        phoneNumber: form.value.phoneNumber,
-        supplierEmail: form.value.supplierEmail || undefined,
-        address: form.value.address,
-        licenseNumber: form.value.licenseNumber,
+        companyName: form.value.companyName.trim(),
+        contactName: form.value.contactName ? form.value.contactName.trim() : undefined,
+        phoneNumber: form.value.phoneNumber.trim(),
+        supplierEmail: form.value.supplierEmail ? form.value.supplierEmail.trim() : undefined,
+        address: form.value.address.trim(),
+        licenseNumber: form.value.licenseNumber.trim(),
         status: form.value.status,
       })
     } else {
       await supplierApi.create({
-        companyName: form.value.companyName,
-        phoneNumber: form.value.phoneNumber,
-        contactName: form.value.contactName,
-        supplierEmail: form.value.supplierEmail,
-        address: form.value.address,
-        licenseNumber: form.value.licenseNumber,
+        companyName: form.value.companyName.trim(),
+        phoneNumber: form.value.phoneNumber.trim(),
+        contactName: form.value.contactName.trim(),
+        supplierEmail: form.value.supplierEmail.trim(),
+        address: form.value.address.trim(),
+        licenseNumber: form.value.licenseNumber.trim(),
         status: form.value.status,
       })
     }

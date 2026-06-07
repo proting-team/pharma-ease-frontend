@@ -135,7 +135,15 @@
                 </div>
               </td>
             </tr>
-            <tr v-else-if="paginatedLogs.length === 0">
+            <tr v-else-if="error">
+              <td colspan="6" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center gap-2">
+                  <p class="text-red-500 text-sm">{{ error }}</p>
+                  <button @click="fetchLogs" class="mt-2 text-[#11764B] hover:underline text-sm">Try again</button>
+                </div>
+              </td>
+            </tr>
+            <tr v-else-if="filteredLogs.length === 0">
               <td colspan="6" class="px-6 py-12 text-center">
                 <div class="flex flex-col items-center gap-2">
                   <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +155,8 @@
               </td>
             </tr>
             <tr
-              v-for="(log, index) in paginatedLogs"
+              v-else
+              v-for="(log, index) in filteredLogs"
               :key="log.id"
               class="hover:bg-gray-50/60 transition-colors duration-150 even:bg-gray-50/30"
             >
@@ -196,7 +205,7 @@
         <span class="text-sm text-gray-500">
           Showing <span class="font-medium text-gray-700">{{ showingStart }}</span>
           to <span class="font-medium text-gray-700">{{ showingEnd }}</span>
-          of <span class="font-medium text-gray-700">{{ filteredLogs.length }}</span> results
+          of <span class="font-medium text-gray-700">{{ totalLogs }}</span> results
         </span>
         <div class="flex items-center gap-1.5">
           <button
@@ -248,41 +257,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { activityLogApi, type ActivityLogResponse, type PaginatedResult } from '@/api-services/repositories/activityLogApi'
+import * as XLSX from 'xlsx'
 
 // --- TYPES ---
 interface OperationalLog {
-  id: number
+  id: string
   timestamp: string
   user: string
   role: string
-  action: 'created' | 'updated' | 'deleted' | 'login'
+  action: string
   module: string
   description: string
 }
-
-// --- MOCK DATA ---
-const mockLogs: OperationalLog[] = [
-  { id: 1, timestamp: '20 May 2026 08:19', user: 'Felicia Ritchie', role: 'owner', action: 'login', module: 'Authentication', description: 'Successful login from IP 103.194.173.97' },
-  { id: 2, timestamp: '20 May 2026 07:45', user: 'Budi Santoso', role: 'pharmacist', action: 'login', module: 'Authentication', description: 'Successful login from IP 103.194.173.98' },
-  { id: 3, timestamp: '19 May 2026 16:30', user: 'Siti Aminah', role: 'cashier', action: 'created', module: 'Medicine Sales Transaction', description: 'Created new transaction #TRX-2026-0542' },
-  { id: 4, timestamp: '19 May 2026 16:30', user: 'Siti Aminah', role: 'cashier', action: 'updated', module: 'Medicine Inventory', description: 'Updated stock for Paracetamol 500mg (-2 units)' },
-  { id: 5, timestamp: '19 May 2026 14:22', user: 'Rakha Fatih', role: 'pharmacist', action: 'updated', module: 'Medicine Inventory', description: 'Updated medicine details: Amoxicillin 250mg' },
-  { id: 6, timestamp: '19 May 2026 11:15', user: 'Felicia Ritchie', role: 'owner', action: 'deleted', module: 'User Management', description: 'Deleted user account: Joko Widodo (cashier)' },
-  { id: 7, timestamp: '18 May 2026 20:00', user: 'Dewi Lestari', role: 'cashier', action: 'login', module: 'Authentication', description: 'Successful login from IP 103.194.173.102' },
-  { id: 8, timestamp: '18 May 2026 19:45', user: 'Dewi Lestari', role: 'cashier', action: 'created', module: 'Transaction Details', description: 'Added item to transaction #TRX-2026-0541' },
-  { id: 9, timestamp: '18 May 2026 15:10', user: 'Budi Santoso', role: 'pharmacist', action: 'updated', module: 'Medicine Inventory', description: 'Adjusted stock for Omeprazole 20mg (+50 units)' },
-  { id: 10, timestamp: '18 May 2026 13:00', user: 'Rakha Fatih', role: 'pharmacist', action: 'created', module: 'Purchase Order', description: 'Created purchase order PO-026 to PT. Pharma Jaya' },
-  { id: 11, timestamp: '17 May 2026 11:30', user: 'Felicia Ritchie', role: 'owner', action: 'login', module: 'Authentication', description: 'Successful login from IP 103.194.173.97' },
-  { id: 12, timestamp: '17 May 2026 09:20', user: 'Siti Aminah', role: 'cashier', action: 'updated', module: 'Medicine Inventory', description: 'Updated stock for Ibuprofen 400mg (-1 units)' },
-  { id: 13, timestamp: '16 May 2026 21:00', user: 'Felicia Ritchie', role: 'owner', action: 'login', module: 'Authentication', description: 'Successful login from IP 103.194.173.98' },
-  { id: 14, timestamp: '16 May 2026 14:45', user: 'Dewi Lestari', role: 'cashier', action: 'created', module: 'Medicine Sales Transaction', description: 'Created new transaction #TRX-2026-0538' },
-  { id: 15, timestamp: '16 May 2026 10:30', user: 'Budi Santoso', role: 'pharmacist', action: 'deleted', module: 'Medicine Inventory', description: 'Removed expired medicine: Ranitidine 150mg (batch #RAN-012)' },
-  { id: 16, timestamp: '15 May 2026 16:50', user: 'Rakha Fatih', role: 'pharmacist', action: 'updated', module: 'Supplier Management', description: 'Updated supplier details: CV. Medika Utama' },
-  { id: 17, timestamp: '15 May 2026 13:15', user: 'Siti Aminah', role: 'cashier', action: 'created', module: 'Medicine Sales Transaction', description: 'Created new transaction #TRX-2026-0535' },
-  { id: 18, timestamp: '15 May 2026 08:00', user: 'Felicia Ritchie', role: 'owner', action: 'login', module: 'Authentication', description: 'Successful login from IP 103.194.173.97' },
-  { id: 19, timestamp: '14 May 2026 17:30', user: 'Dewi Lestari', role: 'cashier', action: 'deleted', module: 'Transaction Details', description: 'Removed item from transaction #TRX-2026-0532' },
-  { id: 20, timestamp: '14 May 2026 11:10', user: 'Budi Santoso', role: 'pharmacist', action: 'updated', module: 'Medicine Inventory', description: 'Adjusted stock for Cetirizine 10mg (+30 units)' },
-]
 
 // --- STATE ---
 const logs = ref<OperationalLog[]>([])
@@ -290,7 +277,43 @@ const loading = ref(true)
 const searchQuery = ref('')
 const selectedAction = ref('')
 const currentPage = ref(1)
-const itemsPerPage = ref(8)
+const itemsPerPage = ref(10)
+const meta = ref<PaginatedResult<ActivityLogResponse>['meta'] | null>(null)
+const error = ref<string | null>(null)
+
+// --- FORMAT HELPERS ---
+const formatTimestamp = (isoDate: string): string => {
+  const date = new Date(isoDate);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const d = date.getDate();
+  const m = months[date.getMonth()];
+  const y = date.getFullYear();
+  const h = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  return `${d} ${m} ${y} ${h}:${min}`;
+};
+
+const mapApiToLog = (item: ActivityLogResponse): OperationalLog => {
+  const rawAction = item.action.toLowerCase()
+  let displayAction = rawAction
+  if (rawAction === 'create') displayAction = 'created'
+  if (rawAction === 'update') displayAction = 'updated'
+  if (rawAction === 'delete') displayAction = 'deleted'
+
+  return {
+    id: item.id,
+    timestamp: formatTimestamp(item.createdAt),
+    user: item.employee?.name ?? 'Unknown',
+    role: item.employee?.role?.toLowerCase() ?? '-',
+    action: displayAction,
+    module: item.resourceType ?? '-',
+    description: item.payloadData
+      ? (typeof item.payloadData === 'object' && item.payloadData !== null
+          ? (item.payloadData as Record<string, any>).message ?? JSON.stringify(item.payloadData)
+          : String(item.payloadData))
+      : '-',
+  }
+}
 
 // --- COMPUTED ---
 const filteredLogs = computed(() => {
@@ -307,24 +330,19 @@ const filteredLogs = computed(() => {
   })
 })
 
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage.value)))
-
-const paginatedLogs = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return filteredLogs.value.slice(start, end)
-})
+const totalPages = computed(() => meta.value?.lastPage ?? 1)
+const totalLogs = computed(() => meta.value?.total ?? 0)
 
 const showingStart = computed(() => {
-  if (filteredLogs.value.length === 0) return 0
+  if (totalLogs.value === 0) return 0
   return (currentPage.value - 1) * itemsPerPage.value + 1
 })
 
 const showingEnd = computed(() => {
-  return Math.min(currentPage.value * itemsPerPage.value, filteredLogs.value.length)
+  return Math.min(currentPage.value * itemsPerPage.value, totalLogs.value)
 })
 
-const totalLogs = computed(() => logs.value.length)
+// Stats (calculated based on current page data since API doesn't provide these aggregates)
 const todayCount = computed(() => {
   const today = new Date().toDateString()
   return logs.value.filter((l) => new Date(l.timestamp).toDateString() === today).length
@@ -358,11 +376,15 @@ const visiblePages = computed(() => {
 // --- METHODS ---
 const fetchLogs = async () => {
   loading.value = true
+  error.value = null
   try {
-    await new Promise((resolve) => setTimeout(resolve, 400))
-    logs.value = [...mockLogs]
-  } catch {
-    logs.value = [...mockLogs]
+    const result = await activityLogApi.getAll(currentPage.value, itemsPerPage.value)
+    logs.value = result.data.map(mapApiToLog)
+    meta.value = result.meta
+  } catch (e: any) {
+    error.value = e?.message || 'Failed to fetch operational logs'
+    logs.value = []
+    meta.value = null
   } finally {
     loading.value = false
   }
@@ -375,10 +397,48 @@ const goToPage = (page: number) => {
 }
 
 const handleExport = () => {
-  alert('Export feature will be available once the backend is ready.')
+  // 1. Stats Data
+  const statsData = [
+    ['Operational Report Summary'],
+    [],
+    ['Total Activities', totalLogs.value],
+    ['Today', todayCount.value],
+    ['Updates', updateCount.value],
+    ['Deletions', deleteCount.value],
+    [],
+    ['Detailed Activity Logs'],
+    ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Description']
+  ];
+
+  // 2. Table Data
+  const tableData = filteredLogs.value.map(log => [
+    log.timestamp,
+    log.user,
+    log.role,
+    log.action,
+    log.module,
+    log.description
+  ]);
+
+  // Combine
+  const worksheetData = [...statsData, ...tableData];
+
+  // Create workbook and worksheet
+  const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Operational Report');
+
+  // Generate filename
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const filename = `operational-report-${dateStr}.xlsx`;
+
+  // Download
+  XLSX.writeFile(wb, filename);
 }
 
 const getUserInitials = (name: string): string => {
+  if (!name || name === 'Unknown') return 'UN'
   return name
     .split(' ')
     .map((n) => n[0])
@@ -388,34 +448,28 @@ const getUserInitials = (name: string): string => {
 }
 
 const getActionBadgeClass = (action: string) => {
-  switch (action) {
-    case 'created':
-      return 'bg-green-50 text-green-700 border-green-200'
-    case 'deleted':
-      return 'bg-red-50 text-red-700 border-red-200'
-    case 'login':
-      return 'bg-blue-50 text-blue-700 border-blue-200'
-    default:
-      return 'bg-orange-50 text-orange-700 border-orange-200'
-  }
+  const lower = action.toLowerCase()
+  if (lower === 'created' || lower === 'create') return 'bg-green-50 text-green-700 border-green-200'
+  if (lower === 'deleted' || lower === 'delete') return 'bg-red-50 text-red-700 border-red-200'
+  if (lower === 'login') return 'bg-blue-50 text-blue-700 border-blue-200'
+  return 'bg-orange-50 text-orange-700 border-orange-200'
 }
 
 const getActionDotClass = (action: string) => {
-  switch (action) {
-    case 'created':
-      return 'bg-green-500'
-    case 'deleted':
-      return 'bg-red-500'
-    case 'login':
-      return 'bg-blue-500'
-    default:
-      return 'bg-orange-500'
-  }
+  const lower = action.toLowerCase()
+  if (lower === 'created' || lower === 'create') return 'bg-green-500'
+  if (lower === 'deleted' || lower === 'delete') return 'bg-red-500'
+  if (lower === 'login') return 'bg-blue-500'
+  return 'bg-orange-500'
 }
 
 // --- WATCH ---
 watch([searchQuery, selectedAction], () => {
   currentPage.value = 1
+})
+
+watch(currentPage, () => {
+  fetchLogs()
 })
 
 // --- LIFECYCLE ---

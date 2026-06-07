@@ -5,30 +5,32 @@ export type MedicineOrders = {
     meta?:    Meta;
 }
 
+export type OrderDetail = {
+    medicineId?: string;
+    quantity?:   number;
+    unitPrice?:  number;
+    subtotal?:   number;
+    medicine?:   {
+        id?:           string;
+        medicineName?: string;
+    };
+}
+
 export type Datum = {
-    id?:         string;
-    orderCode?:  string;
-    orderDate?:  Date;
-    totalPrice?: number;
-    status?:     string;
-    createdAt?:  Date;
-    updatedAt?:  Date;
-    supplier?:   Supplier;
-    user?:       User;
+    id?:           string;
+    orderCode?:    string;
+    orderDate?:    Date;
+    totalPrice?:   number;
+    status?:       string;
+    createdAt?:    Date;
+    updatedAt?:    Date;
+    supplier?:     Supplier;
+    employee?:     Employee;
+    orderDetails?: OrderDetail[];
 }
 
-export type Supplier = {
-    supplierName?:        string;
-    phoneNumber?:         string;
-    contactPerson?:       null;
-    contactPersonNumber?: null;
-    status?:              string;
-    address?:             string;
-    createdAt?:           Date;
-    updatedAt?:           Date;
-}
-
-export type User = {
+export type Employee = {
+    id?:            string;
     name?:          string;
     empId?:         string;
     email?:         string;
@@ -44,6 +46,19 @@ export type User = {
     startDate?:     Date;
     createdAt?:     Date;
     updatedAt?:     Date;
+}
+
+export type Supplier = {
+    id?:                  string;
+    companyName?:         string;
+    phoneNumber?:         string;
+    contactName?:         string | null;
+    supplierEmail?:       string | null;
+    status?:              string;
+    address?:             string;
+    licenseNumber?:       string;
+    createdAt?:           Date;
+    updatedAt?:           Date;
 }
 
 export type Meta = {

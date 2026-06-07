@@ -242,6 +242,12 @@ const handleLogin = async () => {
   successMessage.value = ''
 
   try {
+    const payload = {
+      email: form.value.email.trim(),
+      password: form.value.password.trim(),
+    }
+    
+    await authStore.login(payload)
     await authStore.login({
       email: form.value.email,
       password: form.value.password,

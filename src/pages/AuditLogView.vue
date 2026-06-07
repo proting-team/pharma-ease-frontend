@@ -74,7 +74,22 @@
         </div>
       </div>
 
-      <div class="overflow-x-auto">
+      <!-- Loading State -->
+      <div v-if="loading" class="px-6 py-12 text-center">
+        <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-green-500 border-r-transparent"></div>
+        <p class="mt-3 text-sm text-gray-500">Loading audit logs...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="px-6 py-12 text-center">
+        <p class="text-sm text-red-500">{{ error }}</p>
+        <button @click="fetchLogs" class="mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm transition-colors cursor-pointer">
+          Retry
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div v-else class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-gray-200 bg-white">
@@ -84,11 +99,10 @@
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Module</th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Details</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">IP Address</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            <tr v-for="log in paginatedLogs" :key="log.id" class="hover:bg-gray-50 transition-colors">
+            <tr v-for="log in filteredLogs" :key="log.id" class="hover:bg-gray-50 transition-colors">
               <td class="px-6 py-4 text-sm text-gray-600">{{ log.timestamp }}</td>
               <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ log.user }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ log.role }}</td>
@@ -99,10 +113,9 @@
               </td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ log.module }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ log.details }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ log.ip }}</td>
             </tr>
             <tr v-if="filteredLogs.length === 0">
-              <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
+              <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
                 No audit logs found matching your filters.
               </td>
             </tr>
@@ -112,7 +125,7 @@
 
       <div class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
         <p class="text-sm text-gray-600">
-          Showing <span class="font-medium">{{ paginationStart }}</span> to <span class="font-medium">{{ paginationEnd }}</span> of <span class="font-medium">{{ filteredLogs.length }}</span> results
+          Showing <span class="font-medium">{{ paginationStart }}</span> to <span class="font-medium">{{ paginationEnd }}</span> of <span class="font-medium">{{ totalItems }}</span> results
         </p>
 
         <div v-if="totalPages > 1" class="flex border border-gray-300 rounded-md overflow-hidden bg-white">
@@ -149,114 +162,166 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import { activityLogApi, type ActivityLogResponse, type PaginatedResult } from '@/api-services/repositories/activityLogApi';
 
-// Tipe data untuk struktur log
+// Tipe data untuk struktur log yang ditampilkan di UI
 interface AuditLog {
-  id: number;
+  id: string;
   timestamp: string;
   user: string;
   role: string;
-  action: 'Login' | 'Created' | 'Updated' | 'Deleted';
+  action: string;
   module: string;
   details: string;
-  ip: string;
 }
 
-// Data dummy (nantinya akan diisi dari API backend kamu)
-const auditLogs = ref<AuditLog[]>([
-  { id: 1, timestamp: '2026-05-20 08:19:52', user: 'Miss Felicia Ritchie MD', role: 'owner', action: 'Login', module: 'Authentication', details: 'Successful login', ip: '103.194.173.97' },
-  { id: 2, timestamp: '2026-05-16 20:29:56', user: 'Miss Felicia Ritchie MD', role: 'owner', action: 'Login', module: 'Authentication', details: 'Successful login', ip: '103.194.173.98' },
-  { id: 3, timestamp: '2026-05-13 14:51:19', user: 'Gertrude Ortiz Jr.', role: 'cashier', action: 'Created', module: 'Medicine Sales Transaction Management', details: 'Created new data: #', ip: '103.194.173.102' },
-  { id: 4, timestamp: '2026-05-13 14:51:19', user: 'Gertrude Ortiz Jr.', role: 'cashier', action: 'Updated', module: 'Medicine Inventory', details: 'Updated data: #', ip: '103.194.173.102' },
-  { id: 5, timestamp: '2026-05-13 14:51:19', user: 'Gertrude Ortiz Jr.', role: 'cashier', action: 'Created', module: 'Transaction Details Management', details: 'Created new data: #', ip: '103.194.173.102' },
-  { id: 6, timestamp: '2026-05-13 14:51:19', user: 'Gertrude Ortiz Jr.', role: 'cashier', action: 'Updated', module: 'Medicine Sales Transaction Management', details: 'Updated data: #', ip: '103.194.173.102' },
-  { id: 7, timestamp: '2026-05-13 14:43:21', user: 'Gertrude Ortiz Jr.', role: 'cashier', action: 'Login', module: 'Authentication', details: 'Successful login', ip: '103.194.173.101' },
-  { id: 8, timestamp: '2026-05-13 13:49:29', user: 'Name Connelly', role: 'pharmacist', action: 'Login', module: 'Authentication', details: 'Successful login', ip: '103.194.173.98' },
-  { id: 9, timestamp: '2026-05-11 16:13:12', user: 'Miss Felicia Ritchie MD', role: 'owner', action: 'Deleted', module: 'Medicine Inventory', details: 'Deleted data: #', ip: '103.233.100.198' },
-]);
+// --- DATA STATE ---
+const auditLogs = ref<AuditLog[]>([]);
+const loading = ref(false);
+const error = ref<string | null>(null);
+
+// --- PAGINATION STATE (server-side) ---
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const meta = ref<PaginatedResult<ActivityLogResponse>['meta'] | null>(null);
 
 // --- FILTER STATE ---
-const searchQuery = ref('')
-const selectedAction = ref('')
-const selectedModule = ref('')
+const searchQuery = ref('');
+const selectedAction = ref('');
+const selectedModule = ref('');
 
-// --- PAGINATION STATE ---
-const currentPage = ref(1)
-const itemsPerPage = 5
+// --- FORMAT HELPERS ---
+const formatTimestamp = (isoDate: string): string => {
+  const date = new Date(isoDate);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  const h = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  const s = String(date.getSeconds()).padStart(2, '0');
+  return `${y}-${m}-${d} ${h}:${min}:${s}`;
+};
 
-// --- COMPUTED: Filtered Logs ---
+const formatAction = (action: string): string => {
+  // Capitalize first letter, lowercase the rest (e.g., "CREATE" → "Created")
+  const lower = action.toLowerCase();
+  if (lower === 'create') return 'Created';
+  if (lower === 'update') return 'Updated';
+  if (lower === 'delete') return 'Deleted';
+  if (lower === 'login') return 'Login';
+  return action.charAt(0).toUpperCase() + action.slice(1).toLowerCase();
+};
+
+const mapApiToAuditLog = (item: ActivityLogResponse): AuditLog => ({
+  id: item.id,
+  timestamp: formatTimestamp(item.createdAt),
+  user: item.employee?.name ?? 'Unknown',
+  role: item.employee?.role?.toLowerCase() ?? '-',
+  action: formatAction(item.action),
+  module: item.resourceType ?? '-',
+  details: item.payloadData
+    ? (typeof item.payloadData === 'object' && item.payloadData !== null
+        ? (item.payloadData as Record<string, any>).message ?? JSON.stringify(item.payloadData)
+        : String(item.payloadData))
+    : '-',
+});
+
+// --- FETCH DATA ---
+const fetchLogs = async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const result = await activityLogApi.getAll(currentPage.value, itemsPerPage);
+    auditLogs.value = result.data.map(mapApiToAuditLog);
+    meta.value = result.meta;
+  } catch (e: any) {
+    error.value = e?.response?.data?.message || e?.message || 'Failed to fetch audit logs';
+    auditLogs.value = [];
+    meta.value = null;
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchLogs();
+});
+
+// Refetch when page changes
+watch(currentPage, () => {
+  fetchLogs();
+});
+
+// --- COMPUTED: Filtered Logs (client-side filtering on current page data) ---
 const filteredLogs = computed(() => {
   return auditLogs.value.filter(log => {
     const matchesSearch = !searchQuery.value ||
       log.user.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       log.details.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      log.module.toLowerCase().includes(searchQuery.value.toLowerCase())
+      log.module.toLowerCase().includes(searchQuery.value.toLowerCase());
 
-    const matchesAction = !selectedAction.value || log.action === selectedAction.value
-    const matchesModule = !selectedModule.value || log.module === selectedModule.value
+    const matchesAction = !selectedAction.value || log.action === selectedAction.value;
+    const matchesModule = !selectedModule.value || log.module.toLowerCase().includes(selectedModule.value.toLowerCase());
 
-    return matchesSearch && matchesAction && matchesModule
-  })
-})
+    return matchesSearch && matchesAction && matchesModule;
+  });
+});
 
-// --- COMPUTED: Paginated Logs ---
-const paginatedLogs = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredLogs.value.slice(start, end)
-})
-
-// --- COMPUTED: Pagination helpers ---
+// --- COMPUTED: Pagination helpers (server-side) ---
 const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage))
-})
+  return meta.value?.lastPage ?? 1;
+});
+
+const totalItems = computed(() => {
+  return meta.value?.total ?? 0;
+});
 
 const paginationStart = computed(() => {
-  if (filteredLogs.value.length === 0) return 0
-  return (currentPage.value - 1) * itemsPerPage + 1
-})
+  if (totalItems.value === 0) return 0;
+  return (currentPage.value - 1) * itemsPerPage + 1;
+});
 
 const paginationEnd = computed(() => {
-  return Math.min(currentPage.value * itemsPerPage, filteredLogs.value.length)
-})
+  return Math.min(currentPage.value * itemsPerPage, totalItems.value);
+});
 
 const visiblePages = computed(() => {
-  const pages: number[] = []
-  const total = totalPages.value
-  const current = currentPage.value
+  const pages: number[] = [];
+  const total = totalPages.value;
+  const current = currentPage.value;
 
   if (total <= 7) {
-    for (let i = 1; i <= total; i++) pages.push(i)
+    for (let i = 1; i <= total; i++) pages.push(i);
   } else {
-    pages.push(1)
-    if (current > 3) pages.push(-1) // ellipsis sentinel
+    pages.push(1);
+    if (current > 3) pages.push(-1); // ellipsis sentinel
 
-    const start = Math.max(2, current - 1)
-    const end = Math.min(total - 1, current + 1)
+    const start = Math.max(2, current - 1);
+    const end = Math.min(total - 1, current + 1);
 
-    for (let i = start; i <= end; i++) pages.push(i)
+    for (let i = start; i <= end; i++) pages.push(i);
 
-    if (current < total - 2) pages.push(-1)
-    pages.push(total)
+    if (current < total - 2) pages.push(-1);
+    pages.push(total);
   }
 
-  return pages
-})
+  return pages;
+});
 
 // --- PAGINATION METHODS ---
 const goToPage = (page: number) => {
-  if (page < 1 || page > totalPages.value) return
-  currentPage.value = page
-}
+  if (page < 1 || page > totalPages.value) return;
+  currentPage.value = page;
+};
 
 // Reset to page 1 when filters change
 watch([searchQuery, selectedAction, selectedModule], () => {
-  currentPage.value = 1
-})
+  currentPage.value = 1;
+});
 
 // --- EXPORT FUNCTIONS ---
 const getExportFilename = (extension: string) => {
@@ -277,7 +342,7 @@ const downloadBlob = (blob: Blob, filename: string) => {
 };
 
 const exportCSV = () => {
-  const headers = ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details', 'IP Address'];
+  const headers = ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details'];
   const rows = filteredLogs.value.map(log => [
     log.timestamp,
     log.user,
@@ -285,7 +350,6 @@ const exportCSV = () => {
     log.action,
     log.module,
     log.details,
-    log.ip,
   ]);
 
   const csvContent = [
@@ -298,10 +362,10 @@ const exportCSV = () => {
 };
 
 const exportExcel = () => {
-  const headers = ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details', 'IP Address'];
+  const headers = ['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details'];
   const data = [
     headers,
-    ...filteredLogs.value.map(log => [log.timestamp, log.user, log.role, log.action, log.module, log.details, log.ip]),
+    ...filteredLogs.value.map(log => [log.timestamp, log.user, log.role, log.action, log.module, log.details]),
   ];
 
   const ws = XLSX.utils.aoa_to_sheet(data);
@@ -320,7 +384,7 @@ const exportPDF = () => {
   doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 28);
   doc.text(`Total Records: ${filteredLogs.value.length}`, 14, 34);
 
-  const headers = [['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details', 'IP Address']];
+  const headers = [['Timestamp', 'User', 'Role', 'Action', 'Module', 'Details']];
   const rows = filteredLogs.value.map(log => [
     log.timestamp,
     log.user,
@@ -328,7 +392,6 @@ const exportPDF = () => {
     log.action,
     log.module,
     log.details,
-    log.ip,
   ]);
 
   autoTable(doc, {

@@ -141,14 +141,17 @@
         </button>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+
+import { ref, computed, onMounted } from 'vue'
+import { medicineApi } from '@/api-services/repositories/medicineApi'
+import { transactionApi } from '@/api-services/repositories/transactionApi'
 
 interface Medicine {
+  id: string;
   no: number;
   name: string;
   sku: string;
@@ -165,16 +168,7 @@ interface CartItem extends Medicine {
   numericPrice: number;
 }
 
-const medicines = ref<Medicine[]>([
-  { no: 1, name: 'recusandae', sku: 'MED-9104', category: 'sint', supplier: 'deleniti', stock: 49, status: 'Medium', expiry: '07 Jan 2027', price: 'Rp 69.641' },
-  { no: 2, name: 'numquam', sku: 'MED-6875', category: 'voluptatem', supplier: 'iure', stock: 91, status: 'Medium', expiry: '10 Jan 2026', price: 'Rp 30.529' },
-  { no: 3, name: 'recusandae', sku: 'MED-8998', category: 'ipsam', supplier: 'natus', stock: 99, status: 'Medium', expiry: '10 Jan 2026', price: 'Rp 25.721' },
-  { no: 4, name: 'laborum', sku: 'MED-7260', category: 'maxime', supplier: 'natus', stock: 20, status: 'Medium', expiry: '11 Jan 2026', price: 'Rp 79.787' },
-  { no: 5, name: 'soluta', sku: 'MED-2048', category: 'reiciendis', supplier: 'natus', stock: 63, status: 'In Stock', expiry: '10 Jan 2026', price: 'Rp 99.515' },
-  { no: 6, name: 'dolorum', sku: 'MED-4554', category: 'porro', supplier: 'natus', stock: 97, status: 'In Stock', expiry: '10 Jan 2026', price: 'Rp 10.991' },
-  { no: 7, name: 'eum', sku: 'MED-2728', category: 'qui', supplier: 'natus', stock: 34, status: 'In Stock', expiry: '10 Jan 2026', price: 'Rp 76.928' },
-  { no: 8, name: 'veniam', sku: 'MED-6221', category: 'porro', supplier: 'natus', stock: 92, status: 'In Stock', expiry: '10 Jan 2026', price: 'Rp 52.055' }
-])
+const medicines = ref<Medicine[]>([])
 
 const search = ref('')
 const cart = ref<CartItem[]>([])
@@ -255,24 +249,76 @@ const removeFromCart = (index: number) => {
   cart.value.splice(index, 1)
 }
 
-const submitTransaction = () => {
+const submitTransaction = async () => {
+  if (cart.value.length === 0) return
+  if (kembalian.value < 0) {
+    alert('Uang yang diterima kurang!')
+    return
+  }
   if (!confirm('Proses transaksi ini?')) return
 
   isLoading.value = true
 
-  setTimeout(() => {
-    alert(`Transaksi Berhasil!\nKembalian: ${formatRupiah(kembalian.value)}`)
+  try {
+    const payload = {
+      transactionDate: new Date().toISOString(),
+      cashReceived: Number(cashReceived.value),
+      medicines: cart.value.map(item => ({
+        medicineId: item.id,
+        quantity: item.quantity,
+        unitPrice: item.numericPrice
+      }))
+    }
 
-    cart.value.forEach(soldItem => {
-      const med = medicines.value.find(m => m.no === soldItem.no)
-      if (med) med.stock -= soldItem.quantity
-    })
+    await transactionApi.create(payload)
+
+    alert(`Transaksi Berhasil!\nKembalian: ${formatRupiah(kembalian.value)}`)
 
     cart.value = []
     cashReceived.value = ''
+    await fetchMedicines() // Refresh medicines to get updated stock
+  } catch (error: any) {
+    alert('Gagal memproses transaksi: ' + (error.response?.data?.message || error.message))
+    console.error(error)
+  } finally {
     isLoading.value = false
-  }, 1500)
+  }
 }
+
+const fetchMedicines = async () => {
+  try {
+    const response = await medicineApi.getAll(1, 1000)
+    if (response.data) {
+      medicines.value = response.data.map((item: any, index: number) => {
+        const getStockLabel = (stock: number) => {
+          if (stock <= 0) return 'Out of Stock'
+          if (stock <= 20) return 'Low Stock'
+          if (stock <= 50) return 'Medium'
+          return 'In Stock'
+        }
+        
+        return {
+          id: item.id,
+          no: index + 1,
+          name: item.medicineName,
+          sku: item.sku,
+          category: item.category?.categoryName || '-',
+          supplier: item.supplier?.supplierName || '-',
+          stock: item.stock || 0,
+          status: getStockLabel(item.stock || 0),
+          expiry: item.expiredDate ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(item.expiredDate)) : '-',
+          price: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price || 0)
+        }
+      })
+    }
+  } catch (error) {
+    console.error('Failed to fetch medicines', error)
+  }
+}
+
+onMounted(() => {
+  fetchMedicines()
+})
 </script>
 
 <style scoped>
