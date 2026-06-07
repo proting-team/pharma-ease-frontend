@@ -190,7 +190,7 @@
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Code</th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Cashier</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Items</th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Amount</th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
             </tr>
@@ -304,11 +304,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { transactionApi } from '@/api-services/repositories/transactionApi'
+import { medicineOrderApi } from '@/api-services/repositories/medicineOrderApi'
 
 // --- TYPES ---
 interface Transaction {
-  id: number
+  id: number | string
   date: string
+  rawDate: Date
   code: string
   cashier: string
   items: number
@@ -316,35 +319,6 @@ interface Transaction {
   type: 'revenue' | 'expense'
   status: 'completed' | 'pending'
 }
-
-// --- MOCK DATA ---
-const mockTransactions: Transaction[] = [
-  { id: 1, date: '20 May 2026', code: 'TRX-2026-0582', cashier: 'Siti Aminah', items: 3, amount: 450000, type: 'revenue', status: 'completed' },
-  { id: 2, date: '20 May 2026', code: 'TRX-2026-0581', cashier: 'Dewi Lestari', items: 1, amount: 125000, type: 'revenue', status: 'completed' },
-  { id: 3, date: '20 May 2026', code: 'PO-2026-0027', cashier: 'Rakha Fatih', items: 50, amount: 2800000, type: 'expense', status: 'completed' },
-  { id: 4, date: '19 May 2026', code: 'TRX-2026-0580', cashier: 'Siti Aminah', items: 5, amount: 780000, type: 'revenue', status: 'completed' },
-  { id: 5, date: '19 May 2026', code: 'TRX-2026-0579', cashier: 'Dewi Lestari', items: 2, amount: 340000, type: 'revenue', status: 'completed' },
-  { id: 6, date: '19 May 2026', code: 'TRX-2026-0578', cashier: 'Siti Aminah', items: 4, amount: 560000, type: 'revenue', status: 'pending' },
-  { id: 7, date: '18 May 2026', code: 'TRX-2026-0577', cashier: 'Budi Santoso', items: 1, amount: 95000, type: 'revenue', status: 'completed' },
-  { id: 8, date: '18 May 2026', code: 'TRX-2026-0576', cashier: 'Dewi Lestari', items: 6, amount: 1250000, type: 'revenue', status: 'completed' },
-  { id: 9, date: '18 May 2026', code: 'PO-2026-0026', cashier: 'Rakha Fatih', items: 30, amount: 1500000, type: 'expense', status: 'completed' },
-  { id: 10, date: '17 May 2026', code: 'TRX-2026-0575', cashier: 'Siti Aminah', items: 2, amount: 210000, type: 'revenue', status: 'completed' },
-  { id: 11, date: '17 May 2026', code: 'TRX-2026-0574', cashier: 'Budi Santoso', items: 3, amount: 475000, type: 'revenue', status: 'completed' },
-  { id: 12, date: '17 May 2026', code: 'PO-2026-0025', cashier: 'Habib Akbar', items: 40, amount: 3200000, type: 'expense', status: 'pending' },
-  { id: 13, date: '16 May 2026', code: 'TRX-2026-0573', cashier: 'Dewi Lestari', items: 2, amount: 165000, type: 'revenue', status: 'completed' },
-  { id: 14, date: '16 May 2026', code: 'TRX-2026-0572', cashier: 'Siti Aminah', items: 7, amount: 980000, type: 'revenue', status: 'completed' },
-  { id: 15, date: '16 May 2026', code: 'PO-2026-0024', cashier: 'Rakha Fatih', items: 25, amount: 1750000, type: 'expense', status: 'completed' },
-  { id: 16, date: '15 May 2026', code: 'TRX-2026-0571', cashier: 'Budi Santoso', items: 1, amount: 85000, type: 'revenue', status: 'completed' },
-  { id: 17, date: '15 May 2026', code: 'TRX-2026-0570', cashier: 'Dewi Lestari', items: 4, amount: 620000, type: 'revenue', status: 'completed' },
-  { id: 18, date: '15 May 2026', code: 'TRX-2026-0569', cashier: 'Siti Aminah', items: 3, amount: 390000, type: 'revenue', status: 'pending' },
-  { id: 19, date: '14 May 2026', code: 'TRX-2026-0568', cashier: 'Rakha Fatih', items: 2, amount: 280000, type: 'revenue', status: 'completed' },
-  { id: 20, date: '14 May 2026', code: 'PO-2026-0023', cashier: 'Habib Akbar', items: 60, amount: 4500000, type: 'expense', status: 'completed' },
-  { id: 21, date: '14 May 2026', code: 'TRX-2026-0567', cashier: 'Budi Santoso', items: 1, amount: 150000, type: 'revenue', status: 'completed' },
-  { id: 22, date: '13 May 2026', code: 'TRX-2026-0566', cashier: 'Dewi Lestari', items: 5, amount: 710000, type: 'revenue', status: 'completed' },
-  { id: 23, date: '13 May 2026', code: 'TRX-2026-0565', cashier: 'Siti Aminah', items: 2, amount: 195000, type: 'revenue', status: 'completed' },
-  { id: 24, date: '13 May 2026', code: 'PO-2026-0022', cashier: 'Rakha Fatih', items: 35, amount: 2100000, type: 'expense', status: 'pending' },
-  { id: 25, date: '12 May 2026', code: 'TRX-2026-0564', cashier: 'Budi Santoso', items: 3, amount: 420000, type: 'revenue', status: 'completed' },
-]
 
 // --- STATE ---
 const transactions = ref<Transaction[]>([])
@@ -355,27 +329,18 @@ const currentPage = ref(1)
 const itemsPerPage = ref(8)
 
 // --- PERIOD HELPERS ---
-const getCurrentMonth = (): string => {
-  return new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
-}
-
-const isDateInPeriod = (dateStr: string): boolean => {
-  // dateStr format: "20 May 2026"
+const isDateInPeriod = (t: Transaction): boolean => {
   const period = selectedPeriod.value
   if (period === 'yearly') return true
 
   const today = new Date()
-  const todayStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 
   if (period === 'daily') {
-    return dateStr === todayStr
+    return t.rawDate.toDateString() === today.toDateString()
   }
 
   if (period === 'monthly') {
-    // Extract month & year from dateStr, compare with current month & year
-    const dateParts = dateStr.split(' ')
-    const dateMonthYear = dateParts[1] + ' ' + dateParts[2]
-    return dateMonthYear === getCurrentMonth()
+    return t.rawDate.getMonth() === today.getMonth() && t.rawDate.getFullYear() === today.getFullYear()
   }
 
   return true
@@ -383,7 +348,7 @@ const isDateInPeriod = (dateStr: string): boolean => {
 
 // Transactions filtered by period only (for stats & chart)
 const periodFilteredTransactions = computed(() => {
-  return transactions.value.filter((t) => isDateInPeriod(t.date))
+  return transactions.value.filter((t) => isDateInPeriod(t))
 })
 
 // Transactions filtered by period AND search query (for table)
@@ -422,7 +387,9 @@ const totalRevenue = computed(() =>
   periodFilteredTransactions.value.filter((t) => t.type === 'revenue').reduce((sum, t) => sum + t.amount, 0)
 )
 const totalExpenses = computed(() =>
-  periodFilteredTransactions.value.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+  periodFilteredTransactions.value
+    .filter((t) => t.type === 'expense' && t.status === 'completed')
+    .reduce((sum, t) => sum + t.amount, 0)
 )
 const netProfit = computed(() => totalRevenue.value - totalExpenses.value)
 const totalTransactions = computed(() => periodFilteredTransactions.value.length)
@@ -473,10 +440,6 @@ const revenueChartData = computed<ChartItem[]>(() => {
     dateMap.set(key, { revenue: 0, expense: 0 })
   }
 
-  // Filter transactions for the last 7 days
-  const sevenDaysAgo = new Date(today)
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
-
   periodFilteredTransactions.value.forEach((t) => {
     // Only include revenue transactions for the chart
     if (t.type !== 'revenue') return
@@ -506,14 +469,56 @@ const getChartHeight = (value: number, max: number): number => {
 // --- METHODS ---
 const fetchTransactions = async () => {
   loading.value = true
+  const all: Transaction[] = []
+
+  // Fetch revenue from transactions (independent)
   try {
-    await new Promise((resolve) => setTimeout(resolve, 400))
-    transactions.value = [...mockTransactions]
-  } catch {
-    transactions.value = [...mockTransactions]
-  } finally {
-    loading.value = false
+    const trxResponse = await transactionApi.getAll(1, 1000)
+    const revenue: Transaction[] = (trxResponse.data ?? []).map((t: any) => {
+      const d = t.transactionDate ? new Date(t.transactionDate) : new Date()
+      return {
+        id: t.id ?? '',
+        date: d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        rawDate: d,
+        code: t.transactionCode ?? '-',
+        cashier: t.employee?.name ?? '-',
+        items: t.transactionDetails?.reduce((s: number, d: any) => s + (d.quantity ?? 0), 0) ?? 0,
+        amount: t.totalPrice ?? 0,
+        type: 'revenue' as const,
+        status: 'completed' as const,
+      }
+    })
+    all.push(...revenue)
+  } catch (e) {
+    console.error('Failed to fetch transactions (revenue):', e)
   }
+
+  // Fetch expenses from medicine orders (independent)
+  try {
+    const ordersResponse = await medicineOrderApi.getAll(1, 1000)
+    const expenses: Transaction[] = (ordersResponse.data ?? []).map((o: any) => {
+      const d = o.orderDate ? new Date(o.orderDate) : new Date()
+      return {
+        id: o.id ?? '',
+        date: d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        rawDate: d,
+        code: o.orderCode ?? '-',
+        cashier: o.employee?.name ?? '-',
+        items: o.orderDetails?.reduce((s: number, d: any) => s + (d.quantity ?? 0), 0) ?? 0,
+        amount: o.totalPrice ?? 0,
+        type: 'expense' as const,
+        status: o.status === 'COMPLETED' ? 'completed' as const : 'pending' as const,
+      }
+    })
+    all.push(...expenses)
+  } catch (e) {
+    console.error('Failed to fetch medicine orders (expenses):', e)
+  }
+
+  // Gabung & sort by date descending
+  all.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime())
+  transactions.value = all
+  loading.value = false
 }
 
 const goToPage = (page: number) => {

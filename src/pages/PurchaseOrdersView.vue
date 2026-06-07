@@ -212,6 +212,7 @@
               <div class="flex items-center justify-between mb-2">
                 <label class="block text-sm font-medium text-gray-700">Medicines <span class="text-red-500">*</span></label>
                 <button
+                  v-if="!isEditMode"
                   type="button"
                   @click="addMedicineRow"
                   class="text-xs text-[#009245] hover:text-green-700 font-medium flex items-center gap-1"
@@ -219,6 +220,10 @@
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                   Add Medicine
                 </button>
+              </div>
+
+              <div v-if="isEditMode" class="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-600">
+                Medicines cannot be changed in edit mode. Only status and order date can be updated.
               </div>
 
               <div v-if="form.medicines.length === 0" class="p-3 bg-gray-50 rounded-lg text-center text-sm text-gray-400">
@@ -233,7 +238,8 @@
                 <div class="col-span-5">
                   <select
                     v-model="item.medicineId"
-                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245]"
+                    :disabled="isEditMode"
+                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245] disabled:bg-gray-100 disabled:text-gray-500"
                     required
                   >
                     <option value="" disabled>Select Medicine</option>
@@ -247,8 +253,9 @@
                     v-model.number="item.quantity"
                     type="number"
                     min="1"
+                    :disabled="isEditMode"
                     placeholder="Qty"
-                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245]"
+                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245] disabled:bg-gray-100 disabled:text-gray-500"
                     required
                   />
                 </div>
@@ -257,14 +264,16 @@
                     v-model.number="item.unitPrice"
                     type="number"
                     min="0"
+                    :disabled="isEditMode"
                     placeholder="Unit Price"
-                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245]"
+                    class="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245] disabled:bg-gray-100 disabled:text-gray-500"
                     required
                   />
                 </div>
                 <div class="col-span-2 flex items-center gap-1 pb-1">
                   <span class="text-xs text-gray-500">{{ formatPrice((item.quantity || 0) * (item.unitPrice || 0)) }}</span>
                   <button
+                    v-if="!isEditMode"
                     type="button"
                     @click="removeMedicineRow(idx)"
                     class="text-red-400 hover:text-red-600 transition-colors ml-auto"
@@ -511,22 +520,27 @@ const openEditModal = async (order: Order) => {
   formError.value = null
   isModalOpen.value = true
 
-  // Show modal immediately, then try to fetch full detail
   try {
     const detail = await medicineOrderApi.getById(order.id!)
     const empData = detail.employee ?? {}
     const supData = detail.supplier ?? {}
+
+    // Load order details (medicines) from backend
+    const meds: MedicineRow[] = (detail.orderDetails ?? []).map((od) => ({
+      medicineId: od.medicineId ?? '',
+      quantity: od.quantity ?? 1,
+      unitPrice: od.unitPrice ?? 0,
+    }))
 
     form.value = {
       employeeId: empData.id ?? '',
       supplierId: supData.id ?? '',
       orderDate: detail.orderDate ? new Date(detail.orderDate).toISOString().split('T')[0] ?? '' : '',
       status: detail.status ?? 'PENDING',
-      // Note: medicine order details editing not supported in this version
-      medicines: [{ medicineId: '', quantity: 1, unitPrice: 1000 }],
+      medicines: meds.length > 0 ? meds : [{ medicineId: '', quantity: 1, unitPrice: 1000 }],
     }
   } catch {
-    // Fallback: use the list data if detail fetch fails
+    // Fallback: use list data if detail fetch fails
     form.value = {
       employeeId: '',
       supplierId: '',
@@ -546,11 +560,13 @@ const closeModal = () => {
 }
 
 const handleSubmit = async () => {
-  // Validate medicines
-  const invalidMeds = form.value.medicines.filter(m => !m.medicineId || m.quantity < 1 || m.unitPrice <= 0)
-  if (invalidMeds.length > 0) {
-    formError.value = 'Please complete all medicine fields (select medicine, quantity >= 1, unit price > 0).'
-    return
+  // Validate medicines (only for new orders — edit mode only updates status & date)
+  if (!isEditMode.value) {
+    const invalidMeds = form.value.medicines.filter(m => !m.medicineId || m.quantity < 1 || m.unitPrice <= 0)
+    if (invalidMeds.length > 0) {
+      formError.value = 'Please complete all medicine fields (select medicine, quantity >= 1, unit price > 0).'
+      return
+    }
   }
 
   isSubmitting.value = true
