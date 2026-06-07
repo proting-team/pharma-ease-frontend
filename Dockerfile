@@ -35,11 +35,10 @@ RUN npm run build
 # Stage 4: Production Nginx (Delivery Ready)
 FROM nginx:stable-alpine AS production
 
-# Perbaikan typo path: /usr/share/share -> /usr/share
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
-# Opsional: tambahkan nginx config untuk SPA (handle client-side routing)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy full nginx configuration to replace default master config
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]

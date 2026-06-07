@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Users } from "./interfaces/users.interface";
-import type { ArrayType, LiteralType, ObjectType, Property, RefType, TypeMap, UnionType } from './interfaces/model-type'
+import type { ArrayType, LiteralType, ObjectType, Property, RefType, TypeMap, UnionType } from './interfaces/model-type';
 
 export class Convert {
     public static toUsers(json: string): Users {

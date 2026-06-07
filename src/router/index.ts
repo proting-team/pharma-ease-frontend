@@ -37,7 +37,7 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/user-management', 
+      path: '/user-management',
       name: 'user-management',
       component: () => import('../pages/UserManagementView.vue'),
       meta: { requiresAuth: true }
@@ -95,7 +95,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
+
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else if (to.meta.guestOnly && authStore.isAuthenticated) {

@@ -9,7 +9,6 @@ import { ActivityIcon } from 'lucide-vue-next'
 const router = useRouter()
 const reportsOpen = ref(false)
 const userManagementOpen = ref(false)
-const profileDropdownOpen = ref(false)
 const route = useRoute()
 const authStore = useAuthStore()
 

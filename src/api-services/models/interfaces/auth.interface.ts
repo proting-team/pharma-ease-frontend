@@ -1,11 +1,14 @@
-export interface LoginRequest {
+export interface SignInRequest {
   email: string;
   password: string;
 }
 
+export type LoginRequest = SignInRequest;
+
 export interface LoginResponseData {
   access_token: string;
-  user: {
+  accessToken?: string;
+  user?: {
     id: string;
     name: string;
     email: string;
@@ -15,12 +18,14 @@ export interface LoginResponseData {
   };
 }
 
-export interface LoginResponse {
+export interface SignInResponse {
   status: number;
   message: string;
   data: LoginResponseData;
-  meta: any;
+  meta: unknown;
 }
+
+export type LoginResponse = SignInResponse;
 
 export interface ApiError {
   statusCode?: number;
