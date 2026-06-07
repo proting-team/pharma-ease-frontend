@@ -56,16 +56,23 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   async function login(credentials: LoginRequest): Promise<void> {
-    const response = await authApi.login(credentials)
+    const apiResponse: any = await authApi.login(credentials)
 
-    token.value = response.data.access_token
+    // Handle both { data: { access_token } } and { access_token } backend structures
+    const responseData = apiResponse.access_token ? apiResponse : apiResponse.data
+    
+    if (!responseData || !responseData.access_token) {
+      throw new Error("Format response dari server tidak sesuai, access_token tidak ditemukan.")
+    }
+
+    token.value = responseData.access_token
 
     // Some backend versions may not return the full user object.
     // Fallback: decode JWT to get email/role/sub, then build a user stub.
-    if (response.data.user) {
-      user.value = response.data.user
+    if (responseData.user) {
+      user.value = responseData.user
     } else {
-      const payload = decodeJwtPayload(response.data.access_token)
+      const payload = decodeJwtPayload(responseData.access_token)
       const email = payload?.email ?? credentials.email
       const role = payload?.role ?? ''
       const sub = payload?.sub ?? ''
@@ -81,7 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
 
-    localStorage.setItem('auth_token', response.data.access_token)
+    localStorage.setItem('auth_token', responseData.access_token)
     localStorage.setItem('auth_user', JSON.stringify(user.value))
   }
 

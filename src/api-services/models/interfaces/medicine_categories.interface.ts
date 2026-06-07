@@ -8,7 +8,7 @@ export type MedicineCategories = {
 export type Datum = {
     id?:           string;
     categoryName?: string;
-    description?:  null;
+    description?:  string | null;
     createdAt?:    Date;
     updatedAt?:    Date;
 }
