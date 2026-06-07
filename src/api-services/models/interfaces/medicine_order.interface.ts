@@ -14,21 +14,43 @@ export type Datum = {
     createdAt?:  Date;
     updatedAt?:  Date;
     supplier?:   Supplier;
-    user?:       User;
+    employee?:   Employee;
+}
+
+export type Employee = {
+    id?:            string;
+    name?:          string;
+    empId?:         string;
+    email?:         string;
+    password?:      string;
+    phoneNumber?:   null;
+    role?:          string;
+    shift?:         string;
+    status?:        string;
+    dateOfBirth?:   null;
+    alamat?:        null;
+    profileAvatar?: null;
+    salary?:        number;
+    startDate?:     Date;
+    createdAt?:     Date;
+    updatedAt?:     Date;
 }
 
 export type Supplier = {
-    supplierName?:        string;
+    id?:                  string;
+    companyName?:         string;
     phoneNumber?:         string;
-    contactPerson?:       null;
-    contactPersonNumber?: null;
+    contactName?:         string | null;
+    supplierEmail?:       string | null;
     status?:              string;
     address?:             string;
+    licenseNumber?:       string;
     createdAt?:           Date;
     updatedAt?:           Date;
 }
 
 export type User = {
+    id?:            string;
     name?:          string;
     empId?:         string;
     email?:         string;
