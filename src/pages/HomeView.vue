@@ -9,11 +9,8 @@
       <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex justify-between items-start">
         <div>
           <p class="text-sm font-medium text-gray-500 mb-1">Total Medicines</p>
-          <h3 class="text-3xl font-bold text-gray-900">1,284</h3>
-          <p class="text-xs text-green-600 mt-2 flex items-center font-medium">
-            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-            +12% <span class="text-gray-400 ml-1 font-normal">from last month</span>
-          </p>
+          <h3 class="text-3xl font-bold text-gray-900" v-if="!loading">{{ totalMedicines }}</h3>
+          <div v-else class="h-9 w-20 bg-gray-200 animate-pulse rounded"></div>
         </div>
         <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -23,8 +20,9 @@
       <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex justify-between items-start">
         <div>
           <p class="text-sm font-medium text-gray-500 mb-1">Low Stock Items</p>
-          <h3 class="text-3xl font-bold text-gray-900">23</h3>
-          <p class="text-xs text-orange-600 mt-2 font-medium">Requires immediate attention</p>
+          <h3 class="text-3xl font-bold text-gray-900" v-if="!loading">{{ lowStockCount }}</h3>
+          <div v-else class="h-9 w-20 bg-gray-200 animate-pulse rounded"></div>
+          <p class="text-xs text-orange-600 mt-2 font-medium" v-if="!loading && lowStockCount > 0">Requires immediate attention</p>
         </div>
         <div class="p-2 bg-orange-50 rounded-lg text-orange-500">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -34,11 +32,8 @@
       <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex justify-between items-start">
         <div>
           <p class="text-sm font-medium text-gray-500 mb-1">Total Revenue</p>
-          <h3 class="text-3xl font-bold text-gray-900">$186,450</h3>
-          <p class="text-xs text-green-600 mt-2 flex items-center font-medium">
-            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-            +8% <span class="text-gray-400 ml-1 font-normal">from last month</span>
-          </p>
+          <h3 class="text-xl font-bold text-gray-900 truncate max-w-[180px]" :title="formatCurrency(totalRevenue)" v-if="!loading">{{ formatCurrency(totalRevenue) }}</h3>
+          <div v-else class="h-7 w-32 bg-gray-200 animate-pulse rounded"></div>
         </div>
         <div class="p-2 bg-green-50 rounded-lg text-green-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1m4-12H8c-1.104 0-2 .896-2 2v12c0 1.104.896 2 2 2h8c1.104 0 2-.896 2-2V7c0-1.104-.896-2-2-2z"></path></svg>
@@ -48,11 +43,8 @@
       <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex justify-between items-start">
         <div>
           <p class="text-sm font-medium text-gray-500 mb-1">Total Transactions</p>
-          <h3 class="text-3xl font-bold text-gray-900">1,745</h3>
-          <p class="text-xs text-green-600 mt-2 flex items-center font-medium">
-            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-            +7% <span class="text-gray-400 ml-1 font-normal">from last month</span>
-          </p>
+          <h3 class="text-3xl font-bold text-gray-900" v-if="!loading">{{ totalTransactions }}</h3>
+          <div v-else class="h-9 w-20 bg-gray-200 animate-pulse rounded"></div>
         </div>
         <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -101,31 +93,27 @@
         <h4 class="text-md font-bold">Medicines Nearing Expiry</h4>
       </div>
       <div class="p-4">
-        <div class="space-y-3">
-          <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
+        <div v-if="loading" class="flex justify-center p-6">
+          <svg class="animate-spin h-6 w-6 text-[#11764B]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </div>
+        <div v-else-if="nearingExpiry.length === 0" class="p-6 text-center text-gray-500">
+          No medicines are nearing expiry within the next 30 days.
+        </div>
+        <div v-else class="space-y-3">
+          <div v-for="(item, index) in nearingExpiry" :key="index" class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
             <div class="flex items-center gap-4">
-              <div class="p-2 bg-red-100 text-red-600 rounded-lg">
+              <div class="p-2 rounded-lg" :class="item.daysLeft <= 14 ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               </div>
               <div>
-                <h5 class="text-sm font-bold text-gray-900">Paracetamol 500mg</h5>
-                <p class="text-xs text-gray-400 font-medium">Expires: 2023-11-15</p>
+                <h5 class="text-sm font-bold text-gray-900">{{ item.name }}</h5>
+                <p class="text-xs text-gray-400 font-medium">Expires: {{ item.date }}</p>
               </div>
             </div>
-            <span class="text-sm font-bold text-red-600">26 days left</span>
-          </div>
-
-          <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg transition-colors border border-transparent hover:border-gray-100">
-            <div class="flex items-center gap-4">
-              <div class="p-2 bg-red-100 text-red-600 rounded-lg opacity-60">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-              </div>
-              <div>
-                <h5 class="text-sm font-bold text-gray-900">Amoxicillin 250mg</h5>
-                <p class="text-xs text-gray-400 font-medium">Expires: 2023-11-30</p>
-              </div>
-            </div>
-            <span class="text-sm font-bold text-gray-500">31 days left</span>
+            <span class="text-sm font-bold" :class="item.daysLeft <= 14 ? 'text-red-600' : 'text-orange-600'">{{ item.daysLeft }} days left</span>
           </div>
         </div>
       </div>
@@ -134,5 +122,69 @@
 </template>
 
 <script setup lang="ts">
-// Di sini kamu bisa menambahkan logic untuk mengambil data dari store/API nantinya
+import { ref, onMounted } from 'vue'
+import { medicineApi } from '@/api-services/repositories/medicineApi'
+import { transactionApi } from '@/api-services/repositories/transactionApi'
+
+const loading = ref(true)
+
+const totalMedicines = ref(0)
+const lowStockCount = ref(0)
+const totalRevenue = ref(0)
+const totalTransactions = ref(0)
+
+const nearingExpiry = ref<{ name: string; date: string; daysLeft: number }[]>([])
+
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value)
+}
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    // 1. Fetch Medicines Data
+    const medResponse = await medicineApi.getAll(1, 1000)
+    const medicines = medResponse.data || []
+    
+    totalMedicines.value = medResponse.meta?.total || medicines.length
+    
+    // Calculate low stock (stock <= 15)
+    lowStockCount.value = medicines.filter(m => (m.stock ?? 0) <= 15).length
+    
+    // Calculate nearing expiry (within next 30 days)
+    const today = new Date()
+    const nextMonth = new Date()
+    nextMonth.setDate(today.getDate() + 30)
+    
+    const expiring = medicines.filter(m => {
+      if (!m.expiredDate) return false
+      const exp = new Date(m.expiredDate)
+      return exp >= today && exp <= nextMonth
+    }).sort((a, b) => new Date(a.expiredDate!).getTime() - new Date(b.expiredDate!).getTime())
+    
+    nearingExpiry.value = expiring.slice(0, 5).map(m => {
+      const expDate = new Date(m.expiredDate!)
+      const daysLeft = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 3600 * 24))
+      return {
+        name: m.medicineName || 'Unknown',
+        date: expDate.toISOString().split('T')[0],
+        daysLeft
+      }
+    })
+
+    // 2. Fetch Transactions Data
+    const txResponse = await transactionApi.getAll(1, 1000)
+    const transactions = txResponse.data || []
+    
+    totalTransactions.value = txResponse.meta?.total || transactions.length
+    
+    // Sum total price of all transactions
+    totalRevenue.value = transactions.reduce((sum: number, tx: any) => sum + (tx.totalPrice || 0), 0)
+    
+  } catch (error) {
+    console.error('Failed to load dashboard data:', error)
+  } finally {
+    loading.value = false
+  }
+})
 </script>
