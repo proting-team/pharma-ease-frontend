@@ -36,7 +36,20 @@ export const useAuthStore = defineStore('auth', () => {
   const storedUser = localStorage.getItem('auth_user')
   if (storedUser) {
     try {
-      user.value = JSON.parse(storedUser)
+      const parsed = JSON.parse(storedUser)
+      // Defense-in-depth: decode and verify role/sub from JWT token to prevent client-side tampering of localStorage
+      if (token.value) {
+        const payload = decodeJwtPayload(token.value)
+        if (payload) {
+          if (payload.role) {
+            parsed.role = payload.role
+          }
+          if (payload.sub) {
+            parsed.id = payload.sub
+          }
+        }
+      }
+      user.value = parsed
     } catch {
       localStorage.removeItem('auth_user')
     }
@@ -55,24 +68,18 @@ export const useAuthStore = defineStore('auth', () => {
       .slice(0, 2)
   })
 
-  async function login(credentials: LoginRequest): Promise<void> {
-    const apiResponse: any = await authApi.login(credentials)
+   async function login(credentials: LoginRequest): Promise<void> {
+    const response = await authApi.login(credentials)
 
-    // Handle both { data: { access_token } } and { access_token } backend structures
-    const responseData = apiResponse.access_token ? apiResponse : apiResponse.data
-    
-    if (!responseData || !responseData.access_token) {
-      throw new Error("Format response dari server tidak sesuai, access_token tidak ditemukan.")
-    }
-
-    token.value = responseData.access_token
+    const accessToken = response.data.access_token || response.data.accessToken || ''
+    token.value = accessToken
 
     // Some backend versions may not return the full user object.
     // Fallback: decode JWT to get email/role/sub, then build a user stub.
-    if (responseData.user) {
-      user.value = responseData.user
+    if (response.data.user) {
+      user.value = response.data.user
     } else {
-      const payload = decodeJwtPayload(responseData.access_token)
+      const payload = decodeJwtPayload(accessToken)
       const email = payload?.email ?? credentials.email
       const role = payload?.role ?? ''
       const sub = payload?.sub ?? ''
@@ -88,7 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
 
-    localStorage.setItem('auth_token', responseData.access_token)
+    localStorage.setItem('auth_token', accessToken)
     localStorage.setItem('auth_user', JSON.stringify(user.value))
   }
 

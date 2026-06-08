@@ -51,7 +51,7 @@ function handleLogout() {
           Dashboard
         </RouterLink>
 
-        <RouterLink to="/medicines" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+        <RouterLink v-if="['ADMIN', 'OWNER', 'PHARMACIST'].includes(authStore.userRole ?? '')" to="/medicines" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
@@ -59,7 +59,7 @@ function handleLogout() {
           Medicine Inventory
         </RouterLink>
 
-        <RouterLink to="/purchase-orders" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+        <RouterLink v-if="['ADMIN', 'OWNER', 'PHARMACIST'].includes(authStore.userRole ?? '')" to="/purchase-orders" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -67,7 +67,7 @@ function handleLogout() {
           Medicine Resupply
         </RouterLink>
 
-        <RouterLink to="/cashier" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+        <RouterLink v-if="['ADMIN', 'OWNER', 'CASHIER'].includes(authStore.userRole ?? '')" to="/cashier" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
@@ -75,7 +75,7 @@ function handleLogout() {
           Cashier / POS
         </RouterLink>
 
-        <div>
+        <div v-if="['ADMIN', 'OWNER', 'PHARMACIST'].includes(authStore.userRole ?? '')">
           <button @click="userManagementOpen = !userManagementOpen"
             class="flex items-center w-full px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
             :class="{ 'bg-[#21a870] font-semibold': isUserManagementActive }">
@@ -90,14 +90,14 @@ function handleLogout() {
           </button>
           <transition name="dropdown">
             <div v-if="userManagementOpen" class="ml-4 mt-1 space-y-1 border-l border-green-600/30 pl-3">
-              <RouterLink to="/supplier" class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
+              <RouterLink v-if="['OWNER', 'PHARMACIST'].includes(authStore.userRole ?? '')" to="/supplier" class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
                 exact-active-class="bg-[#21a870] font-semibold">
                 <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                 </svg>
                 Supplier Management
               </RouterLink>
-              <RouterLink to="/user-management" class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
+              <RouterLink v-if="['ADMIN', 'OWNER'].includes(authStore.userRole ?? '')" to="/user-management" class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
                 exact-active-class="bg-[#21a870] font-semibold">
                 <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -108,7 +108,7 @@ function handleLogout() {
           </transition>
         </div>
 
-        <div>
+        <div v-if="['ADMIN', 'OWNER', 'PHARMACIST'].includes(authStore.userRole ?? '')">
           <button @click="reportsOpen = !reportsOpen"
             class="flex items-center w-full px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
             :class="{ 'bg-[#21a870] font-semibold': isReportsActive }">
@@ -123,7 +123,7 @@ function handleLogout() {
           </button>
           <transition name="dropdown">
             <div v-if="reportsOpen" class="ml-4 mt-1 space-y-1 border-l border-green-600/30 pl-3">
-              <RouterLink to="/reports/operational"
+              <RouterLink v-if="['ADMIN', 'OWNER'].includes(authStore.userRole ?? '')" to="/reports/operational"
                 class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
                 exact-active-class="bg-[#21a870] font-semibold">
                 <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@ function handleLogout() {
                 </svg>
                 Operational Report
               </RouterLink>
-              <RouterLink to="/reports/financial"
+              <RouterLink v-if="['ADMIN', 'OWNER'].includes(authStore.userRole ?? '')" to="/reports/financial"
                 class="flex items-center px-3 py-2 text-sm rounded-lg hover:bg-[#1a8a5b] transition-colors"
                 exact-active-class="bg-[#21a870] font-semibold">
                 <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +143,7 @@ function handleLogout() {
           </transition>
         </div>
 
-        <RouterLink to="/audit-log" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
+        <RouterLink v-if="['ADMIN', 'OWNER'].includes(authStore.userRole ?? '')" to="/audit-log" class="flex items-center px-4 py-3 rounded-lg hover:bg-[#1a8a5b] transition-colors"
           exact-active-class="bg-[#21a870] font-semibold">
           <svg class="w-5 h-5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>

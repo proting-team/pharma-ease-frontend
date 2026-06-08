@@ -125,7 +125,9 @@
 import { ref, onMounted } from 'vue'
 import { medicineApi } from '@/api-services/repositories/medicineApi'
 import { transactionApi } from '@/api-services/repositories/transactionApi'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 const loading = ref(true)
 
 const totalMedicines = ref(0)
@@ -142,45 +144,52 @@ const formatCurrency = (value: number) => {
 onMounted(async () => {
   loading.value = true
   try {
+    const hasMedicineAccess = ['ADMIN', 'OWNER', 'PHARMACIST'].includes(authStore.userRole ?? '')
+    const hasTransactionAccess = ['ADMIN', 'OWNER', 'CASHIER'].includes(authStore.userRole ?? '')
+
     // 1. Fetch Medicines Data
-    const medResponse = await medicineApi.getAll(1, 1000)
-    const medicines = medResponse.data || []
-    
-    totalMedicines.value = medResponse.meta?.total || medicines.length
-    
-    // Calculate low stock (stock <= 15)
-    lowStockCount.value = medicines.filter(m => (m.stock ?? 0) <= 15).length
-    
-    // Calculate nearing expiry (within next 30 days)
-    const today = new Date()
-    const nextMonth = new Date()
-    nextMonth.setDate(today.getDate() + 30)
-    
-    const expiring = medicines.filter(m => {
-      if (!m.expiredDate) return false
-      const exp = new Date(m.expiredDate)
-      return exp >= today && exp <= nextMonth
-    }).sort((a, b) => new Date(a.expiredDate!).getTime() - new Date(b.expiredDate!).getTime())
-    
-    nearingExpiry.value = expiring.slice(0, 5).map(m => {
-      const expDate = new Date(m.expiredDate!)
-      const daysLeft = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 3600 * 24))
-      return {
-        name: m.medicineName || 'Unknown',
-        date: expDate.toISOString().split('T')[0],
-        daysLeft
-      }
-    })
+    if (hasMedicineAccess) {
+      const medResponse = await medicineApi.getAll(1, 1000)
+      const medicines = medResponse.data || []
+
+      totalMedicines.value = medResponse.meta?.total || medicines.length
+
+      // Calculate low stock (stock <= 15)
+      lowStockCount.value = medicines.filter(m => (m.stock ?? 0) <= 15).length
+
+      // Calculate nearing expiry (within next 30 days)
+      const today = new Date()
+      const nextMonth = new Date()
+      nextMonth.setDate(today.getDate() + 30)
+
+      const expiring = medicines.filter(m => {
+        if (!m.expiredDate) return false
+        const exp = new Date(m.expiredDate)
+        return exp >= today && exp <= nextMonth
+      }).sort((a, b) => new Date(a.expiredDate!).getTime() - new Date(b.expiredDate!).getTime())
+
+      nearingExpiry.value = expiring.slice(0, 5).map(m => {
+        const expDate = new Date(m.expiredDate!)
+        const daysLeft = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 3600 * 24))
+        return {
+          name: m.medicineName || 'Unknown',
+          date: expDate.toISOString().split('T')[0],
+          daysLeft
+        }
+      })
+    }
 
     // 2. Fetch Transactions Data
-    const txResponse = await transactionApi.getAll(1, 1000)
-    const transactions = txResponse.data || []
-    
-    totalTransactions.value = txResponse.meta?.total || transactions.length
-    
-    // Sum total price of all transactions
-    totalRevenue.value = transactions.reduce((sum: number, tx: any) => sum + (tx.totalPrice || 0), 0)
-    
+    if (hasTransactionAccess) {
+      const txResponse = await transactionApi.getAll(1, 1000)
+      const transactions = txResponse.data || []
+
+      totalTransactions.value = txResponse.meta?.total || transactions.length
+
+      // Sum total price of all transactions
+      totalRevenue.value = transactions.reduce((sum: number, tx: any) => sum + (tx.totalPrice || 0), 0)
+    }
+
   } catch (error) {
     console.error('Failed to load dashboard data:', error)
   } finally {
