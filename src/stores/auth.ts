@@ -36,7 +36,20 @@ export const useAuthStore = defineStore('auth', () => {
   const storedUser = localStorage.getItem('auth_user')
   if (storedUser) {
     try {
-      user.value = JSON.parse(storedUser)
+      const parsed = JSON.parse(storedUser)
+      // Defense-in-depth: decode and verify role/sub from JWT token to prevent client-side tampering of localStorage
+      if (token.value) {
+        const payload = decodeJwtPayload(token.value)
+        if (payload) {
+          if (payload.role) {
+            parsed.role = payload.role
+          }
+          if (payload.sub) {
+            parsed.id = payload.sub
+          }
+        }
+      }
+      user.value = parsed
     } catch {
       localStorage.removeItem('auth_user')
     }

@@ -38,15 +38,32 @@
             >Yearly</button>
           </div>
 
-          <button
-            @click="handleExport"
-            class="inline-flex items-center gap-2 rounded-lg bg-[#11764B] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#158e5a] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-            Export
-          </button>
+          <div class="relative group">
+            <button
+              class="inline-flex items-center gap-2 rounded-lg bg-[#11764B] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#158e5a] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Export Report
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div class="py-1">
+                <button @click="handleExport('excel')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                  <span>Excel Format</span>
+                </button>
+                <button @click="handleExport('pdf')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                  <span>PDF Format</span>
+                </button>
+                <button @click="handleExport('csv')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                  <span>CSV Format</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -304,6 +321,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { financialReportApi } from '@/api-services/repositories/financialReportApi'
 
 // --- TYPES ---
 interface Transaction {
@@ -355,35 +373,36 @@ const currentPage = ref(1)
 const itemsPerPage = ref(8)
 
 // --- PERIOD HELPERS ---
-const getCurrentMonth = (): string => {
-  return new Date().toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
-}
-
-const isDateInPeriod = (dateStr: string): boolean => {
-  // dateStr format: "20 May 2026"
-  const period = selectedPeriod.value
-  if (period === 'yearly') return true
-
+const getPeriodDateRange = (period: string) => {
   const today = new Date()
-  const todayStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  let startDate: string | undefined
+  let endDate: string | undefined
 
   if (period === 'daily') {
-    return dateStr === todayStr
+    const start = new Date(today)
+    start.setHours(0, 0, 0, 0)
+    const end = new Date(today)
+    end.setHours(23, 59, 59, 999)
+    startDate = start.toISOString()
+    endDate = end.toISOString()
+  } else if (period === 'monthly') {
+    const start = new Date(today.getFullYear(), today.getMonth(), 1, 0, 0, 0, 0)
+    const end = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999)
+    startDate = start.toISOString()
+    endDate = end.toISOString()
+  } else if (period === 'yearly') {
+    const start = new Date(today.getFullYear(), 0, 1, 0, 0, 0, 0)
+    const end = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999)
+    startDate = start.toISOString()
+    endDate = end.toISOString()
   }
 
-  if (period === 'monthly') {
-    // Extract month & year from dateStr, compare with current month & year
-    const dateParts = dateStr.split(' ')
-    const dateMonthYear = dateParts[1] + ' ' + dateParts[2]
-    return dateMonthYear === getCurrentMonth()
-  }
-
-  return true
+  return { startDate, endDate }
 }
 
 // Transactions filtered by period only (for stats & chart)
 const periodFilteredTransactions = computed(() => {
-  return transactions.value.filter((t) => isDateInPeriod(t.date))
+  return transactions.value
 })
 
 // Transactions filtered by period AND search query (for table)
@@ -507,10 +526,47 @@ const getChartHeight = (value: number, max: number): number => {
 const fetchTransactions = async () => {
   loading.value = true
   try {
-    await new Promise((resolve) => setTimeout(resolve, 400))
-    transactions.value = [...mockTransactions]
-  } catch {
-    transactions.value = [...mockTransactions]
+    const { startDate, endDate } = getPeriodDateRange(selectedPeriod.value)
+    const result = await financialReportApi.getData(startDate, endDate)
+
+    // Map incomeBreakdown
+    const income: Transaction[] = (result.incomeBreakdown ?? []).map((t) => {
+      const d = t.transactionDate ? new Date(t.transactionDate) : new Date()
+      return {
+        id: t.id ?? '',
+        date: d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        rawDate: d,
+        code: t.transactionCode ?? '-',
+        cashier: t.employee?.name ?? '-',
+        items: t.transactionDetails?.reduce((s: number, det: any) => s + (det.quantity ?? 0), 0) ?? 0,
+        amount: t.totalPrice ?? 0,
+        type: 'revenue' as const,
+        status: 'completed' as const
+      }
+    })
+
+    // Map expenseBreakdown
+    const expenses: Transaction[] = (result.expenseBreakdown ?? []).map((o) => {
+      const d = o.orderDate ? new Date(o.orderDate) : new Date()
+      return {
+        id: o.id ?? '',
+        date: d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        rawDate: d,
+        code: o.orderCode ?? '-',
+        cashier: o.employee?.name ?? '-',
+        items: o.orderDetails?.reduce((s: number, det: any) => s + (det.quantity ?? 0), 0) ?? 0,
+        amount: o.totalPrice ?? 0,
+        type: 'expense' as const,
+        status: 'completed' as const
+      }
+    })
+
+    const all = [...income, ...expenses]
+    all.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime())
+    transactions.value = all
+  } catch (e) {
+    console.error('Failed to fetch financial report:', e)
+    transactions.value = []
   } finally {
     loading.value = false
   }
@@ -522,8 +578,28 @@ const goToPage = (page: number) => {
   }
 }
 
-const handleExport = () => {
-  alert('Export feature will be available once the backend is ready.')
+const handleExport = async (format: 'excel' | 'pdf' | 'csv') => {
+  try {
+    const { startDate, endDate } = getPeriodDateRange(selectedPeriod.value)
+    const blob = await financialReportApi.exportReport(format, startDate, endDate)
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+
+    const extension = format === 'excel' ? 'xlsx' : format === 'pdf' ? 'pdf' : 'csv'
+    const dateRangeStr = startDate || endDate
+      ? `_from_${startDate ? startDate.substring(0, 10) : 'start'}_to_${endDate ? endDate.substring(0, 10) : 'end'}`
+      : '_all_time'
+
+    link.setAttribute('download', `financial_report${dateRangeStr}.${extension}`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  } catch (e) {
+    console.error('Failed to export financial report:', e)
+    alert('Failed to export financial report.')
+  }
 }
 
 const formatCurrency = (value: number): string => {
@@ -548,6 +624,7 @@ watch(searchQuery, () => {
 
 watch(selectedPeriod, () => {
   currentPage.value = 1
+  fetchTransactions()
 })
 
 // --- LIFECYCLE ---

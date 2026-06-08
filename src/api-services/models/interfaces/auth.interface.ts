@@ -8,14 +8,18 @@ export type LoginRequest = SignInRequest;
 export interface LoginResponseData {
   access_token: string;
   accessToken?: string;
-  user?: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-    shift: string;
+  user: User;
+}
+
+export interface User {
+    id:            string;
+    name:          string;
+    empId:         string;
+    email:         string;
+    role:          string;
+    shift:         string;
+    status:        string;
     profileAvatar: string | null;
-  };
 }
 
 export interface SignInResponse {
