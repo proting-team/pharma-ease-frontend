@@ -67,9 +67,9 @@ const router = createRouter({
       meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'CASHIER'] }
     },
     {
-      path: '/purchase-orders',
-      name: 'purchase-orders',
-      component: () => import('../pages/PurchaseOrdersView.vue'),
+      path: '/medicine-orders',
+      name: 'medicine-orders',
+      component: () => import('../pages/medicine/MedicineOrdersView.vue'),
       meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] }
     },
     {
