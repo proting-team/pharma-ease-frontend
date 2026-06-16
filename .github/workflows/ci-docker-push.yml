@@ -31,10 +31,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Validate Build Configuration
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v7
         with:
-          call: check
+            call: check
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v7
@@ -42,4 +42,4 @@ jobs:
           context: .
           platforms: linux/amd64, linux/arm64
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/pharma-ease-frontend:${{ inputs.image_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pharma-ease-frontend:${{ inputs.image_tag }}
