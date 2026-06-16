@@ -1,8 +1,10 @@
 services:
   pharma-ease-frontend:
-    image: isyawal16/pharma-ease-frontend:early-v.1
+    image: ${DOCKERHUB_USERNAME}/pharma-ease-frontend:${IMAGE_TAG-latest}
     container_name: pharma-ease-frontend-prod
     restart: unless-stopped
+    env_file: 
+      - ./.env
     ports:
       - "80:8080"
     networks:
