@@ -13,7 +13,6 @@ jobs:
     uses: ./.github/workflows/ci-standard.yml
 
   call-security-gateways:
-    need: call-standard-ci
     needs: call-standard-ci
     uses: ./.github/workflows/ci-security.yml
     permissions:
