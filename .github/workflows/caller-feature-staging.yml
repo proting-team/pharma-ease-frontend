@@ -20,4 +20,5 @@ jobs:
     uses: ./.github/workflows/ci-security.yml
     permissions:
       actions: read
+      contents: read
       security-events: write
