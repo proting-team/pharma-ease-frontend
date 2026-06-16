@@ -76,8 +76,8 @@ jobs:
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
 
             # Pull and restart services
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker-compose.frontend.prod.yml pull
+            docker compose -f docker-compose.frontend.prod.yml up -d --remove-orphans
             docker image prune -f
 
 

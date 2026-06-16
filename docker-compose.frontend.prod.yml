@@ -17,4 +17,5 @@ services:
 
 networks:
   prisma-network:
+    name: pharma-ease-backend_prisma-network
     external: true
