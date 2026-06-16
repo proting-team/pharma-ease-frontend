@@ -18,3 +18,6 @@ jobs:
   call-security-gateways:
     needs: call-standard-ci
     uses: ./.github/workflows/ci-security.yml
+    permissions:
+      actions: read
+      security-events: write
