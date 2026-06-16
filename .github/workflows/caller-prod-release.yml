@@ -24,7 +24,7 @@ jobs:
     needs: [call-standard-ci, call-security-gateways]
     uses: ./.github/workflows/ci-docker-push.yml
     with:
-      image_tag: early-v.1
+      image_tag: early-v1
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
