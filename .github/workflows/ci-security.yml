@@ -21,24 +21,35 @@ jobs:
         run: npm audit --audit-level=high || true
 
   sast-scan:
-    name: Semgrep SAST Scan
+    name: CodeQL SAST Analysis
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Semgrep SAST Scan
-        uses: semgrep/semgrep-action@v1
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
         with:
-          config: p/javascript
-        continue-on-error: true
+          languages: javascript-typescript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v4
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript-typescript"
 
   dockerfile-scan:
     name: Trivy Dockerfile Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run Trivy vulnerability scanner on Dockerfile
         uses: aquasecurity/trivy-action@master
@@ -51,7 +62,7 @@ jobs:
           severity: 'HIGH,CRITICAL'
 
       - name: Upload Trivy Scan Results to GitHub Security Tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
