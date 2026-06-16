@@ -3,6 +3,9 @@ FROM node:24-alpine AS base
 
 WORKDIR /app
 
+# Change ownership of the working directory to the node user
+RUN chown node:node /app
+
 # Copy package files dengan ownership node sejak awal
 COPY --chown=node:node package*.json ./
 
