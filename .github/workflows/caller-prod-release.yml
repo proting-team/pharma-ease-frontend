@@ -70,7 +70,7 @@ jobs:
             }
 
             set_env DOCKERHUB_USERNAME "${{ secrets.DOCKER_HUB_USERNAME }}"
-            set_env IMAGE_TAG "${{ github.ref_name }}-${{ github.sha }}"
+            set_env IMAGE_TAG "early-${{ github.sha }}"
 
             # Authenticate to docker
             docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
