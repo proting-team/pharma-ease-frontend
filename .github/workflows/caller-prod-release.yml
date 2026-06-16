@@ -13,15 +13,19 @@ jobs:
     uses: ./.github/workflows/ci-standard.yml
 
   call-security-gateways:
+    need: call-standard-ci
     needs: call-standard-ci
     uses: ./.github/workflows/ci-security.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
   call-docker-build-push:
     needs: [call-standard-ci, call-security-gateways]
     uses: ./.github/workflows/ci-docker-push.yml
     with:
-      image_name: 'isaliefian/pharma-ease-frontend'
-      image_tag: ${{ github.ref_name }}
+      image_tag: "${{ github.ref_name }}-${{ github.sha }}"
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
