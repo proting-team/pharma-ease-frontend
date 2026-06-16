@@ -30,7 +30,7 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   deploy:
-    needs: call_app_container_workflow
+    needs: call-docker-build-push
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
