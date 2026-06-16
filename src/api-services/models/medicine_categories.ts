@@ -1,15 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { MedicineCategories } from "./interfaces/medicine_categories.interface";
-import type { ArrayType, LiteralType, ObjectType, Property, RefType, TypeMap, UnionType } from "./interfaces/model-type";
+import type { MedicineCategories } from './interfaces/medicine_categories.interface'
+import type {
+  ArrayType,
+  LiteralType,
+  ObjectType,
+  Property,
+  RefType,
+  TypeMap,
+  UnionType,
+} from './interfaces/model-type'
 
 export class Convert {
-    public static toMedicineCategories(json: string): MedicineCategories {
-        return cast(JSON.parse(json), r("MedicineCategories"));
-    }
+  public static toMedicineCategories(json: string): MedicineCategories {
+    return cast(JSON.parse(json), r('MedicineCategories'))
+  }
 
-    public static medicineCategoriesToJson(value: MedicineCategories): string {
-        return JSON.stringify(uncast(value, r("MedicineCategories")), null, 2);
-    }
+  public static medicineCategoriesToJson(value: MedicineCategories): string {
+    return JSON.stringify(uncast(value, r('MedicineCategories')), null, 2)
+  }
 }
 
 function invalidValue(typ: unknown, val: unknown, key: string, parent: string = ''): never {
@@ -144,25 +151,34 @@ function o(props: Property[], additional: boolean): ObjectType {
 }
 
 const typeMap: TypeMap = {
-    "MedicineCategories": o([
-        { json: "status", js: "status", typ: u(undefined, 0) },
-        { json: "message", js: "message", typ: u(undefined, "") },
-        { json: "data", js: "data", typ: u(undefined, a(r("Datum"))) },
-        { json: "meta", js: "meta", typ: u(undefined, r("Meta")) },
-    ], false),
-    "Datum": o([
-        { json: "id", js: "id", typ: u(undefined, "") },
-        { json: "categoryName", js: "categoryName", typ: u(undefined, "") },
-        { json: "description", js: "description", typ: u(undefined, null) },
-        { json: "createdAt", js: "createdAt", typ: u(undefined, Date) },
-        { json: "updatedAt", js: "updatedAt", typ: u(undefined, Date) },
-    ], false),
-    "Meta": o([
-        { json: "total", js: "total", typ: u(undefined, 0) },
-        { json: "lastPage", js: "lastPage", typ: u(undefined, 0) },
-        { json: "currentPage", js: "currentPage", typ: u(undefined, 0) },
-        { json: "perPage", js: "perPage", typ: u(undefined, 0) },
-        { json: "prev", js: "prev", typ: u(undefined, null) },
-        { json: "next", js: "next", typ: u(undefined, null) },
-    ], false),
-};
+  MedicineCategories: o(
+    [
+      { json: 'status', js: 'status', typ: u(undefined, 0) },
+      { json: 'message', js: 'message', typ: u(undefined, '') },
+      { json: 'data', js: 'data', typ: u(undefined, a(r('Datum'))) },
+      { json: 'meta', js: 'meta', typ: u(undefined, r('Meta')) },
+    ],
+    false,
+  ),
+  Datum: o(
+    [
+      { json: 'id', js: 'id', typ: u(undefined, '') },
+      { json: 'categoryName', js: 'categoryName', typ: u(undefined, '') },
+      { json: 'description', js: 'description', typ: u(undefined, null) },
+      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
+      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
+    ],
+    false,
+  ),
+  Meta: o(
+    [
+      { json: 'total', js: 'total', typ: u(undefined, 0) },
+      { json: 'lastPage', js: 'lastPage', typ: u(undefined, 0) },
+      { json: 'currentPage', js: 'currentPage', typ: u(undefined, 0) },
+      { json: 'perPage', js: 'perPage', typ: u(undefined, 0) },
+      { json: 'prev', js: 'prev', typ: u(undefined, null) },
+      { json: 'next', js: 'next', typ: u(undefined, null) },
+    ],
+    false,
+  ),
+}

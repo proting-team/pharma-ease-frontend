@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Medicines } from './interfaces/medicine.interface'
 import type {
   ArrayType,

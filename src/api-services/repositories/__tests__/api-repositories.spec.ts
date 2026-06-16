@@ -19,7 +19,7 @@ vi.mock('../../providers/providers', () => {
       put: vi.fn(),
       patch: vi.fn(),
       delete: vi.fn(),
-    }
+    },
   }
 })
 
@@ -43,24 +43,55 @@ describe('API Repositories Unit Tests', () => {
 
   describe('activityLogApi', () => {
     it('should fetch all logs with default or custom pagination', async () => {
-      const mockResponse = { data: { data: [], meta: { total: 0 } } }
-      vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
+      const mockLogsResponse = {
+        status: 200,
+        message: 'Success',
+        data: [],
+        meta: {
+          total: 0,
+          lastPage: 1,
+          currentPage: 1,
+          perPage: 10,
+          prev: null,
+          next: null,
+        },
+      }
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLogsResponse })
 
-      let result = await activityLogApi.getAll()
-      expect(apiClient.get).toHaveBeenCalledWith('/activity-logs', { params: { page: 1, perPage: 10 } })
-      expect(result).toEqual(mockResponse.data)
+      const result = await activityLogApi.getAll()
+      expect(apiClient.get).toHaveBeenCalledWith('/activity-logs', {
+        params: { page: 1, perPage: 10 },
+      })
+      // Structural conversion matches the response
+      expect(result.status).toEqual(mockLogsResponse.status)
+      expect(result.message).toEqual(mockLogsResponse.message)
+      expect(result.data).toEqual(mockLogsResponse.data)
 
       await activityLogApi.getAll(3, 25)
-      expect(apiClient.get).toHaveBeenCalledWith('/activity-logs', { params: { page: 3, perPage: 25 } })
+      expect(apiClient.get).toHaveBeenCalledWith('/activity-logs', {
+        params: { page: 3, perPage: 25 },
+      })
     })
 
     it('should fetch a log by ID', async () => {
-      const mockResponse = { data: { id: 'log-1', action: 'CREATE' } }
-      vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
+      const mockLogDetail = {
+        status: 200,
+        message: 'Success',
+        data: {
+          id: 'log-1',
+          action: 'CREATE',
+          employeeId: 'emp-1',
+          resourceType: 'Medicine',
+          resourceId: 'med-1',
+          payloadData: { email: 'admin@pharma.com', password: 'password123' },
+          createdAt: '2026-06-09T10:00:00.000Z',
+        },
+      }
+      vi.mocked(apiClient.get).mockResolvedValueOnce({ data: mockLogDetail })
 
       const result = await activityLogApi.getById('log-1')
       expect(apiClient.get).toHaveBeenCalledWith('/activity-logs/log-1')
-      expect(result).toEqual(mockResponse.data)
+      expect(result).toEqual(mockLogDetail)
     })
   })
 
@@ -70,7 +101,9 @@ describe('API Repositories Unit Tests', () => {
       vi.mocked(apiClient.get).mockResolvedValue(mockResponse)
 
       await employeeApi.getAll(1, 10, 'john')
-      expect(apiClient.get).toHaveBeenCalledWith('/employees', { params: { page: 1, perPage: 10, search: 'john' } })
+      expect(apiClient.get).toHaveBeenCalledWith('/employees', {
+        params: { page: 1, perPage: 10, search: 'john' },
+      })
 
       await employeeApi.getAll(2, 15)
       expect(apiClient.get).toHaveBeenCalledWith('/employees', { params: { page: 2, perPage: 15 } })
@@ -127,7 +160,7 @@ describe('API Repositories Unit Tests', () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
       const result = await financialReportApi.getData('2026-01-01', '2026-01-31')
-      expect(apiClient.get).toHaveBeenCalledWith('/financial-report', {
+      expect(apiClient.get).toHaveBeenCalledWith('/reports/transaction-details', {
         params: { startDate: '2026-01-01', endDate: '2026-01-31' },
       })
       expect(result).toEqual(mockResponse.data)
@@ -139,7 +172,7 @@ describe('API Repositories Unit Tests', () => {
       vi.mocked(apiClient.get).mockResolvedValueOnce(mockResponse)
 
       const result = await financialReportApi.exportReport('excel', '2026-01-01', '2026-01-31')
-      expect(apiClient.get).toHaveBeenCalledWith('/financial-report/export', {
+      expect(apiClient.get).toHaveBeenCalledWith('/reports/transaction-details/export', {
         params: { format: 'excel', startDate: '2026-01-01', endDate: '2026-01-31' },
         responseType: 'blob',
       })
@@ -262,7 +295,9 @@ describe('API Repositories Unit Tests', () => {
       // Update
       vi.mocked(apiClient.patch).mockResolvedValueOnce({ data: { id: 'ord-2' } })
       await medicineOrderApi.update('ord-2', { status: 'COMPLETED' })
-      expect(apiClient.patch).toHaveBeenCalledWith('/finances/medicine-orders/ord-2', { status: 'COMPLETED' })
+      expect(apiClient.patch).toHaveBeenCalledWith('/finances/medicine-orders/ord-2', {
+        status: 'COMPLETED',
+      })
 
       // Delete
       vi.mocked(apiClient.delete).mockResolvedValueOnce({ data: {} })
@@ -273,18 +308,40 @@ describe('API Repositories Unit Tests', () => {
 
   describe('operationalReportApi', () => {
     it('should fetch operational report data', async () => {
-      vi.mocked(apiClient.get).mockResolvedValueOnce({ data: { stats: {} } })
-      await operationalReportApi.getData('2026-06-01', '2026-06-09')
-      expect(apiClient.get).toHaveBeenCalledWith('/operational-report', {
+      const mockReportResponse = {
+        status: 200,
+        message: 'Success',
+        meta: null,
+        data: {
+          metadata: {
+            generatedAt: '2026-06-09T10:00:00.000Z',
+            filter: { startDate: null, endDate: null },
+          },
+          stats: {
+            totalMedicines: 100,
+            lowStockMedicines: 5,
+            outOfStockMedicines: 2,
+            expiredMedicines: 3,
+            totalActivityLogs: 15,
+          },
+          medicines: [],
+          activityLogs: [],
+        },
+      }
+      vi.mocked(apiClient.get).mockResolvedValueOnce({ data: mockReportResponse })
+      const result = await operationalReportApi.getData('2026-06-01', '2026-06-09')
+      expect(apiClient.get).toHaveBeenCalledWith('/reports/operational-report', {
         params: { startDate: '2026-06-01', endDate: '2026-06-09' },
       })
+      expect(result.status).toEqual(mockReportResponse.status)
+      expect(result.data.stats).toEqual(mockReportResponse.data.stats)
     })
 
     it('should export operational report', async () => {
       const mockBlob = new Blob()
       vi.mocked(apiClient.get).mockResolvedValueOnce({ data: mockBlob })
       await operationalReportApi.exportReport('pdf', '2026-06-01')
-      expect(apiClient.get).toHaveBeenCalledWith('/operational-report/export', {
+      expect(apiClient.get).toHaveBeenCalledWith('/reports/operational-report/export', {
         params: { format: 'pdf', startDate: '2026-06-01' },
         responseType: 'blob',
       })
@@ -320,7 +377,9 @@ describe('API Repositories Unit Tests', () => {
       // Update
       vi.mocked(apiClient.patch).mockResolvedValueOnce({ data: { id: 'sup-2' } })
       await supplierApi.update('sup-2', { contactName: 'New Contact' })
-      expect(apiClient.patch).toHaveBeenCalledWith('/suppliers/sup-2', { contactName: 'New Contact' })
+      expect(apiClient.patch).toHaveBeenCalledWith('/suppliers/sup-2', {
+        contactName: 'New Contact',
+      })
 
       // Delete
       vi.mocked(apiClient.delete).mockResolvedValueOnce({ data: {} })

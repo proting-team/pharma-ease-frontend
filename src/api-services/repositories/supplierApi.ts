@@ -1,26 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import apiClient from '../providers/providers'
 import type { Datum, Suppliers } from '../models/interfaces/suppliers.interface'
 

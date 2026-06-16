@@ -1,0 +1,170 @@
+name: Security Scan Gateways
+
+on:
+  workflow_call:
+
+jobs:
+  audit-dependencies:
+    name: NPM Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.*'
+          cache: 'npm'
+
+      - name: Audit NPM Dependencies
+        run: npm audit --audit-level=high || true
+
+  sast-scan:
+    name: CodeQL SAST Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v4
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript-typescript"
+
+      - name: Generate CodeQL Summary
+        if: always()
+        shell: python
+        run: |
+          import json
+          import glob
+          import os
+
+          summary_file = os.environ.get('GITHUB_STEP_SUMMARY')
+          temp_dir = os.environ.get('RUNNER_TEMP', '')
+          
+          # Search for CodeQL generated SARIF files
+          sarif_files = glob.glob(os.path.join(temp_dir, 'codeql-sarif', '*.sarif'))
+          if not sarif_files:
+              # Fallback recursive search in temp directory
+              sarif_files = glob.glob(os.path.join(temp_dir, '**', '*.sarif'), recursive=True)
+
+          findings = []
+          for file_path in sarif_files:
+              if 'codeql' not in file_path.lower():
+                  continue
+              try:
+                  with open(file_path, 'r') as f:
+                      data = json.load(f)
+                      for run in data.get('runs', []):
+                          for result in run.get('results', []):
+                              rule_id = result.get('ruleId', 'N/A')
+                              message = result.get('message', {}).get('text', 'N/A')
+                              level = result.get('level', 'warning')
+                              locations = result.get('locations', [])
+                              file_loc = "N/A"
+                              if locations:
+                                  phys_loc = locations[0].get('physicalLocation', {})
+                                  art_loc = phys_loc.get('artifactLocation', {})
+                                  uri = art_loc.get('uri', 'N/A')
+                                  region = phys_loc.get('region', {})
+                                  line = region.get('startLine', '?')
+                                  file_loc = f"{uri}:{line}"
+                              findings.append((rule_id, level, message, file_loc))
+              except Exception as e:
+                  print(f"Error parsing CodeQL SARIF {file_path}: {e}")
+
+          with open(summary_file, 'a') as f:
+              f.write("## 🛡️ CodeQL SAST Scan Summary\n\n")
+              if not findings:
+                  f.write("✅ No security vulnerabilities or code quality issues found by CodeQL.\n")
+              else:
+                  f.write(f"⚠️ Found **{len(findings)}** issue(s) during analysis:\n\n")
+                  f.write("| Rule ID | Severity | Message | Location |\n")
+                  f.write("| --- | --- | --- | --- |\n")
+                  for rule, level, msg, loc in findings:
+                      emoji = "🔴 error" if level == "error" else "🟡 warning"
+                      msg_clean = msg.replace("|", "\\|").replace("\n", " ")
+                      f.write(f"| `{rule}` | {emoji} | {msg_clean} | `{loc}` |\n")
+
+  dockerfile-scan:
+    name: Trivy Dockerfile Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Run Trivy vulnerability scanner on Dockerfile
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Upload Trivy Scan Results to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
+
+      - name: Generate Trivy Summary
+        if: always()
+        shell: python
+        run: |
+          import json
+          import os
+
+          summary_file = os.environ.get('GITHUB_STEP_SUMMARY')
+          trivy_file = 'trivy-results.sarif'
+
+          findings = []
+          if os.path.exists(trivy_file):
+              try:
+                  with open(trivy_file, 'r') as f:
+                      data = json.load(f)
+                      for run in data.get('runs', []):
+                          for result in run.get('results', []):
+                              rule_id = result.get('ruleId', 'N/A')
+                              message = result.get('message', {}).get('text', 'N/A')
+                              level = result.get('level', 'warning')
+                              locations = result.get('locations', [])
+                              file_loc = "N/A"
+                              if locations:
+                                  phys_loc = locations[0].get('physicalLocation', {})
+                                  art_loc = phys_loc.get('artifactLocation', {})
+                                  uri = art_loc.get('uri', 'N/A')
+                                  region = phys_loc.get('region', {})
+                                  line = region.get('startLine', '?')
+                                  file_loc = f"{uri}:{line}"
+                              findings.append((rule_id, level, message, file_loc))
+              except Exception as e:
+                  print(f"Error parsing Trivy SARIF: {e}")
+
+          with open(summary_file, 'a') as f:
+              f.write("\n## 🐳 Trivy Container & Dockerfile Scan Summary\n\n")
+              if not findings:
+                  f.write("✅ No vulnerabilities found in Dockerfile or dependencies.\n")
+              else:
+                  f.write(f"⚠️ Found **{len(findings)}** vulnerability/vulnerabilities:\n\n")
+                  f.write("| Rule ID | Severity | Message | Location |\n")
+                  f.write("| --- | --- | --- | --- |\n")
+                  for rule, level, msg, loc in findings:
+                      emoji = "🔴 error" if level == "error" else "🟡 warning"
+                      msg_clean = msg.replace("|", "\\|").replace("\n", " ")
+                      f.write(f"| `{rule}` | {emoji} | {msg_clean} | `{loc}` |\n")

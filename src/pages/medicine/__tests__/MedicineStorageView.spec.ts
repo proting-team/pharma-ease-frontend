@@ -22,7 +22,7 @@ describe('MedicineStorageView.vue Unit Tests', () => {
         price: 5000,
         expiredDate: '2026-06-20',
         category: { categoryName: 'Tablets' },
-        supplier: { supplierName: 'PT Bio Farma' }
+        supplier: { supplierName: 'PT Bio Farma' },
       },
       {
         id: 'med-2',
@@ -32,14 +32,14 @@ describe('MedicineStorageView.vue Unit Tests', () => {
         price: 8000,
         expiredDate: '2027-12-31',
         category: { categoryName: 'Capsules' },
-        supplier: { supplierName: 'PT Kimia Farma' }
-      }
+        supplier: { supplierName: 'PT Kimia Farma' },
+      },
     ],
     meta: {
       total: 2,
       currentPage: 1,
-      perPage: 10
-    }
+      perPage: 10,
+    },
   }
 
   beforeEach(() => {
@@ -51,9 +51,9 @@ describe('MedicineStorageView.vue Unit Tests', () => {
     const wrapper = mount(MedicineStorageView, {
       global: {
         stubs: {
-          AddMedicineModal: true
-        }
-      }
+          AddMedicineModal: true,
+        },
+      },
     })
 
     await new Promise((resolve) => setTimeout(resolve, 10))
@@ -71,31 +71,31 @@ describe('MedicineStorageView.vue Unit Tests', () => {
     const wrapper = mount(MedicineStorageView, {
       global: {
         stubs: {
-          AddMedicineModal: true
-        }
-      }
+          AddMedicineModal: true,
+        },
+      },
     })
 
     await new Promise((resolve) => setTimeout(resolve, 10))
     await wrapper.vm.$nextTick()
 
     // Find and click the add button
-    const addBtn = wrapper.findAll('button').find(b => b.text().includes('Add New Medicine'))
+    const addBtn = wrapper.findAll('button').find((b) => b.text().includes('Add New Medicine'))
     expect(addBtn).toBeDefined()
     await addBtn!.trigger('click')
 
     // Expect the modal open ref to be true
-    expect(wrapper.vm.isModalOpen).toBe(true)
-    expect(wrapper.vm.selectedMedicine).toBeNull()
+    expect((wrapper.vm as any).isModalOpen).toBe(true)
+    expect((wrapper.vm as any).selectedMedicine).toBeNull()
   })
 
   it('opens edit modal on edit button click', async () => {
     const wrapper = mount(MedicineStorageView, {
       global: {
         stubs: {
-          AddMedicineModal: true
-        }
-      }
+          AddMedicineModal: true,
+        },
+      },
     })
 
     await new Promise((resolve) => setTimeout(resolve, 10))
@@ -106,8 +106,8 @@ describe('MedicineStorageView.vue Unit Tests', () => {
     expect(editBtn.exists()).toBe(true)
     await editBtn.trigger('click')
 
-    expect(wrapper.vm.isModalOpen).toBe(true)
-    expect(wrapper.vm.selectedMedicine).toEqual(mockMedicinesResponse.data[0])
+    expect((wrapper.vm as any).isModalOpen).toBe(true)
+    expect((wrapper.vm as any).selectedMedicine).toEqual(mockMedicinesResponse.data[0])
   })
 
   it('calls delete medicine API when delete button is clicked', async () => {
@@ -117,9 +117,9 @@ describe('MedicineStorageView.vue Unit Tests', () => {
     const wrapper = mount(MedicineStorageView, {
       global: {
         stubs: {
-          AddMedicineModal: true
-        }
-      }
+          AddMedicineModal: true,
+        },
+      },
     })
 
     await new Promise((resolve) => setTimeout(resolve, 10))

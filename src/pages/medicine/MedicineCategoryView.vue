@@ -1,16 +1,22 @@
 <template>
   <div class="p-8 bg-gray-50 min-h-screen font-sans">
-    
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Medicine Category</h1>
       <p class="text-sm text-gray-500 mt-1">Kategori Obat yang tersedia di Apotek Lamtama</p>
     </div>
 
     <!-- Error Alert -->
-    <div v-if="error" class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-md flex items-start">
+    <div
+      v-if="error"
+      class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-md flex items-start"
+    >
       <div class="flex-shrink-0">
         <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd"
+          />
         </svg>
       </div>
       <div class="ml-3">
@@ -19,31 +25,60 @@
     </div>
 
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-      
-      <div class="p-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div
+        class="p-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4"
+      >
         <h2 class="text-lg font-medium text-gray-800">Category List</h2>
-        
+
         <div class="flex items-center gap-3">
           <div class="relative">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
             </span>
-            <input v-model="searchQuery" type="text" placeholder="Search categories..." class="pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 w-56" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search categories..."
+              class="pl-9 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 w-56"
+            />
           </div>
-          
-          <button @click="openAddModal" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+
+          <button
+            @click="openAddModal"
+            class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
             + Add Category
           </button>
-          
-          <router-link to="/medicines" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+
+          <router-link
+            to="/medicines"
+            class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              ></path>
+            </svg>
             Back to Medicine
           </router-link>
         </div>
       </div>
 
       <div class="overflow-x-auto relative">
-        <div v-if="loading" class="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
+        <div
+          v-if="loading"
+          class="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center"
+        >
           <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
         </div>
 
@@ -51,9 +86,13 @@
           <thead>
             <tr class="border-b border-gray-200 bg-gray-50/50">
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase w-16">No</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase w-1/4">Category Name</th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase w-1/4">
+                Category Name
+              </th>
               <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Description</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right w-24">Actions</th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right w-24">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
@@ -62,16 +101,44 @@
                 No categories found.
               </td>
             </tr>
-            <tr v-for="(cat, index) in filteredCategories" :key="cat.id" class="hover:bg-gray-50 transition-colors">
+            <tr
+              v-for="(cat, index) in filteredCategories"
+              :key="cat.id"
+              class="hover:bg-gray-50 transition-colors"
+            >
               <td class="px-6 py-4 text-sm text-gray-600">{{ showingStart + index }}</td>
               <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ cat.categoryName }}</td>
-              <td class="px-6 py-4 text-sm text-gray-500 truncate max-w-xl">{{ cat.description || '-' }}</td>
+              <td class="px-6 py-4 text-sm text-gray-500 truncate max-w-xl">
+                {{ cat.description || '-' }}
+              </td>
               <td class="px-6 py-4 text-sm text-right space-x-3">
-                <button @click="openEditModal(cat)" class="text-orange-400 hover:text-orange-600" title="Edit">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                <button
+                  @click="openEditModal(cat)"
+                  class="text-orange-400 hover:text-orange-600"
+                  title="Edit"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    ></path>
+                  </svg>
                 </button>
-                <button @click="handleDelete(cat.id)" class="text-red-400 hover:text-red-600" title="Delete">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <button
+                  @click="handleDelete(cat.id)"
+                  class="text-red-400 hover:text-red-600"
+                  title="Delete"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
+                  </svg>
                 </button>
               </td>
             </tr>
@@ -80,26 +147,59 @@
       </div>
 
       <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
-        <p class="text-sm text-gray-600">Showing {{ showingStart }} to {{ showingEnd }} of {{ totalItems }} results</p>
+        <p class="text-sm text-gray-600">
+          Showing {{ showingStart }} to {{ showingEnd }} of {{ totalItems }} results
+        </p>
         <div class="flex border border-gray-300 rounded-md overflow-hidden bg-white">
-          <button @click="prevPage" :disabled="currentPage === 1" class="px-3 py-1 hover:bg-gray-50 border-r border-gray-300 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">&lt;</button>
-          <button class="px-3 py-1 bg-gray-100 border-r border-gray-300 text-gray-800 font-medium">{{ currentPage }}</button>
-          <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 0" class="px-3 py-1 hover:bg-gray-50 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">&gt;</button>
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 hover:bg-gray-50 border-r border-gray-300 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &lt;
+          </button>
+          <button class="px-3 py-1 bg-gray-100 border-r border-gray-300 text-gray-800 font-medium">
+            {{ currentPage }}
+          </button>
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages || totalPages === 0"
+            class="px-3 py-1 hover:bg-gray-50 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            &gt;
+          </button>
         </div>
       </div>
-      
     </div>
 
     <!-- Modal -->
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
+    >
       <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-start">
           <div>
-            <h3 class="text-lg font-bold text-gray-900">{{ isEditMode ? 'Edit Category' : 'Add New Category' }}</h3>
-            <p class="text-xs text-gray-500 mt-1">{{ isEditMode ? 'Update existing category details.' : 'Add a new medicine category to organize your inventory.' }}</p>
+            <h3 class="text-lg font-bold text-gray-900">
+              {{ isEditMode ? 'Edit Category' : 'Add New Category' }}
+            </h3>
+            <p class="text-xs text-gray-500 mt-1">
+              {{
+                isEditMode
+                  ? 'Update existing category details.'
+                  : 'Add a new medicine category to organize your inventory.'
+              }}
+            </p>
           </div>
           <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
           </button>
         </div>
 
@@ -107,26 +207,44 @@
           <div class="p-6 space-y-4">
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">Category Name</label>
-              <input v-model="form.categoryName" type="text" placeholder="e.g., Painkillers" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500" />
+              <input
+                v-model="form.categoryName"
+                type="text"
+                placeholder="e.g., Painkillers"
+                required
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
+              />
             </div>
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
-              <textarea v-model="form.description" rows="3" placeholder="Optional description..." class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 resize-none"></textarea>
+              <textarea
+                v-model="form.description"
+                rows="3"
+                placeholder="Optional description..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500 resize-none"
+              ></textarea>
             </div>
           </div>
 
           <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-            <button type="button" @click="closeModal" class="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors">
+            <button
+              type="button"
+              @click="closeModal"
+              class="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
               Cancel
             </button>
-            <button type="submit" :disabled="isSubmitting" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-              {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Category' : 'Add Category') }}
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {{ isSubmitting ? 'Saving...' : isEditMode ? 'Update Category' : 'Add Category' }}
             </button>
           </div>
         </form>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -140,9 +258,7 @@ function getErrorMessage(e: unknown, fallback: string): string {
   if (e && typeof e === 'object' && 'response' in e) {
     const data = (e as any).response?.data
     if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
-      return data.errors.map((err: any) =>
-        `• ${err.property}: ${err.errors.join(', ')}`
-      ).join('\n')
+      return data.errors.map((err: any) => `• ${err.property}: ${err.errors.join(', ')}`).join('\n')
     }
     return data?.message || fallback
   }
@@ -249,9 +365,10 @@ const handleDelete = async (id: string | undefined) => {
 const filteredCategories = computed(() => {
   if (!searchQuery.value) return categories.value
   const query = searchQuery.value.toLowerCase()
-  return categories.value.filter(cat => 
-    cat.categoryName?.toLowerCase().includes(query) ||
-    cat.description?.toLowerCase().includes(query)
+  return categories.value.filter(
+    (cat) =>
+      cat.categoryName?.toLowerCase().includes(query) ||
+      cat.description?.toLowerCase().includes(query),
   )
 })
 

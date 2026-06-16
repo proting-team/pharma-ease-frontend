@@ -1,42 +1,19 @@
 import apiClient from '../providers/providers'
-
-export interface ActivityLogResponse {
-  id: string
-  action: string
-  employeeId: string
-  employee: {
-    id: string
-    name: string
-    role: string
-  }
-  resourceType: string | null
-  resourceId: string | null
-  payloadData: Record<string, any> | null
-  createdAt: string
-}
-
-export interface PaginatedResult<T> {
-  data: T[]
-  meta: {
-    total: number
-    lastPage: number
-    currentPage: number
-    perPage: number
-    prev: number | null
-    next: number | null
-  }
-}
+import { Convert } from '../models/activity_logs'
+import type { ActivityLogs, Datum } from '../models/interfaces/activity_logs.interface'
 
 export const activityLogApi = {
-  async getAll(page = 1, perPage = 10): Promise<PaginatedResult<ActivityLogResponse>> {
+  async getAll(page = 1, perPage = 10): Promise<ActivityLogs> {
     const response = await apiClient.get('/activity-logs', {
       params: { page, perPage },
     })
-    return response.data as PaginatedResult<ActivityLogResponse>
+    const jsonStr =
+      typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
+    return Convert.toActivityLogs(jsonStr)
   },
 
-  async getById(id: string): Promise<ActivityLogResponse> {
+  async getById(id: string): Promise<{ status: number; message: string; data: Datum }> {
     const response = await apiClient.get(`/activity-logs/${id}`)
-    return response.data as ActivityLogResponse
+    return response.data as { status: number; message: string; data: Datum }
   },
 }

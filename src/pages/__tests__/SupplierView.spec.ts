@@ -23,7 +23,7 @@ describe('SupplierView.vue Unit Tests', () => {
         phoneNumber: '0812345',
         address: 'Bandung',
         licenseNumber: 'LIC-001',
-        status: 'ACTIVE'
+        status: 'ACTIVE',
       },
       {
         id: 'sup-2',
@@ -32,15 +32,15 @@ describe('SupplierView.vue Unit Tests', () => {
         phoneNumber: '0854321',
         address: 'Jakarta',
         licenseNumber: 'LIC-002',
-        status: 'INACTIVE'
-      }
+        status: 'INACTIVE',
+      },
     ],
     meta: {
       total: 2,
       lastPage: 1,
       currentPage: 1,
-      perPage: 10
-    }
+      perPage: 10,
+    },
   }
 
   beforeEach(() => {
@@ -71,7 +71,7 @@ describe('SupplierView.vue Unit Tests', () => {
     expect(wrapper.find('form').exists()).toBe(false)
 
     // Click Add Supplier
-    const addBtn = wrapper.findAll('button').find(b => b.text().includes('Add Supplier'))
+    const addBtn = wrapper.findAll('button').find((b) => b.text().includes('Add Supplier'))
     expect(addBtn).toBeDefined()
     await addBtn!.trigger('click')
 
@@ -80,7 +80,7 @@ describe('SupplierView.vue Unit Tests', () => {
     expect(wrapper.text()).toContain('Add New Supplier')
 
     // Click Cancel
-    const cancelBtn = wrapper.findAll('button').find(b => b.text().includes('Cancel'))
+    const cancelBtn = wrapper.findAll('button').find((b) => b.text().includes('Cancel'))
     expect(cancelBtn).toBeDefined()
     await cancelBtn!.trigger('click')
 
@@ -96,7 +96,7 @@ describe('SupplierView.vue Unit Tests', () => {
     await wrapper.vm.$nextTick()
 
     // Open Add Modal
-    const addBtn = wrapper.findAll('button').find(b => b.text().includes('Add Supplier'))
+    const addBtn = wrapper.findAll('button').find((b) => b.text().includes('Add Supplier'))
     await addBtn!.trigger('click')
 
     // Set input values
@@ -117,7 +117,7 @@ describe('SupplierView.vue Unit Tests', () => {
       supplierEmail: 'indo@farma.com',
       licenseNumber: 'LIC-003',
       address: 'Surabaya Barat',
-      status: 'ACTIVE'
+      status: 'ACTIVE',
     })
   })
 
@@ -149,7 +149,7 @@ describe('SupplierView.vue Unit Tests', () => {
       supplierEmail: undefined,
       licenseNumber: 'LIC-001',
       address: 'Bandung',
-      status: 'ACTIVE'
+      status: 'ACTIVE',
     })
   })
 

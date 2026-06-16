@@ -8,34 +8,42 @@
           <p class="text-sm text-gray-500 mt-1.5">Revenue, expenses, and profit analysis</p>
         </div>
         <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-1.5 shadow-sm">
+          <div
+            class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-1.5 shadow-sm"
+          >
             <button
               @click="selectedPeriod = 'daily'"
               :class="[
                 'px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150',
                 selectedPeriod === 'daily'
                   ? 'bg-[#11764B] text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 hover:bg-gray-100',
               ]"
-            >Daily</button>
+            >
+              Daily
+            </button>
             <button
               @click="selectedPeriod = 'monthly'"
               :class="[
                 'px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150',
                 selectedPeriod === 'monthly'
                   ? 'bg-[#11764B] text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 hover:bg-gray-100',
               ]"
-            >Monthly</button>
+            >
+              Monthly
+            </button>
             <button
               @click="selectedPeriod = 'yearly'"
               :class="[
                 'px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150',
                 selectedPeriod === 'yearly'
                   ? 'bg-[#11764B] text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 hover:bg-gray-100',
               ]"
-            >Yearly</button>
+            >
+              Yearly
+            </button>
           </div>
 
           <div class="relative group">
@@ -43,22 +51,43 @@
               class="inline-flex items-center gap-2 rounded-lg bg-[#11764B] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#158e5a] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
               </svg>
               Export Report
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
               </svg>
             </button>
-            <div class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div
+              class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+            >
               <div class="py-1">
-                <button @click="handleExport('excel')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <button
+                  @click="handleExport('excel')"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                >
                   <span>Excel Format</span>
                 </button>
-                <button @click="handleExport('pdf')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <button
+                  @click="handleExport('pdf')"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                >
                   <span>PDF Format</span>
                 </button>
-                <button @click="handleExport('csv')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <button
+                  @click="handleExport('csv')"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                >
                   <span>CSV Format</span>
                 </button>
               </div>
@@ -69,66 +98,119 @@
 
       <!-- Stat Cards -->
       <div class="grid gap-5 md:grid-cols-4 mt-6">
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1m4-12H8c-1.104 0-2 .896-2 2v12c0 1.104.896 2 2 2h8c1.104 0 2-.896 2-2V7c0-1.104-.896-2-2-2z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1m4-12H8c-1.104 0-2 .896-2 2v12c0 1.104.896 2 2 2h8c1.104 0 2-.896 2-2V7c0-1.104-.896-2-2-2z"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Total Revenue</p>
-              <p class="text-xl font-bold text-green-600 mt-0.5 tabular-nums">{{ formatCurrency(totalRevenue) }}</p>
+              <p class="text-xl font-bold text-green-600 mt-0.5 tabular-nums">
+                {{ formatCurrency(totalRevenue) }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-green-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-green-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
 
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-red-50 rounded-xl text-red-600 group-hover:bg-red-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-red-50 rounded-xl text-red-600 group-hover:bg-red-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Total Expenses</p>
-              <p class="text-xl font-bold text-red-600 mt-0.5 tabular-nums">{{ formatCurrency(totalExpenses) }}</p>
+              <p class="text-xl font-bold text-red-600 mt-0.5 tabular-nums">
+                {{ formatCurrency(totalExpenses) }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-red-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-red-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
 
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Net Profit</p>
-              <p class="text-xl font-bold mt-0.5 tabular-nums" :class="netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'">
+              <p
+                class="text-xl font-bold mt-0.5 tabular-nums"
+                :class="netProfit >= 0 ? 'text-blue-600' : 'text-orange-600'"
+              >
                 {{ formatCurrency(netProfit) }}
               </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
 
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Transactions</p>
-              <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">{{ totalTransactions }}</p>
+              <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">
+                {{ totalTransactions }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
       </div>
 
@@ -142,7 +224,10 @@
               :key="i"
               class="flex-1 flex flex-col items-center gap-1.5 group/chart"
             >
-              <span class="text-[10px] text-gray-400 font-medium opacity-0 group-hover/chart:opacity-100 transition-opacity">{{ formatCurrencyShort(item.value) }}</span>
+              <span
+                class="text-[10px] text-gray-400 font-medium opacity-0 group-hover/chart:opacity-100 transition-opacity"
+                >{{ formatCurrencyShort(item.value) }}</span
+              >
               <div
                 class="w-full rounded-t-md transition-all duration-500 group-hover/chart:opacity-80"
                 :class="item.type === 'revenue' ? 'bg-green-400' : 'bg-red-400'"
@@ -160,8 +245,12 @@
               <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f3f4f6" stroke-width="3" />
                 <circle
-                  cx="18" cy="18" r="15.9"
-                  fill="none" stroke="currentColor" stroke-width="3"
+                  cx="18"
+                  cy="18"
+                  r="15.9"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
                   stroke-dasharray="100"
                   :stroke-dashoffset="100 - profitMarginPercent"
                   class="text-[#11764B] transition-all duration-1000 ease-out"
@@ -170,7 +259,9 @@
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="text-center">
-                  <p class="text-2xl font-bold text-gray-900">{{ profitMarginPercent.toFixed(0) }}%</p>
+                  <p class="text-2xl font-bold text-gray-900">
+                    {{ profitMarginPercent.toFixed(0) }}%
+                  </p>
                   <p class="text-[10px] text-gray-400 font-medium">Margin</p>
                 </div>
               </div>
@@ -182,12 +273,21 @@
 
     <!-- Table -->
     <div class="rounded-xl bg-white shadow-sm border border-gray-100 overflow-hidden">
-      <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div
+        class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+      >
         <h3 class="text-sm font-semibold text-gray-700">Transaction History</h3>
         <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
+          <span
+            class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none"
+          >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
             </svg>
           </span>
           <input
@@ -203,22 +303,56 @@
         <table class="w-full text-sm text-left">
           <thead>
             <tr class="border-b border-gray-100 bg-gray-50/80">
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Code</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Cashier</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Amount</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                #
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Code
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Cashier
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Qty
+              </th>
+              <th
+                class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right"
+              >
+                Amount
+              </th>
+              <th
+                class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center"
+              >
+                Status
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
             <tr v-if="loading">
               <td colspan="7" class="px-6 py-12 text-center">
                 <div class="flex items-center justify-center gap-3">
-                  <svg class="animate-spin h-5 w-5 text-[#11764B]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  <svg
+                    class="animate-spin h-5 w-5 text-[#11764B]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    ></path>
                   </svg>
                   <span class="text-gray-400 text-sm">Loading data...</span>
                 </div>
@@ -227,8 +361,18 @@
             <tr v-else-if="paginatedTransactions.length === 0">
               <td colspan="7" class="px-6 py-12 text-center">
                 <div class="flex flex-col items-center gap-2">
-                  <svg class="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1m4-12H8c-1.104 0-2 .896-2 2v12c0 1.104.896 2 2 2h8c1.104 0 2-.896 2-2V7c0-1.104-.896-2-2-2z"></path>
+                  <svg
+                    class="w-12 h-12 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1m4-12H8c-1.104 0-2 .896-2 2v12c0 1.104.896 2 2 2h8c1.104 0 2-.896 2-2V7c0-1.104-.896-2-2-2z"
+                    ></path>
                   </svg>
                   <p class="text-gray-400 text-sm">No transactions found</p>
                   <p class="text-gray-300 text-xs">Try adjusting your search criteria</p>
@@ -245,21 +389,34 @@
                 <span class="text-sm text-gray-600">{{ trx.date }}</span>
               </td>
               <td class="px-6 py-4">
-                <span class="font-mono text-xs font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded">{{ trx.code }}</span>
+                <span
+                  class="font-mono text-xs font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded"
+                  >{{ trx.code }}</span
+                >
               </td>
               <td class="px-6 py-4 text-sm text-gray-700">{{ trx.cashier }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ trx.items }}</td>
               <td class="px-6 py-4 text-right">
-                <span class="font-medium tabular-nums" :class="trx.type === 'revenue' ? 'text-green-600' : 'text-red-600'">
+                <span
+                  class="font-medium tabular-nums"
+                  :class="trx.type === 'revenue' ? 'text-green-600' : 'text-red-600'"
+                >
                   {{ trx.type === 'revenue' ? '' : '-' }}{{ formatCurrency(trx.amount) }}
                 </span>
               </td>
               <td class="px-6 py-4 text-center">
                 <span
                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border"
-                  :class="trx.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'"
+                  :class="
+                    trx.status === 'completed'
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                  "
                 >
-                  <span class="w-1.5 h-1.5 rounded-full" :class="trx.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'"></span>
+                  <span
+                    class="w-1.5 h-1.5 rounded-full"
+                    :class="trx.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'"
+                  ></span>
                   {{ trx.status === 'completed' ? 'Completed' : 'Pending' }}
                 </span>
               </td>
@@ -271,9 +428,9 @@
       <!-- Pagination -->
       <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white">
         <span class="text-sm text-gray-500">
-          Showing <span class="font-medium text-gray-700">{{ showingStart }}</span>
-          to <span class="font-medium text-gray-700">{{ showingEnd }}</span>
-          of <span class="font-medium text-gray-700">{{ filteredTransactions.length }}</span> results
+          Showing <span class="font-medium text-gray-700">{{ showingStart }}</span> to
+          <span class="font-medium text-gray-700">{{ showingEnd }}</span> of
+          <span class="font-medium text-gray-700">{{ filteredTransactions.length }}</span> results
         </span>
         <div class="flex items-center gap-1.5">
           <button
@@ -282,7 +439,12 @@
             class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
             </svg>
           </button>
 
@@ -291,7 +453,9 @@
               v-if="page === '...'"
               disabled
               class="px-2 py-1.5 text-sm text-gray-400 cursor-default"
-            >...</button>
+            >
+              ...
+            </button>
             <button
               v-else
               @click="goToPage(Number(page))"
@@ -299,9 +463,11 @@
                 'px-3 py-1.5 border rounded-lg text-sm transition-all duration-150',
                 currentPage === page
                   ? 'bg-[#11764B] text-white border-[#11764B] shadow-sm'
-                  : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800'
+                  : 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-800',
               ]"
-            >{{ page }}</button>
+            >
+              {{ page }}
+            </button>
           </template>
 
           <button
@@ -310,7 +476,12 @@
             class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
             </svg>
           </button>
         </div>
@@ -386,13 +557,15 @@ const filteredTransactions = computed(() => {
       (t) =>
         t.code.toLowerCase().includes(q) ||
         t.cashier.toLowerCase().includes(q) ||
-        t.date.toLowerCase().includes(q)
+        t.date.toLowerCase().includes(q),
     )
   }
   return result
 })
 
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredTransactions.value.length / itemsPerPage.value)))
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredTransactions.value.length / itemsPerPage.value)),
+)
 
 const paginatedTransactions = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value
@@ -410,17 +583,19 @@ const showingEnd = computed(() => {
 })
 
 const totalRevenue = computed(() =>
-  periodFilteredTransactions.value.filter((t) => t.type === 'revenue').reduce((sum, t) => sum + t.amount, 0)
+  periodFilteredTransactions.value
+    .filter((t) => t.type === 'revenue')
+    .reduce((sum, t) => sum + t.amount, 0),
 )
 const totalExpenses = computed(() =>
   periodFilteredTransactions.value
     .filter((t) => t.type === 'expense' && t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0)
+    .reduce((sum, t) => sum + t.amount, 0),
 )
 const netProfit = computed(() => totalRevenue.value - totalExpenses.value)
 const totalTransactions = computed(() => periodFilteredTransactions.value.length)
 const profitMarginPercent = computed(() =>
-  totalRevenue.value > 0 ? ((netProfit.value / totalRevenue.value) * 100) : 0
+  totalRevenue.value > 0 ? (netProfit.value / totalRevenue.value) * 100 : 0,
 )
 
 const visiblePages = computed(() => {
@@ -508,10 +683,11 @@ const fetchTransactions = async () => {
         rawDate: d,
         code: t.transactionCode ?? '-',
         cashier: t.employee?.name ?? '-',
-        items: t.transactionDetails?.reduce((s: number, det: any) => s + (det.quantity ?? 0), 0) ?? 0,
+        items:
+          t.transactionDetails?.reduce((s: number, det: any) => s + (det.quantity ?? 0), 0) ?? 0,
         amount: t.totalPrice ?? 0,
         type: 'revenue' as const,
-        status: 'completed' as const
+        status: 'completed' as const,
       }
     })
 
@@ -527,7 +703,7 @@ const fetchTransactions = async () => {
         items: o.orderDetails?.reduce((s: number, det: any) => s + (det.quantity ?? 0), 0) ?? 0,
         amount: o.totalPrice ?? 0,
         type: 'expense' as const,
-        status: 'completed' as const
+        status: 'completed' as const,
       }
     })
 
@@ -541,8 +717,6 @@ const fetchTransactions = async () => {
     loading.value = false
   }
 }
-
-
 
 const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
@@ -559,9 +733,10 @@ const handleExport = async (format: 'excel' | 'pdf' | 'csv') => {
     link.href = url
 
     const extension = format === 'excel' ? 'xlsx' : format === 'pdf' ? 'pdf' : 'csv'
-    const dateRangeStr = startDate || endDate
-      ? `_from_${startDate ? startDate.substring(0, 10) : 'start'}_to_${endDate ? endDate.substring(0, 10) : 'end'}`
-      : '_all_time'
+    const dateRangeStr =
+      startDate || endDate
+        ? `_from_${startDate ? startDate.substring(0, 10) : 'start'}_to_${endDate ? endDate.substring(0, 10) : 'end'}`
+        : '_all_time'
 
     link.setAttribute('download', `financial_report${dateRangeStr}.${extension}`)
     document.body.appendChild(link)

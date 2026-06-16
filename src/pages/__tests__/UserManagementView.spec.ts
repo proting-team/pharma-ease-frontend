@@ -25,14 +25,14 @@ describe('UserManagementView.vue Unit Tests', () => {
         shift: 'MORNING',
         salary: 4000000,
         startDate: '2026-01-01',
-      }
+      },
     ],
     meta: {
       total: 1,
       lastPage: 1,
       currentPage: 1,
-      perPage: 10
-    }
+      perPage: 10,
+    },
   }
 
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('UserManagementView.vue Unit Tests', () => {
     await wrapper.vm.$nextTick()
 
     // Click Add User
-    const addBtn = wrapper.findAll('button').find(b => b.text().includes('Add User'))
+    const addBtn = wrapper.findAll('button').find((b) => b.text().includes('Add User'))
     expect(addBtn).toBeDefined()
     await addBtn!.trigger('click')
 

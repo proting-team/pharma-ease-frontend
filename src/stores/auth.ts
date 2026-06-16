@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
       .slice(0, 2)
   })
 
-   async function login(credentials: LoginRequest): Promise<void> {
+  async function login(credentials: LoginRequest): Promise<void> {
     const response = await authApi.login(credentials)
 
     const accessToken = response.data.access_token || response.data.accessToken || ''

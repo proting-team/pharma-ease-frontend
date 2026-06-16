@@ -13,7 +13,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../pages/LoginView.vue'),
-      meta: { guestOnly: true }
+      meta: { guestOnly: true },
     },
     {
       path: '/',
@@ -28,62 +28,62 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../pages/AboutView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/supplier',
       name: 'supplier',
       component: () => import('../pages/SupplierView.vue'),
-      meta: { requiresAuth: true, roles: ['OWNER', 'PHARMACIST'] }
+      meta: { requiresAuth: true, roles: ['OWNER', 'PHARMACIST'] },
     },
     {
       path: '/user-management',
       name: 'user-management',
       component: () => import('../pages/UserManagementView.vue'),
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] },
     },
     {
       path: '/audit-log',
       name: 'audit-log',
       component: AuditLogView,
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] },
     },
     {
       path: '/medicines',
       name: 'medicines',
       component: MedicineStorageView,
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] },
     },
     {
       path: '/medicines/categories',
       name: 'medicine-categories',
       component: MedicineCategoryView,
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] },
     },
     {
       path: '/cashier',
       name: 'cashier',
       component: () => import('../pages/CashierPOSView.vue'),
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'CASHIER'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'CASHIER'] },
     },
     {
       path: '/medicine-orders',
       name: 'medicine-orders',
       component: () => import('../pages/medicine/MedicineOrdersView.vue'),
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER', 'PHARMACIST'] },
     },
     {
       path: '/reports/operational',
       name: 'operational-report',
       component: () => import('../pages/reports/OperationalReportView.vue'),
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] },
     },
     {
       path: '/reports/financial',
       name: 'financial-report',
       component: () => import('../pages/reports/FinancialReportView.vue'),
-      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] }
-    }
+      meta: { requiresAuth: true, roles: ['ADMIN', 'OWNER'] },
+    },
   ],
 })
 

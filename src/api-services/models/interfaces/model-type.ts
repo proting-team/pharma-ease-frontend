@@ -1,4 +1,4 @@
-export type TypeMap = { [key: string]: ObjectType }
+export type TypeMap = { [key: string]: ObjectType | string[] }
 
 export type ObjectType = {
   props: Property[]

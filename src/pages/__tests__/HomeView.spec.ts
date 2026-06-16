@@ -34,21 +34,21 @@ describe('HomeView.vue Unit Tests', () => {
   const mockMedicinesResponse = {
     data: [
       { id: '1', medicineName: 'Paracetamol', stock: 10, expiredDate: expiryDateString },
-      { id: '2', medicineName: 'Amoxicillin', stock: 50, expiredDate: '2030-12-31' }
+      { id: '2', medicineName: 'Amoxicillin', stock: 50, expiredDate: '2030-12-31' },
     ],
     meta: {
-      total: 2
-    }
+      total: 2,
+    },
   }
 
   const mockTransactionsResponse = {
     data: [
       { id: 'tx-1', totalPrice: 15000 },
-      { id: 'tx-2', totalPrice: 25000 }
+      { id: 'tx-2', totalPrice: 25000 },
     ],
     meta: {
-      total: 2
-    }
+      total: 2,
+    },
   }
 
   beforeEach(() => {

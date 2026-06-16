@@ -1,21 +1,21 @@
-import type { MedicineOrders } from './interfaces/medicine_order.interface'
+import type { OperationalReport } from './interfaces/operational_report.interface.ts'
 import type {
-  ArrayType,
   LiteralType,
   ObjectType,
   Property,
   RefType,
   TypeMap,
   UnionType,
+  ArrayType,
 } from './interfaces/model-type'
 
 export class Convert {
-  public static toMedicineOrders(json: string): MedicineOrders {
-    return cast(JSON.parse(json), r('MedicineOrders'))
+  public static toOperationalReport(json: string): OperationalReport {
+    return cast(JSON.parse(json), r('OperationalReport'))
   }
 
-  public static medicineOrdersToJson(value: MedicineOrders): string {
-    return JSON.stringify(uncast(value, r('MedicineOrders')), null, 2)
+  public static operationalReportToJson(value: OperationalReport): string {
+    return JSON.stringify(uncast(value, r('OperationalReport')), null, 2)
   }
 }
 
@@ -101,6 +101,15 @@ function transform(
     return result
   }
 
+  function transformDate(val: unknown): any {
+    if (val === null) return null
+    const d = new Date(val as any)
+    if (isNaN(d.valueOf())) {
+      return invalidValue('Date', val, key, parent)
+    }
+    return d
+  }
+
   if (typ === 'any') return val
   if (typ === null) return val === null ? val : invalidValue(typ, val, key, parent)
 
@@ -126,6 +135,8 @@ function transform(
       )
   }
 
+  if (currentTyp === Date && typeof val !== 'number') return transformDate(val)
+
   return transformPrimitive(currentTyp as string, val)
 }
 
@@ -140,82 +151,125 @@ function uncast<T>(val: T, typ: unknown): unknown {
 function r(name: string): RefType {
   return { ref: name }
 }
-function u(...typs: unknown[]): UnionType {
-  return { unionMembers: typs }
-}
 function a(typ: unknown): ArrayType {
   return { arrayItems: typ }
 }
 function o(props: Property[], additional: boolean): ObjectType {
   return { props, additional }
 }
-
 const typeMap: TypeMap = {
-  MedicineOrders: o(
+  OperationalReport: o(
     [
-      { json: 'status', js: 'status', typ: u(undefined, 0) },
-      { json: 'message', js: 'message', typ: u(undefined, '') },
-      { json: 'data', js: 'data', typ: u(undefined, a(r('Datum'))) },
-      { json: 'meta', js: 'meta', typ: u(undefined, r('Meta')) },
+      { json: 'status', js: 'status', typ: 0 },
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'data', js: 'data', typ: r('Data') },
+      { json: 'meta', js: 'meta', typ: null },
     ],
     false,
   ),
-  Datum: o(
+  Data: o(
     [
-      { json: 'id', js: 'id', typ: u(undefined, '') },
-      { json: 'orderCode', js: 'orderCode', typ: u(undefined, '') },
-      { json: 'orderDate', js: 'orderDate', typ: u(undefined, Date) },
-      { json: 'totalPrice', js: 'totalPrice', typ: u(undefined, 0) },
-      { json: 'status', js: 'status', typ: u(undefined, '') },
-      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
-      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
-      { json: 'supplier', js: 'supplier', typ: u(undefined, r('Supplier')) },
-      { json: 'user', js: 'user', typ: u(undefined, r('User')) },
+      { json: 'metadata', js: 'metadata', typ: r('Metadata') },
+      { json: 'stats', js: 'stats', typ: r('Stats') },
+      { json: 'medicines', js: 'medicines', typ: a(r('Medicine')) },
+      { json: 'activityLogs', js: 'activityLogs', typ: a(r('ActivityLog')) },
+    ],
+    false,
+  ),
+  ActivityLog: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'action', js: 'action', typ: '' },
+      { json: 'employeeId', js: 'employeeId', typ: '' },
+      { json: 'resourceType', js: 'resourceType', typ: '' },
+      { json: 'resourceId', js: 'resourceId', typ: '' },
+      { json: 'payloadData', js: 'payloadData', typ: r('PayloadData') },
+      { json: 'createdAt', js: 'createdAt', typ: Date },
+      { json: 'employee', js: 'employee', typ: r('Employee') },
+    ],
+    false,
+  ),
+  Employee: o(
+    [
+      { json: 'name', js: 'name', typ: '' },
+      { json: 'empId', js: 'empId', typ: '' },
+      { json: 'role', js: 'role', typ: '' },
+    ],
+    false,
+  ),
+  PayloadData: o(
+    [
+      { json: 'email', js: 'email', typ: '' },
+      { json: 'password', js: 'password', typ: '' },
+    ],
+    false,
+  ),
+  Medicine: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'medicineName', js: 'medicineName', typ: '' },
+      { json: 'sku', js: 'sku', typ: '' },
+      { json: 'description', js: 'description', typ: '' },
+      { json: 'categoryId', js: 'categoryId', typ: '' },
+      { json: 'supplierId', js: 'supplierId', typ: '' },
+      { json: 'stock', js: 'stock', typ: 0 },
+      { json: 'price', js: 'price', typ: 0 },
+      { json: 'expiredDate', js: 'expiredDate', typ: Date },
+      { json: 'createdAt', js: 'createdAt', typ: Date },
+      { json: 'updatedAt', js: 'updatedAt', typ: Date },
+      { json: 'category', js: 'category', typ: r('Category') },
+      { json: 'supplier', js: 'supplier', typ: r('Supplier') },
+    ],
+    false,
+  ),
+  Category: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'categoryName', js: 'categoryName', typ: '' },
+      { json: 'description', js: 'description', typ: '' },
+      { json: 'createdAt', js: 'createdAt', typ: Date },
+      { json: 'updatedAt', js: 'updatedAt', typ: Date },
     ],
     false,
   ),
   Supplier: o(
     [
-      { json: 'supplierName', js: 'supplierName', typ: u(undefined, '') },
-      { json: 'phoneNumber', js: 'phoneNumber', typ: u(undefined, '') },
-      { json: 'contactPerson', js: 'contactPerson', typ: u(undefined, null) },
-      { json: 'contactPersonNumber', js: 'contactPersonNumber', typ: u(undefined, null) },
-      { json: 'status', js: 'status', typ: u(undefined, '') },
-      { json: 'address', js: 'address', typ: u(undefined, '') },
-      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
-      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'companyName', js: 'companyName', typ: '' },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
+      { json: 'contactName', js: 'contactName', typ: '' },
+      { json: 'supplierEmail', js: 'supplierEmail', typ: '' },
+      { json: 'status', js: 'status', typ: r('Status') },
+      { json: 'address', js: 'address', typ: '' },
+      { json: 'licenseNumber', js: 'licenseNumber', typ: '' },
+      { json: 'createdAt', js: 'createdAt', typ: Date },
+      { json: 'updatedAt', js: 'updatedAt', typ: Date },
     ],
     false,
   ),
-  User: o(
+  Metadata: o(
     [
-      { json: 'name', js: 'name', typ: u(undefined, '') },
-      { json: 'empId', js: 'empId', typ: u(undefined, '') },
-      { json: 'email', js: 'email', typ: u(undefined, '') },
-      { json: 'password', js: 'password', typ: u(undefined, '') },
-      { json: 'phoneNumber', js: 'phoneNumber', typ: u(undefined, null) },
-      { json: 'role', js: 'role', typ: u(undefined, '') },
-      { json: 'shift', js: 'shift', typ: u(undefined, '') },
-      { json: 'status', js: 'status', typ: u(undefined, '') },
-      { json: 'dateOfBirth', js: 'dateOfBirth', typ: u(undefined, null) },
-      { json: 'alamat', js: 'alamat', typ: u(undefined, null) },
-      { json: 'profileAvatar', js: 'profileAvatar', typ: u(undefined, null) },
-      { json: 'salary', js: 'salary', typ: u(undefined, 0) },
-      { json: 'startDate', js: 'startDate', typ: u(undefined, Date) },
-      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
-      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
+      { json: 'generatedAt', js: 'generatedAt', typ: Date },
+      { json: 'filter', js: 'filter', typ: r('Filter') },
     ],
     false,
   ),
-  Meta: o(
+  Filter: o(
     [
-      { json: 'total', js: 'total', typ: u(undefined, 0) },
-      { json: 'lastPage', js: 'lastPage', typ: u(undefined, 0) },
-      { json: 'currentPage', js: 'currentPage', typ: u(undefined, 0) },
-      { json: 'perPage', js: 'perPage', typ: u(undefined, 0) },
-      { json: 'prev', js: 'prev', typ: u(undefined, null) },
-      { json: 'next', js: 'next', typ: u(undefined, null) },
+      { json: 'startDate', js: 'startDate', typ: null },
+      { json: 'endDate', js: 'endDate', typ: null },
     ],
     false,
   ),
+  Stats: o(
+    [
+      { json: 'totalMedicines', js: 'totalMedicines', typ: 0 },
+      { json: 'lowStockMedicines', js: 'lowStockMedicines', typ: 0 },
+      { json: 'outOfStockMedicines', js: 'outOfStockMedicines', typ: 0 },
+      { json: 'expiredMedicines', js: 'expiredMedicines', typ: 0 },
+      { json: 'totalActivityLogs', js: 'totalActivityLogs', typ: 0 },
+    ],
+    false,
+  ),
+  Status: ['ACTIVE', 'INACTIVE'],
 }

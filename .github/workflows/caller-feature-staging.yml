@@ -1,0 +1,24 @@
+name: Feature and Staging CI Pipeline
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+      - 'staging'
+  pull_request:
+    branches:
+      - 'staging'
+
+jobs:
+  call-standard-ci:
+    uses: ./.github/workflows/ci-standard.yml
+
+  call-security-gateways:
+    needs: call-standard-ci
+    uses: ./.github/workflows/ci-security.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
