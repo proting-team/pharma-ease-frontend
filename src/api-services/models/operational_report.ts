@@ -1,5 +1,13 @@
 import type { OperationalReport } from './interfaces/operational_report.interface.ts'
-import type { LiteralType, ObjectType, Property, RefType, TypeMap, UnionType, ArrayType } from './interfaces/model-type'
+import type {
+  LiteralType,
+  ObjectType,
+  Property,
+  RefType,
+  TypeMap,
+  UnionType,
+  ArrayType,
+} from './interfaces/model-type'
 
 export class Convert {
   public static toOperationalReport(json: string): OperationalReport {

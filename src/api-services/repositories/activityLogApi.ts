@@ -7,7 +7,8 @@ export const activityLogApi = {
     const response = await apiClient.get('/activity-logs', {
       params: { page, perPage },
     })
-    const jsonStr = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
+    const jsonStr =
+      typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
     return Convert.toActivityLogs(jsonStr)
   },
 
@@ -16,4 +17,3 @@ export const activityLogApi = {
     return response.data as { status: number; message: string; data: Datum }
   },
 }
-

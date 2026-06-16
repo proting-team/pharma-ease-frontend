@@ -348,7 +348,7 @@ const fetchEmployees = async () => {
       if (emp.id && emp.name) {
         employeeMap.value.set(emp.id, {
           name: emp.name,
-          role: emp.role || 'employee'
+          role: emp.role || 'employee',
         })
       }
     })
@@ -552,7 +552,12 @@ const getActionBadgeClass = (action: string) => {
   if (lower.includes('create') || lower.includes('add') || lower.includes('post')) {
     return 'bg-blue-50 text-blue-700 border-blue-200'
   }
-  if (lower.includes('update') || lower.includes('edit') || lower.includes('patch') || lower.includes('modify')) {
+  if (
+    lower.includes('update') ||
+    lower.includes('edit') ||
+    lower.includes('patch') ||
+    lower.includes('modify')
+  ) {
     return 'bg-amber-50 text-amber-700 border-amber-200'
   }
   if (lower.includes('delete') || lower.includes('remove')) {

@@ -38,4 +38,3 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/pharma-ease-frontend:${{ inputs.image_tag }}
-

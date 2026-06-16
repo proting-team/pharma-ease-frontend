@@ -27,9 +27,9 @@ jobs:
 
       - name: Codebase Formtting and linting checkers
         uses: wearerequired/lint-action@v2
-        with: 
-            eslint: true
-            prettier: true
+        with:
+          eslint: true
+          prettier: true
 
       - name: Run Unit Tests
         run: npm run test:unit -- --run

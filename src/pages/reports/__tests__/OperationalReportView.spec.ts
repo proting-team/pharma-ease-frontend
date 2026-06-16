@@ -61,7 +61,7 @@ describe('OperationalReportView.vue Unit Tests', () => {
           createdAt: '2026-06-09T10:00:00.000Z',
         },
       ],
-    }
+    },
   }
 
   beforeEach(() => {

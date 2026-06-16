@@ -42,9 +42,7 @@ describe('AuditLogView.vue Unit Tests', () => {
   }
 
   const mockEmployeesResponse = {
-    data: [
-      { id: 'emp-1', name: 'John Cashier', role: 'CASHIER' }
-    ]
+    data: [{ id: 'emp-1', name: 'John Cashier', role: 'CASHIER' }],
   }
 
   beforeEach(() => {

@@ -9,11 +9,16 @@ export const operationalReportApi = {
     if (endDate) params.endDate = endDate
 
     const response = await apiClient.get('/reports/operational-report', { params })
-    const jsonStr = typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
+    const jsonStr =
+      typeof response.data === 'string' ? response.data : JSON.stringify(response.data)
     return Convert.toOperationalReport(jsonStr)
   },
 
-  async exportReport(format: 'excel' | 'pdf' | 'csv', startDate?: string, endDate?: string): Promise<Blob> {
+  async exportReport(
+    format: 'excel' | 'pdf' | 'csv',
+    startDate?: string,
+    endDate?: string,
+  ): Promise<Blob> {
     const params: any = { format }
     if (startDate) params.startDate = startDate
     if (endDate) params.endDate = endDate
@@ -23,5 +28,5 @@ export const operationalReportApi = {
       responseType: 'blob',
     })
     return response.data as Blob
-  }
+  },
 }

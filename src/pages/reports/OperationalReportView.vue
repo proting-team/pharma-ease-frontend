@@ -913,10 +913,21 @@ const getActionBadgeClass = (action: string) => {
   if (lower.includes('login') || lower.includes('sign-in')) {
     return 'bg-emerald-50 text-emerald-700 border-emerald-250'
   }
-  if (lower.includes('created') || lower.includes('create') || lower.includes('add') || lower.includes('post')) {
+  if (
+    lower.includes('created') ||
+    lower.includes('create') ||
+    lower.includes('add') ||
+    lower.includes('post')
+  ) {
     return 'bg-green-50 text-green-700 border-green-200'
   }
-  if (lower.includes('updated') || lower.includes('update') || lower.includes('edit') || lower.includes('patch') || lower.includes('modify')) {
+  if (
+    lower.includes('updated') ||
+    lower.includes('update') ||
+    lower.includes('edit') ||
+    lower.includes('patch') ||
+    lower.includes('modify')
+  ) {
     return 'bg-amber-50 text-amber-700 border-amber-200'
   }
   if (lower.includes('deleted') || lower.includes('delete') || lower.includes('remove')) {
@@ -928,9 +939,22 @@ const getActionBadgeClass = (action: string) => {
 const getActionDotClass = (action: string) => {
   const lower = action.toLowerCase()
   if (lower.includes('login') || lower.includes('sign-in')) return 'bg-emerald-500'
-  if (lower.includes('created') || lower.includes('create') || lower.includes('add') || lower.includes('post')) return 'bg-green-500'
-  if (lower.includes('updated') || lower.includes('update') || lower.includes('edit') || lower.includes('patch')) return 'bg-amber-500'
-  if (lower.includes('deleted') || lower.includes('delete') || lower.includes('remove')) return 'bg-red-500'
+  if (
+    lower.includes('created') ||
+    lower.includes('create') ||
+    lower.includes('add') ||
+    lower.includes('post')
+  )
+    return 'bg-green-500'
+  if (
+    lower.includes('updated') ||
+    lower.includes('update') ||
+    lower.includes('edit') ||
+    lower.includes('patch')
+  )
+    return 'bg-amber-500'
+  if (lower.includes('deleted') || lower.includes('delete') || lower.includes('remove'))
+    return 'bg-red-500'
   return 'bg-orange-500'
 }
 

@@ -1,4 +1,4 @@
-import type { ActivityLogs } from './interfaces/activity_logs.interface.ts';
+import type { ActivityLogs } from './interfaces/activity_logs.interface.ts'
 import type {
   ArrayType,
   LiteralType,
@@ -7,7 +7,7 @@ import type {
   RefType,
   TypeMap,
   UnionType,
-} from './interfaces/model-type';
+} from './interfaces/model-type'
 
 export class Convert {
   public static toActivityLogs(json: string): ActivityLogs {
