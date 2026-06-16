@@ -1,19 +1,28 @@
 <template>
   <div class="h-[calc(100vh-120px)] flex flex-col lg:flex-row gap-4">
-
     <div class="flex-1 flex flex-col gap-4 h-full">
-
       <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
         <div class="relative">
-          <svg class="absolute left-3 top-3 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            class="absolute left-3 top-3 h-4 w-4 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
           <input
             type="text"
             v-model="search"
             placeholder="Cari nama obat atau SKU..."
             class="w-full h-10 pl-10 pr-4 rounded-md border border-gray-300 bg-white text-sm outline-none focus:ring-2 focus:ring-emerald-500"
-          >
+          />
         </div>
       </div>
 
@@ -27,7 +36,9 @@
           >
             <div
               class="absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold"
-              :class="item.stock <= 10 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'"
+              :class="
+                item.stock <= 10 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'
+              "
             >
               Stok: {{ item.stock }}
             </div>
@@ -42,17 +53,40 @@
 
             <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
               <span class="font-bold text-lg text-gray-900">{{ item.price }}</span>
-              <button class="h-8 w-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <button
+                class="h-8 w-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform"
+              >
+                <svg
+                  class="h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
               </button>
             </div>
           </div>
 
-          <div v-show="filteredMedicines.length === 0" class="col-span-full flex flex-col items-center justify-center py-12 text-gray-400">
-            <svg class="h-10 w-10 mb-2 opacity-50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          <div
+            v-show="filteredMedicines.length === 0"
+            class="col-span-full flex flex-col items-center justify-center py-12 text-gray-400"
+          >
+            <svg
+              class="h-10 w-10 mb-2 opacity-50"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
             </svg>
             <p>Obat tidak ditemukan.</p>
           </div>
@@ -60,12 +94,24 @@
       </div>
     </div>
 
-    <div class="w-full lg:w-[400px] bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-full">
-
+    <div
+      class="w-full lg:w-[400px] bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-full"
+    >
       <div class="p-4 border-b border-gray-200 bg-gray-50/30">
         <h3 class="font-semibold text-lg flex items-center gap-2 text-gray-800">
-          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+          <svg
+            class="h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"
+            />
           </svg>
           Current Order
         </h3>
@@ -82,26 +128,71 @@
               <h4 class="font-medium text-sm text-gray-900">{{ cartItem.name }}</h4>
               <p class="text-xs text-gray-500">{{ formatRupiah(cartItem.numericPrice) }}</p>
             </div>
-            <p class="font-semibold text-sm text-gray-900">{{ formatRupiah(cartItem.numericPrice * cartItem.quantity) }}</p>
+            <p class="font-semibold text-sm text-gray-900">
+              {{ formatRupiah(cartItem.numericPrice * cartItem.quantity) }}
+            </p>
           </div>
 
           <div class="flex items-center justify-between mt-1">
             <div class="flex items-center gap-3 bg-gray-50 rounded-md p-1">
-              <button @click="updateQty(index, -1)" class="w-6 h-6 rounded bg-white shadow-sm flex items-center justify-center hover:text-red-600 text-gray-600">
-                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" /></svg>
+              <button
+                @click="updateQty(index, -1)"
+                class="w-6 h-6 rounded bg-white shadow-sm flex items-center justify-center hover:text-red-600 text-gray-600"
+              >
+                <svg
+                  class="h-3 w-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
+                </svg>
               </button>
               <span class="text-sm font-medium w-6 text-center">{{ cartItem.quantity }}</span>
-              <button @click="updateQty(index, 1)" class="w-6 h-6 rounded bg-white shadow-sm flex items-center justify-center hover:text-emerald-600 text-gray-600">
-                <svg class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+              <button
+                @click="updateQty(index, 1)"
+                class="w-6 h-6 rounded bg-white shadow-sm flex items-center justify-center hover:text-emerald-600 text-gray-600"
+              >
+                <svg
+                  class="h-3 w-3"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
               </button>
             </div>
-            <button @click="removeFromCart(index)" class="text-red-500 hover:text-red-700 text-xs flex items-center gap-1">
-              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            <button
+              @click="removeFromCart(index)"
+              class="text-red-500 hover:text-red-700 text-xs flex items-center gap-1"
+            >
+              <svg
+                class="h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
             </button>
           </div>
         </div>
 
-        <div v-show="cart.length === 0" class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60">
+        <div
+          v-show="cart.length === 0"
+          class="h-full flex flex-col items-center justify-center text-gray-400 opacity-60"
+        >
           <p class="text-sm">Keranjang kosong</p>
         </div>
       </div>
@@ -120,23 +211,33 @@
               type="number"
               v-model.number="cashReceived"
               class="w-full h-10 pl-10 pr-4 rounded-md border border-gray-300 bg-white text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"
-            >
+            />
           </div>
         </div>
 
-        <div v-show="grandTotal > 0 && typeof cashReceived === 'number' && cashReceived >= grandTotal" class="flex justify-between items-center text-sm px-3 py-2 bg-emerald-100 rounded-md border border-emerald-200 text-emerald-800">
+        <div
+          v-show="grandTotal > 0 && typeof cashReceived === 'number' && cashReceived >= grandTotal"
+          class="flex justify-between items-center text-sm px-3 py-2 bg-emerald-100 rounded-md border border-emerald-200 text-emerald-800"
+        >
           <span class="font-bold">Kembalian:</span>
           <span class="font-bold text-lg">{{ formatRupiah(kembalian) }}</span>
         </div>
 
         <button
           @click="submitTransaction()"
-          :disabled="cart.length === 0 || typeof cashReceived !== 'number' || cashReceived < grandTotal || isLoading"
+          :disabled="
+            cart.length === 0 ||
+            typeof cashReceived !== 'number' ||
+            cashReceived < grandTotal ||
+            isLoading
+          "
           class="w-full h-11 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-show="!isLoading">Bayar & Cetak Struk</span>
           <span v-show="isLoading" class="flex items-center justify-center">
-            <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            <div
+              class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            ></div>
           </span>
         </button>
       </div>
@@ -145,27 +246,26 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, computed, onMounted } from 'vue'
 import { medicineApi } from '@/api-services/repositories/medicineApi'
 import { transactionApi } from '@/api-services/repositories/transactionApi'
 
 interface Medicine {
-  id: string;
-  no: number;
-  name: string;
-  sku: string;
-  category: string;
-  supplier: string;
-  stock: number;
-  status: string;
-  expiry: string;
-  price: string;
+  id: string
+  no: number
+  name: string
+  sku: string
+  category: string
+  supplier: string
+  stock: number
+  status: string
+  expiry: string
+  price: string
 }
 
 interface CartItem extends Medicine {
-  quantity: number;
-  numericPrice: number;
+  quantity: number
+  numericPrice: number
 }
 
 const medicines = ref<Medicine[]>([])
@@ -176,29 +276,28 @@ const cashReceived = ref<number | ''>('')
 const isLoading = ref(false)
 
 const parsePriceToNumber = (priceString: string): number => {
-  const cleanStr = priceString.replace(/[^0-9]/g, '');
-  return parseInt(cleanStr);
+  const cleanStr = priceString.replace(/[^0-9]/g, '')
+  return parseInt(cleanStr)
 }
 
 const formatRupiah = (number: number) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-    minimumFractionDigits: 0
+    minimumFractionDigits: 0,
   }).format(number)
 }
 
 const filteredMedicines = computed(() => {
   if (search.value === '') return medicines.value
   const keyword = search.value.toLowerCase()
-  return medicines.value.filter(item => {
-    return item.name.toLowerCase().includes(keyword) ||
-      item.sku.toLowerCase().includes(keyword)
+  return medicines.value.filter((item) => {
+    return item.name.toLowerCase().includes(keyword) || item.sku.toLowerCase().includes(keyword)
   })
 })
 
 const grandTotal = computed(() => {
-  return cart.value.reduce((total, item) => total + (item.numericPrice * item.quantity), 0)
+  return cart.value.reduce((total, item) => total + item.numericPrice * item.quantity, 0)
 })
 
 const kembalian = computed(() => {
@@ -214,7 +313,7 @@ const addToCart = (item: Medicine) => {
     return
   }
 
-  const existingItem = cart.value.find(c => c.no === item.no)
+  const existingItem = cart.value.find((c) => c.no === item.no)
   const currentQtyInCart = existingItem ? existingItem.quantity : 0
 
   if (currentQtyInCart + 1 > item.stock) {
@@ -228,7 +327,7 @@ const addToCart = (item: Medicine) => {
     cart.value.push({
       ...item,
       numericPrice: parsePriceToNumber(item.price),
-      quantity: 1
+      quantity: 1,
     })
   }
 }
@@ -263,11 +362,11 @@ const submitTransaction = async () => {
     const payload = {
       transactionDate: new Date().toISOString(),
       cashReceived: Number(cashReceived.value),
-      medicines: cart.value.map(item => ({
+      medicines: cart.value.map((item) => ({
         medicineId: item.id,
         quantity: item.quantity,
-        unitPrice: item.numericPrice
-      }))
+        unitPrice: item.numericPrice,
+      })),
     }
 
     await transactionApi.create(payload)
@@ -296,7 +395,7 @@ const fetchMedicines = async () => {
           if (stock <= 50) return 'Medium'
           return 'In Stock'
         }
-        
+
         return {
           id: item.id,
           no: index + 1,
@@ -306,8 +405,16 @@ const fetchMedicines = async () => {
           supplier: item.supplier?.supplierName || '-',
           stock: item.stock || 0,
           status: getStockLabel(item.stock || 0),
-          expiry: item.expiredDate ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(item.expiredDate)) : '-',
-          price: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.price || 0)
+          expiry: item.expiredDate
+            ? new Intl.DateTimeFormat('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+              }).format(new Date(item.expiredDate))
+            : '-',
+          price: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
+            item.price || 0,
+          ),
         }
       })
     }

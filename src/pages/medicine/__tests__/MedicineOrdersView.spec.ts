@@ -44,27 +44,27 @@ describe('MedicineOrdersView.vue Unit Tests', () => {
         totalPrice: 50000,
         status: 'PENDING',
         employee: { name: 'John Cashier' },
-        supplier: { companyName: 'PT Kalbe Farma' }
-      }
+        supplier: { companyName: 'PT Kalbe Farma' },
+      },
     ],
     meta: {
       total: 1,
       lastPage: 1,
       currentPage: 1,
-      perPage: 10
-    }
+      perPage: 10,
+    },
   }
 
   const mockSuppliersResponse = {
-    data: [{ id: 'sup-1', companyName: 'PT Kalbe Farma' }]
+    data: [{ id: 'sup-1', companyName: 'PT Kalbe Farma' }],
   }
 
   const mockEmployeesResponse = {
-    data: [{ id: 'emp-1', name: 'John Cashier' }]
+    data: [{ id: 'emp-1', name: 'John Cashier' }],
   }
 
   const mockMedicinesResponse = {
-    data: [{ id: 'med-1', medicineName: 'Paracetamol', price: 5000 }]
+    data: [{ id: 'med-1', medicineName: 'Paracetamol', price: 5000 }],
   }
 
   beforeEach(() => {
@@ -102,7 +102,7 @@ describe('MedicineOrdersView.vue Unit Tests', () => {
     expect(wrapper.text()).not.toContain('Add New Order')
 
     // Click Add Order
-    const addBtn = wrapper.findAll('button').find(b => b.text().includes('Add Order'))
+    const addBtn = wrapper.findAll('button').find((b) => b.text().includes('Add Order'))
     expect(addBtn).toBeDefined()
     await addBtn!.trigger('click')
 
@@ -110,7 +110,7 @@ describe('MedicineOrdersView.vue Unit Tests', () => {
     expect(wrapper.text()).toContain('Add New Order')
 
     // Click Cancel
-    const cancelBtn = wrapper.findAll('button').find(b => b.text().includes('Cancel'))
+    const cancelBtn = wrapper.findAll('button').find((b) => b.text().includes('Cancel'))
     expect(cancelBtn).toBeDefined()
     await cancelBtn!.trigger('click')
 

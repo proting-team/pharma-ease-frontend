@@ -1,15 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { MedicineOrders } from "./interfaces/medicine_order.interface";
-import type { ArrayType, LiteralType, ObjectType, Property, RefType, TypeMap, UnionType } from "./interfaces/model-type";
+import type { MedicineOrders } from './interfaces/medicine_order.interface'
+import type {
+  ArrayType,
+  LiteralType,
+  ObjectType,
+  Property,
+  RefType,
+  TypeMap,
+  UnionType,
+} from './interfaces/model-type'
 
 export class Convert {
-    public static toMedicineOrders(json: string): MedicineOrders {
-        return cast(JSON.parse(json), r("MedicineOrders"));
-    }
+  public static toMedicineOrders(json: string): MedicineOrders {
+    return cast(JSON.parse(json), r('MedicineOrders'))
+  }
 
-    public static medicineOrdersToJson(value: MedicineOrders): string {
-        return JSON.stringify(uncast(value, r("MedicineOrders")), null, 2);
-    }
+  public static medicineOrdersToJson(value: MedicineOrders): string {
+    return JSON.stringify(uncast(value, r('MedicineOrders')), null, 2)
+  }
 }
 
 function invalidValue(typ: unknown, val: unknown, key: string, parent: string = ''): never {
@@ -144,56 +151,71 @@ function o(props: Property[], additional: boolean): ObjectType {
 }
 
 const typeMap: TypeMap = {
-    "MedicineOrders": o([
-        { json: "status", js: "status", typ: u(undefined, 0) },
-        { json: "message", js: "message", typ: u(undefined, "") },
-        { json: "data", js: "data", typ: u(undefined, a(r("Datum"))) },
-        { json: "meta", js: "meta", typ: u(undefined, r("Meta")) },
-    ], false),
-    "Datum": o([
-        { json: "id", js: "id", typ: u(undefined, "") },
-        { json: "orderCode", js: "orderCode", typ: u(undefined, "") },
-        { json: "orderDate", js: "orderDate", typ: u(undefined, Date) },
-        { json: "totalPrice", js: "totalPrice", typ: u(undefined, 0) },
-        { json: "status", js: "status", typ: u(undefined, "") },
-        { json: "createdAt", js: "createdAt", typ: u(undefined, Date) },
-        { json: "updatedAt", js: "updatedAt", typ: u(undefined, Date) },
-        { json: "supplier", js: "supplier", typ: u(undefined, r("Supplier")) },
-        { json: "user", js: "user", typ: u(undefined, r("User")) },
-    ], false),
-    "Supplier": o([
-        { json: "supplierName", js: "supplierName", typ: u(undefined, "") },
-        { json: "phoneNumber", js: "phoneNumber", typ: u(undefined, "") },
-        { json: "contactPerson", js: "contactPerson", typ: u(undefined, null) },
-        { json: "contactPersonNumber", js: "contactPersonNumber", typ: u(undefined, null) },
-        { json: "status", js: "status", typ: u(undefined, "") },
-        { json: "address", js: "address", typ: u(undefined, "") },
-        { json: "createdAt", js: "createdAt", typ: u(undefined, Date) },
-        { json: "updatedAt", js: "updatedAt", typ: u(undefined, Date) },
-    ], false),
-    "User": o([
-        { json: "name", js: "name", typ: u(undefined, "") },
-        { json: "empId", js: "empId", typ: u(undefined, "") },
-        { json: "email", js: "email", typ: u(undefined, "") },
-        { json: "password", js: "password", typ: u(undefined, "") },
-        { json: "phoneNumber", js: "phoneNumber", typ: u(undefined, null) },
-        { json: "role", js: "role", typ: u(undefined, "") },
-        { json: "shift", js: "shift", typ: u(undefined, "") },
-        { json: "status", js: "status", typ: u(undefined, "") },
-        { json: "dateOfBirth", js: "dateOfBirth", typ: u(undefined, null) },
-        { json: "alamat", js: "alamat", typ: u(undefined, null) },
-        { json: "profileAvatar", js: "profileAvatar", typ: u(undefined, null) },
-        { json: "salary", js: "salary", typ: u(undefined, 0) },
-        { json: "startDate", js: "startDate", typ: u(undefined, Date) },
-        { json: "createdAt", js: "createdAt", typ: u(undefined, Date) },
-        { json: "updatedAt", js: "updatedAt", typ: u(undefined, Date) },
-    ], false),
-    "Meta": o([
-        { json: "total", js: "total", typ: u(undefined, 0) },
-        { json: "lastPage", js: "lastPage", typ: u(undefined, 0) },
-        { json: "currentPage", js: "currentPage", typ: u(undefined, 0) },
-        { json: "perPage", js: "perPage", typ: u(undefined, 0) },
-        { json: "prev", js: "prev", typ: u(undefined, null) },
-        { json: "next", js: "next", typ: u(undefined, null) },
-    ], false),
-};
+  MedicineOrders: o(
+    [
+      { json: 'status', js: 'status', typ: u(undefined, 0) },
+      { json: 'message', js: 'message', typ: u(undefined, '') },
+      { json: 'data', js: 'data', typ: u(undefined, a(r('Datum'))) },
+      { json: 'meta', js: 'meta', typ: u(undefined, r('Meta')) },
+    ],
+    false,
+  ),
+  Datum: o(
+    [
+      { json: 'id', js: 'id', typ: u(undefined, '') },
+      { json: 'orderCode', js: 'orderCode', typ: u(undefined, '') },
+      { json: 'orderDate', js: 'orderDate', typ: u(undefined, Date) },
+      { json: 'totalPrice', js: 'totalPrice', typ: u(undefined, 0) },
+      { json: 'status', js: 'status', typ: u(undefined, '') },
+      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
+      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
+      { json: 'supplier', js: 'supplier', typ: u(undefined, r('Supplier')) },
+      { json: 'user', js: 'user', typ: u(undefined, r('User')) },
+    ],
+    false,
+  ),
+  Supplier: o(
+    [
+      { json: 'supplierName', js: 'supplierName', typ: u(undefined, '') },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: u(undefined, '') },
+      { json: 'contactPerson', js: 'contactPerson', typ: u(undefined, null) },
+      { json: 'contactPersonNumber', js: 'contactPersonNumber', typ: u(undefined, null) },
+      { json: 'status', js: 'status', typ: u(undefined, '') },
+      { json: 'address', js: 'address', typ: u(undefined, '') },
+      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
+      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
+    ],
+    false,
+  ),
+  User: o(
+    [
+      { json: 'name', js: 'name', typ: u(undefined, '') },
+      { json: 'empId', js: 'empId', typ: u(undefined, '') },
+      { json: 'email', js: 'email', typ: u(undefined, '') },
+      { json: 'password', js: 'password', typ: u(undefined, '') },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: u(undefined, null) },
+      { json: 'role', js: 'role', typ: u(undefined, '') },
+      { json: 'shift', js: 'shift', typ: u(undefined, '') },
+      { json: 'status', js: 'status', typ: u(undefined, '') },
+      { json: 'dateOfBirth', js: 'dateOfBirth', typ: u(undefined, null) },
+      { json: 'alamat', js: 'alamat', typ: u(undefined, null) },
+      { json: 'profileAvatar', js: 'profileAvatar', typ: u(undefined, null) },
+      { json: 'salary', js: 'salary', typ: u(undefined, 0) },
+      { json: 'startDate', js: 'startDate', typ: u(undefined, Date) },
+      { json: 'createdAt', js: 'createdAt', typ: u(undefined, Date) },
+      { json: 'updatedAt', js: 'updatedAt', typ: u(undefined, Date) },
+    ],
+    false,
+  ),
+  Meta: o(
+    [
+      { json: 'total', js: 'total', typ: u(undefined, 0) },
+      { json: 'lastPage', js: 'lastPage', typ: u(undefined, 0) },
+      { json: 'currentPage', js: 'currentPage', typ: u(undefined, 0) },
+      { json: 'perPage', js: 'perPage', typ: u(undefined, 0) },
+      { json: 'prev', js: 'prev', typ: u(undefined, null) },
+      { json: 'next', js: 'next', typ: u(undefined, null) },
+    ],
+    false,
+  ),
+}

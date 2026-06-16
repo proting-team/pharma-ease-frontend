@@ -64,19 +64,23 @@ export const financialReportApi = {
     if (startDate) params.startDate = startDate
     if (endDate) params.endDate = endDate
 
-    const response = await apiClient.get('/financial-report', { params })
+    const response = await apiClient.get('/reports/transaction-details', { params })
     return response.data as FinancialReportData
   },
 
-  async exportReport(format: 'excel' | 'pdf' | 'csv', startDate?: string, endDate?: string): Promise<Blob> {
+  async exportReport(
+    format: 'excel' | 'pdf' | 'csv',
+    startDate?: string,
+    endDate?: string,
+  ): Promise<Blob> {
     const params: any = { format }
     if (startDate) params.startDate = startDate
     if (endDate) params.endDate = endDate
 
-    const response = await apiClient.get('/financial-report/export', {
+    const response = await apiClient.get('/reports/transaction-details/export', {
       params,
       responseType: 'blob',
     })
     return response.data as Blob
-  }
+  },
 }

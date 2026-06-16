@@ -1,15 +1,15 @@
 import httpClient from '../providers/providers'
 
 export interface MedicineSale {
-  medicineId: string;
-  quantity: number;
-  unitPrice: number;
+  medicineId: string
+  quantity: number
+  unitPrice: number
 }
 
 export interface CreateTransactionPayload {
-  transactionDate: Date | string;
-  cashReceived: number;
-  medicines: MedicineSale[];
+  transactionDate: Date | string
+  cashReceived: number
+  medicines: MedicineSale[]
 }
 
 export const transactionApi = {
@@ -20,7 +20,7 @@ export const transactionApi = {
 
   getAll: async (page = 1, perPage = 10) => {
     const response = await httpClient.get('/finances/transactions', {
-      params: { page, perPage }
+      params: { page, perPage },
     })
     return response.data
   },

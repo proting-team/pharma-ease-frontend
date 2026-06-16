@@ -21,42 +21,47 @@ vi.mock('@/api-services/repositories/operationalReportApi', () => ({
 
 describe('OperationalReportView.vue Unit Tests', () => {
   const mockReportData = {
-    metadata: {
-      generatedAt: '2026-06-09T10:00:00.000Z',
-      filter: { startDate: null, endDate: null }
-    },
-    stats: {
-      totalMedicines: 100,
-      lowStockMedicines: 5,
-      outOfStockMedicines: 2,
-      expiredMedicines: 3,
-      totalActivityLogs: 15
-    },
-    medicines: [
-      {
-        id: 'med-1',
-        medicineName: 'Amoxicillin',
-        sku: 'AMX-01',
-        description: 'Antibiotic',
-        stock: 50,
-        price: 10000,
-        expiredDate: '2028-12-31',
-        category: { categoryName: 'Capsules' },
-        supplier: { companyName: 'PT Bio Farma' }
-      }
-    ],
-    activityLogs: [
-      {
-        id: 'act-1',
-        action: 'UPDATE_MEDICINE',
-        employeeId: 'emp-1',
-        employee: { name: 'John Doe', empId: 'EMP01', role: 'ADMIN' },
-        resourceType: 'Medicine',
-        resourceId: 'med-1',
-        payloadData: { oldStock: 20, newStock: 50 },
-        createdAt: '2026-06-09T10:00:00.000Z'
-      }
-    ]
+    status: 200,
+    message: 'Success',
+    meta: null,
+    data: {
+      metadata: {
+        generatedAt: '2026-06-09T10:00:00.000Z',
+        filter: { startDate: null, endDate: null },
+      },
+      stats: {
+        totalMedicines: 100,
+        lowStockMedicines: 5,
+        outOfStockMedicines: 2,
+        expiredMedicines: 3,
+        totalActivityLogs: 15,
+      },
+      medicines: [
+        {
+          id: 'med-1',
+          medicineName: 'Amoxicillin',
+          sku: 'AMX-01',
+          description: 'Antibiotic',
+          stock: 50,
+          price: 10000,
+          expiredDate: '2028-12-31',
+          category: { categoryName: 'Capsules' },
+          supplier: { companyName: 'PT Bio Farma' },
+        },
+      ],
+      activityLogs: [
+        {
+          id: 'act-1',
+          action: 'UPDATE_MEDICINE',
+          employeeId: 'emp-1',
+          employee: { name: 'John Doe', empId: 'EMP01', role: 'ADMIN' },
+          resourceType: 'Medicine',
+          resourceId: 'med-1',
+          payloadData: { oldStock: 20, newStock: 50 },
+          createdAt: '2026-06-09T10:00:00.000Z',
+        },
+      ],
+    }
   }
 
   beforeEach(() => {
@@ -92,15 +97,17 @@ describe('OperationalReportView.vue Unit Tests', () => {
     await wrapper.vm.$nextTick()
 
     // Default tab should be activities
-    expect(wrapper.vm.activeTab).toBe('activities')
+    expect((wrapper.vm as any).activeTab).toBe('activities')
 
     // Click inventory tab button
-    const invTabBtn = wrapper.findAll('button').find(b => b.text().includes('Medicine Inventory Status'))
+    const invTabBtn = wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('Medicine Inventory Status'))
     expect(invTabBtn).toBeDefined()
     await invTabBtn!.trigger('click')
 
     // Tab is switched
-    expect(wrapper.vm.activeTab).toBe('inventory')
+    expect((wrapper.vm as any).activeTab).toBe('inventory')
   })
 
   it('triggers operational export on format click', async () => {
@@ -116,7 +123,7 @@ describe('OperationalReportView.vue Unit Tests', () => {
     await new Promise((resolve) => setTimeout(resolve, 10))
     await wrapper.vm.$nextTick()
 
-    await wrapper.vm.handleExport('pdf')
+    await (wrapper.vm as any).handleExport('pdf')
     expect(operationalReportApi.exportReport).toHaveBeenCalledWith('pdf', undefined, undefined)
   })
 })

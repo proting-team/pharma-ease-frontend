@@ -17,14 +17,14 @@ describe('MedicineCategoryView.vue Unit Tests', () => {
   const mockCategoriesResponse = {
     data: [
       { id: 'cat-1', categoryName: 'Tablets', description: 'Tablet medicines' },
-      { id: 'cat-2', categoryName: 'Syrups', description: 'Liquid syrup medicines' }
+      { id: 'cat-2', categoryName: 'Syrups', description: 'Liquid syrup medicines' },
     ],
     meta: {
       total: 2,
       lastPage: 1,
       currentPage: 1,
-      perPage: 10
-    }
+      perPage: 10,
+    },
   }
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('MedicineCategoryView.vue Unit Tests', () => {
     await wrapper.vm.$nextTick()
 
     // Click Add Category
-    const addBtn = wrapper.findAll('button').find(b => b.text().includes('Add Category'))
+    const addBtn = wrapper.findAll('button').find((b) => b.text().includes('Add Category'))
     await addBtn!.trigger('click')
 
     // Expect modal is shown
@@ -67,7 +67,7 @@ describe('MedicineCategoryView.vue Unit Tests', () => {
 
     expect(medicineCategoryApi.create).toHaveBeenCalledWith({
       categoryName: 'Capsules',
-      description: 'Capsule medications'
+      description: 'Capsule medications',
     })
   })
 
@@ -92,7 +92,7 @@ describe('MedicineCategoryView.vue Unit Tests', () => {
 
     expect(medicineCategoryApi.update).toHaveBeenCalledWith('cat-1', {
       categoryName: 'Tablets Updated',
-      description: 'Tablet medicines'
+      description: 'Tablet medicines',
     })
   })
 

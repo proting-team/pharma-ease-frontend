@@ -15,14 +15,14 @@ describe('FinancialReportView.vue Unit Tests', () => {
   const mockReportData = {
     metadata: {
       generatedAt: '2026-06-09T10:00:00.000Z',
-      filter: { startDate: null, endDate: null }
+      filter: { startDate: null, endDate: null },
     },
     summary: {
       totalRevenue: 1500000,
       totalExpenses: 500000,
       netProfit: 1000000,
       totalTransactionsCount: 2,
-      totalOrdersCount: 1
+      totalOrdersCount: 1,
     },
     incomeBreakdown: [
       {
@@ -36,10 +36,10 @@ describe('FinancialReportView.vue Unit Tests', () => {
             id: 'det-1',
             quantity: 3,
             unitPrice: 500000,
-            medicine: { medicineName: 'Amoxicillin', sku: 'AMX-01' }
-          }
-        ]
-      }
+            medicine: { medicineName: 'Amoxicillin', sku: 'AMX-01' },
+          },
+        ],
+      },
     ],
     expenseBreakdown: [
       {
@@ -54,11 +54,11 @@ describe('FinancialReportView.vue Unit Tests', () => {
             id: 'ord-det-1',
             quantity: 10,
             unitPrice: 50000,
-            medicine: { medicineName: 'Paracetamol', sku: 'PCT-01' }
-          }
-        ]
-      }
-    ]
+            medicine: { medicineName: 'Paracetamol', sku: 'PCT-01' },
+          },
+        ],
+      },
+    ],
   }
 
   beforeEach(() => {
@@ -96,14 +96,14 @@ describe('FinancialReportView.vue Unit Tests', () => {
     await wrapper.vm.$nextTick()
 
     // Default period should be daily
-    expect(wrapper.vm.selectedPeriod).toBe('daily')
+    expect((wrapper.vm as any).selectedPeriod).toBe('daily')
 
     // Click Monthly period button
-    const monthlyBtn = wrapper.findAll('button').find(b => b.text() === 'Monthly')
+    const monthlyBtn = wrapper.findAll('button').find((b) => b.text() === 'Monthly')
     expect(monthlyBtn).toBeDefined()
     await monthlyBtn!.trigger('click')
 
-    expect(wrapper.vm.selectedPeriod).toBe('monthly')
+    expect((wrapper.vm as any).selectedPeriod).toBe('monthly')
   })
 
   it('triggers report export when handleExport is called', async () => {
@@ -120,7 +120,11 @@ describe('FinancialReportView.vue Unit Tests', () => {
     await wrapper.vm.$nextTick()
 
     // Trigger export excel
-    await wrapper.vm.handleExport('excel')
-    expect(financialReportApi.exportReport).toHaveBeenCalledWith('excel', expect.any(String), expect.any(String))
+    await (wrapper.vm as any).handleExport('excel')
+    expect(financialReportApi.exportReport).toHaveBeenCalledWith(
+      'excel',
+      expect.any(String),
+      expect.any(String),
+    )
   })
 })

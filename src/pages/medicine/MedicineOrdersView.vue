@@ -1,25 +1,39 @@
 <template>
   <div class="p-8 bg-gray-50 min-h-screen font-sans">
-
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Medicine Order List</h1>
       <p class="text-sm text-gray-500 mt-1">Daftar Pemesanan Obat di Apotek Lamtama</p>
     </div>
 
-    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line">
+    <div
+      v-if="error"
+      class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line"
+    >
       {{ error }}
     </div>
 
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-
-      <div class="p-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div
+        class="p-4 border-b border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4"
+      >
         <h2 class="text-lg font-medium text-gray-800">Medicine Order List</h2>
 
         <div class="flex items-center gap-3 w-full md:w-auto">
           <div class="relative w-full md:w-auto">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
               </svg>
             </span>
             <input
@@ -30,9 +44,23 @@
             />
           </div>
 
-          <button @click="openAddModal" class="flex items-center gap-2 bg-[#009245] hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          <button
+            @click="openAddModal"
+            class="flex items-center gap-2 bg-[#009245] hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
             </svg>
             Add Order
           </button>
@@ -43,13 +71,29 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-gray-200 bg-gray-50/50">
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Code</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Supplier</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Code
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                User
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Supplier
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Total
+              </th>
+              <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th
+                class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
@@ -57,12 +101,20 @@
               <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">Loading...</td>
             </tr>
             <tr v-else-if="paginatedOrders.length === 0">
-              <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">No orders found.</td>
+              <td colspan="7" class="px-6 py-12 text-center text-gray-400 text-sm">
+                No orders found.
+              </td>
             </tr>
-            <tr v-for="order in paginatedOrders" :key="order.id" class="hover:bg-gray-50 transition-colors">
+            <tr
+              v-for="order in paginatedOrders"
+              :key="order.id"
+              class="hover:bg-gray-50 transition-colors"
+            >
               <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ order.orderCode }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ order.employee?.name || '-' }}</td>
-              <td class="px-6 py-4 text-sm text-gray-600">{{ order.supplier?.companyName || '-' }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ order.supplier?.companyName || '-' }}
+              </td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ formatDate(order.orderDate) }}</td>
               <td class="px-6 py-4 text-sm text-gray-600">{{ formatPrice(order.totalPrice) }}</td>
               <td class="px-6 py-4 text-sm">
@@ -74,14 +126,44 @@
                 </span>
               </td>
               <td class="px-6 py-4 text-sm text-right space-x-3">
-                <button @click="openEditModal(order)" class="text-orange-400 hover:text-orange-600 transition-colors" title="Edit">
-                  <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                <button
+                  @click="openEditModal(order)"
+                  class="text-orange-400 hover:text-orange-600 transition-colors"
+                  title="Edit"
+                >
+                  <svg
+                    class="w-4 h-4 inline"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    ></path>
                   </svg>
                 </button>
-                <button @click="handleDelete(order.id)" class="text-red-400 hover:text-red-600 transition-colors" title="Delete">
-                  <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                <button
+                  @click="handleDelete(order.id)"
+                  class="text-red-400 hover:text-red-600 transition-colors"
+                  title="Delete"
+                >
+                  <svg
+                    class="w-4 h-4 inline"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
                   </svg>
                 </button>
               </td>
@@ -91,9 +173,13 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="meta" class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div
+        v-if="meta"
+        class="px-6 py-4 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4"
+      >
         <span class="text-sm text-gray-500">
-          Showing {{ showingStart }} to {{ showingEnd }} of {{ meta.total ?? orders.length }} results
+          Showing {{ showingStart }} to {{ showingEnd }} of
+          {{ meta.total ?? orders.length }} results
         </span>
         <div v-if="totalPages > 1" class="flex items-center gap-1">
           <button
@@ -109,7 +195,9 @@
             @click="goToPage(page)"
             :class="[
               'px-3 py-1 border border-gray-300 rounded transition-colors',
-              (meta?.currentPage ?? 1) === page ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-gray-50'
+              (meta?.currentPage ?? 1) === page
+                ? 'bg-gray-100 text-gray-800 font-medium'
+                : 'text-gray-600 hover:bg-gray-50',
             ]"
           >
             {{ page }}
@@ -123,23 +211,37 @@
           </button>
         </div>
       </div>
-
     </div>
 
     <!-- Add/Edit Modal -->
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity"
+    >
+      <div
+        class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col"
+      >
         <div class="flex justify-between items-center p-5 border-b border-gray-100">
-          <h3 class="font-bold text-lg text-gray-800">{{ isEditMode ? 'Edit Order' : 'Add New Order' }}</h3>
+          <h3 class="font-bold text-lg text-gray-800">
+            {{ isEditMode ? 'Edit Order' : 'Add New Order' }}
+          </h3>
           <button @click="closeModal" class="text-gray-400 hover:text-gray-700 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
             </svg>
           </button>
         </div>
 
         <div class="p-5 overflow-y-auto">
-          <div v-if="formError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div
+            v-if="formError"
+            class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
+          >
             {{ formError }}
           </div>
 
@@ -157,7 +259,9 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Employee <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Employee <span class="text-red-500">*</span></label
+                >
                 <select
                   v-model="form.employeeId"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245]"
@@ -170,7 +274,9 @@
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Supplier <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Supplier <span class="text-red-500">*</span></label
+                >
                 <select
                   v-model="form.supplierId"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#009245] focus:border-[#009245]"
@@ -186,7 +292,9 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Order Date <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Order Date <span class="text-red-500">*</span></label
+                >
                 <input
                   v-model="form.orderDate"
                   type="date"
@@ -210,23 +318,38 @@
             <!-- Medicines Section -->
             <div>
               <div class="flex items-center justify-between mb-2">
-                <label class="block text-sm font-medium text-gray-700">Medicines <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Medicines <span class="text-red-500">*</span></label
+                >
                 <button
                   v-if="!isEditMode"
                   type="button"
                   @click="addMedicineRow"
                   class="text-xs text-[#009245] hover:text-green-700 font-medium flex items-center gap-1"
                 >
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    ></path>
+                  </svg>
                   Add Medicine
                 </button>
               </div>
 
-              <div v-if="isEditMode" class="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-600">
+              <div
+                v-if="isEditMode"
+                class="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-600"
+              >
                 Medicines cannot be changed in edit mode. Only status and order date can be updated.
               </div>
 
-              <div v-if="form.medicines.length === 0" class="p-3 bg-gray-50 rounded-lg text-center text-sm text-gray-400">
+              <div
+                v-if="form.medicines.length === 0"
+                class="p-3 bg-gray-50 rounded-lg text-center text-sm text-gray-400"
+              >
                 No medicines added yet. Click "Add Medicine" to add items.
               </div>
 
@@ -271,7 +394,9 @@
                   />
                 </div>
                 <div class="col-span-2 flex items-center gap-1 pb-1">
-                  <span class="text-xs text-gray-500">{{ formatPrice((item.quantity || 0) * (item.unitPrice || 0)) }}</span>
+                  <span class="text-xs text-gray-500">{{
+                    formatPrice((item.quantity || 0) * (item.unitPrice || 0))
+                  }}</span>
                   <button
                     v-if="!isEditMode"
                     type="button"
@@ -279,12 +404,22 @@
                     class="text-red-400 hover:text-red-600 transition-colors ml-auto"
                     title="Remove"
                   >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
+                    </svg>
                   </button>
                 </div>
               </div>
 
-              <div v-if="form.medicines.length > 0" class="text-right text-sm font-semibold text-gray-700 pt-2 border-t border-gray-200">
+              <div
+                v-if="form.medicines.length > 0"
+                class="text-right text-sm font-semibold text-gray-700 pt-2 border-t border-gray-200"
+              >
                 Grand Total: {{ formatPrice(grandTotal) }}
               </div>
             </div>
@@ -292,7 +427,11 @@
         </div>
 
         <div class="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-          <button type="button" @click="closeModal" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+          <button
+            type="button"
+            @click="closeModal"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+          >
             Cancel
           </button>
           <button
@@ -301,13 +440,11 @@
             :disabled="isSubmitting"
             class="px-4 py-2 bg-[#009245] hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
           >
-            {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Order' : 'Save Order') }}
+            {{ isSubmitting ? 'Saving...' : isEditMode ? 'Update Order' : 'Save Order' }}
           </button>
         </div>
-
       </div>
     </div>
-
   </div>
 </template>
 
@@ -316,7 +453,10 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { supplierApi } from '@/api-services/repositories/supplierApi'
 import { employeeApi } from '@/api-services/repositories/employeeApi'
 import { medicineApi } from '@/api-services/repositories/medicineApi'
-import { medicineOrderApi, type CreateMedicineOrderPayload } from '@/api-services/repositories/medicineOrderApi'
+import {
+  medicineOrderApi,
+  type CreateMedicineOrderPayload,
+} from '@/api-services/repositories/medicineOrderApi'
 import type { Datum as Order } from '@/api-services/models/interfaces/medicine_order.interface'
 import type { Datum as Supplier } from '@/api-services/models/interfaces/suppliers.interface'
 import type { Datum as Employee } from '@/api-services/models/interfaces/users.interface'
@@ -326,12 +466,20 @@ import type { Meta } from '@/api-services/models/interfaces/medicine_order.inter
 // --- HELPERS ---
 function formatDate(d?: Date | string): string {
   if (!d) return '-'
-  return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  return new Date(d).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 function formatPrice(v?: number): string {
   if (v === undefined || v === null) return 'Rp 0'
-  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v)
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(v)
 }
 
 function statusClass(status?: string): string {
@@ -420,11 +568,11 @@ const filteredOrders = computed(() => {
   if (!searchQuery.value) return orders.value
   const q = searchQuery.value.toLowerCase()
   return orders.value.filter(
-    o =>
+    (o) =>
       o.orderCode?.toLowerCase().includes(q) ||
       o.employee?.name?.toLowerCase().includes(q) ||
       o.supplier?.companyName?.toLowerCase().includes(q) ||
-      o.status?.toLowerCase().includes(q)
+      o.status?.toLowerCase().includes(q),
   )
 })
 
@@ -444,11 +592,17 @@ const showingStart = computed(() => {
 })
 
 const showingEnd = computed(() => {
-  return Math.min((meta.value?.currentPage ?? 1) * itemsPerPage.value, meta.value?.total ?? filteredOrders.value.length)
+  return Math.min(
+    (meta.value?.currentPage ?? 1) * itemsPerPage.value,
+    meta.value?.total ?? filteredOrders.value.length,
+  )
 })
 
 const grandTotal = computed(() => {
-  return form.value.medicines.reduce((sum, item) => sum + (item.quantity || 0) * (item.unitPrice || 0), 0)
+  return form.value.medicines.reduce(
+    (sum, item) => sum + (item.quantity || 0) * (item.unitPrice || 0),
+    0,
+  )
 })
 
 // --- METHODS ---
@@ -535,7 +689,9 @@ const openEditModal = async (order: Order) => {
     form.value = {
       employeeId: empData.id ?? '',
       supplierId: supData.id ?? '',
-      orderDate: detail.orderDate ? new Date(detail.orderDate).toISOString().split('T')[0] ?? '' : '',
+      orderDate: detail.orderDate
+        ? (new Date(detail.orderDate).toISOString().split('T')[0] ?? '')
+        : '',
       status: detail.status ?? 'PENDING',
       medicines: meds.length > 0 ? meds : [{ medicineId: '', quantity: 1, unitPrice: 1000 }],
     }
@@ -544,7 +700,9 @@ const openEditModal = async (order: Order) => {
     form.value = {
       employeeId: '',
       supplierId: '',
-      orderDate: order.orderDate ? new Date(order.orderDate).toISOString().split('T')[0] ?? '' : '',
+      orderDate: order.orderDate
+        ? (new Date(order.orderDate).toISOString().split('T')[0] ?? '')
+        : '',
       status: order.status ?? 'PENDING',
       medicines: [{ medicineId: '', quantity: 1, unitPrice: 1000 }],
     }
@@ -562,9 +720,12 @@ const closeModal = () => {
 const handleSubmit = async () => {
   // Validate medicines (only for new orders — edit mode only updates status & date)
   if (!isEditMode.value) {
-    const invalidMeds = form.value.medicines.filter(m => !m.medicineId || m.quantity < 1 || m.unitPrice <= 0)
+    const invalidMeds = form.value.medicines.filter(
+      (m) => !m.medicineId || m.quantity < 1 || m.unitPrice <= 0,
+    )
     if (invalidMeds.length > 0) {
-      formError.value = 'Please complete all medicine fields (select medicine, quantity >= 1, unit price > 0).'
+      formError.value =
+        'Please complete all medicine fields (select medicine, quantity >= 1, unit price > 0).'
       return
     }
   }
@@ -577,7 +738,7 @@ const handleSubmit = async () => {
       employeeId: form.value.employeeId,
       supplierId: form.value.supplierId,
       status: form.value.status,
-      medicines: form.value.medicines.map(m => ({
+      medicines: form.value.medicines.map((m) => ({
         medicineId: m.medicineId,
         quantity: m.quantity,
         unitPrice: m.unitPrice,

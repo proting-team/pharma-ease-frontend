@@ -5,7 +5,10 @@
       <p class="text-gray-500 text-sm mt-1">List dari para pemasok obat pada Apotek Lamtama</p>
     </div>
 
-    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line">
+    <div
+      v-if="error"
+      class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm whitespace-pre-line"
+    >
       {{ error }}
     </div>
 
@@ -16,8 +19,18 @@
         <div class="flex items-center gap-4">
           <div class="relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              <svg
+                class="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
               </svg>
             </span>
             <input
@@ -28,9 +41,17 @@
             />
           </div>
 
-          <button @click="openAddModal" class="bg-[#11764B] hover:bg-[#158e5a] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors">
+          <button
+            @click="openAddModal"
+            class="bg-[#11764B] hover:bg-[#158e5a] text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+          >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
             </svg>
             Add Supplier
           </button>
@@ -67,14 +88,30 @@
               <td class="px-6 py-4 text-gray-600">{{ supplier.phoneNumber }}</td>
               <td class="px-6 py-4 text-gray-500 truncate max-w-xs">{{ supplier.address }}</td>
               <td class="px-6 py-4 flex justify-center gap-3">
-                <button @click="openEditModal(supplier)" class="text-orange-400 hover:text-orange-600 transition-colors">
+                <button
+                  @click="openEditModal(supplier)"
+                  class="text-orange-400 hover:text-orange-600 transition-colors"
+                >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    ></path>
                   </svg>
                 </button>
-                <button @click="handleDelete(supplier.id)" class="text-red-400 hover:text-red-600 transition-colors">
+                <button
+                  @click="handleDelete(supplier.id)"
+                  class="text-red-400 hover:text-red-600 transition-colors"
+                >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
                   </svg>
                 </button>
               </td>
@@ -101,7 +138,9 @@
             @click="goToPage(page)"
             :class="[
               'px-3 py-1 border border-gray-300 rounded transition-colors',
-              currentPage === page ? 'bg-gray-100 text-gray-800 font-medium' : 'text-gray-600 hover:bg-gray-50'
+              currentPage === page
+                ? 'bg-gray-100 text-gray-800 font-medium'
+                : 'text-gray-600 hover:bg-gray-50',
             ]"
           >
             {{ page }}
@@ -118,13 +157,23 @@
     </div>
 
     <!-- Modal -->
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity"
+    >
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
         <div class="flex justify-between items-center p-5 border-b border-gray-100">
-          <h3 class="font-bold text-lg text-gray-800">{{ isEditMode ? 'Edit Supplier' : 'Add New Supplier' }}</h3>
+          <h3 class="font-bold text-lg text-gray-800">
+            {{ isEditMode ? 'Edit Supplier' : 'Add New Supplier' }}
+          </h3>
           <button @click="closeModal" class="text-gray-400 hover:text-gray-700 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
             </svg>
           </button>
         </div>
@@ -211,7 +260,11 @@
           </div>
 
           <div class="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-            <button type="button" @click="closeModal" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+            <button
+              type="button"
+              @click="closeModal"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+            >
               Cancel
             </button>
             <button
@@ -219,7 +272,7 @@
               :disabled="isSubmitting"
               class="px-4 py-2 bg-[#11764B] hover:bg-[#158e5a] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
             >
-              {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Supplier' : 'Save Supplier') }}
+              {{ isSubmitting ? 'Saving...' : isEditMode ? 'Update Supplier' : 'Save Supplier' }}
             </button>
           </div>
         </form>
@@ -236,11 +289,15 @@ import { supplierApi } from '@/api-services/repositories/supplierApi'
 // Helper to extract error message from axios/backend responses
 function getErrorMessage(e: unknown, fallback: string): string {
   if (e && typeof e === 'object' && 'response' in e) {
-    const data = (e as { response?: { data?: { message?: string; errors?: Array<{ property: string; errors: string[] }> } } }).response?.data
+    const data = (
+      e as {
+        response?: {
+          data?: { message?: string; errors?: Array<{ property: string; errors: string[] }> }
+        }
+      }
+    ).response?.data
     if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
-      return data.errors.map((err) =>
-        `• ${err.property}: ${err.errors.join(', ')}`
-      ).join('\n')
+      return data.errors.map((err) => `• ${err.property}: ${err.errors.join(', ')}`).join('\n')
     }
     return data?.message || fallback
   }
@@ -378,10 +435,11 @@ const handleDelete = async (id: string | undefined) => {
 const filteredSuppliers = computed((): Datum[] => {
   if (!searchQuery.value) return suppliers.value
   const query = searchQuery.value.toLowerCase()
-  return suppliers.value.filter(s =>
-    s.companyName?.toLowerCase().includes(query) ||
-    (s.contactName ?? '').toLowerCase().includes(query) ||
-    s.phoneNumber?.includes(query)
+  return suppliers.value.filter(
+    (s) =>
+      s.companyName?.toLowerCase().includes(query) ||
+      (s.contactName ?? '').toLowerCase().includes(query) ||
+      s.phoneNumber?.includes(query),
   )
 })
 

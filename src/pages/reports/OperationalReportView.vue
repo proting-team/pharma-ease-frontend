@@ -9,7 +9,9 @@
         </div>
 
         <!-- Date Filters & Export -->
-        <div class="flex flex-wrap items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+        <div
+          class="flex flex-wrap items-center gap-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"
+        >
           <div class="flex items-center gap-2">
             <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">From</label>
             <input
@@ -34,22 +36,43 @@
               class="inline-flex items-center gap-2 rounded-lg bg-[#11764B] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#158e5a] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                ></path>
               </svg>
               Export Report
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
               </svg>
             </button>
-            <div class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div
+              class="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50"
+            >
               <div class="py-1">
-                <button @click="handleExport('excel')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <button
+                  @click="handleExport('excel')"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                >
                   <span>Excel Format</span>
                 </button>
-                <button @click="handleExport('pdf')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <button
+                  @click="handleExport('pdf')"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                >
                   <span>PDF Format</span>
                 </button>
-                <button @click="handleExport('csv')" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <button
+                  @click="handleExport('csv')"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                >
                   <span>CSV Format</span>
                 </button>
               </div>
@@ -60,64 +83,116 @@
 
       <!-- Stat Cards -->
       <div class="grid gap-5 md:grid-cols-4 mt-8">
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-blue-50 rounded-xl text-blue-600 group-hover:bg-blue-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Total Activities</p>
-              <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">{{ stats.totalActivityLogs }}</p>
+              <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">
+                {{ stats.totalActivityLogs }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
 
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-green-50 rounded-xl text-green-600 group-hover:bg-green-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Total Medicines</p>
-              <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">{{ stats.totalMedicines }}</p>
+              <p class="text-xl font-bold text-gray-900 mt-0.5 tabular-nums">
+                {{ stats.totalMedicines }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-green-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-green-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
 
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Low Stock Items</p>
-              <p class="text-xl font-bold text-orange-600 mt-0.5 tabular-nums">{{ stats.lowStockMedicines }}</p>
+              <p class="text-xl font-bold text-orange-600 mt-0.5 tabular-nums">
+                {{ stats.lowStockMedicines }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-orange-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-orange-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
 
-        <div class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5">
+        <div
+          class="group relative rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5"
+        >
           <div class="flex items-center gap-3">
-            <div class="p-2.5 bg-red-50 rounded-xl text-red-600 group-hover:bg-red-100 group-hover:scale-110 transition-all duration-300">
+            <div
+              class="p-2.5 bg-red-50 rounded-xl text-red-600 group-hover:bg-red-100 group-hover:scale-110 transition-all duration-300"
+            >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                ></path>
               </svg>
             </div>
             <div>
               <p class="text-xs font-medium text-gray-500">Expired Items</p>
-              <p class="text-xl font-bold text-red-600 mt-0.5 tabular-nums">{{ stats.expiredMedicines }}</p>
+              <p class="text-xl font-bold text-red-600 mt-0.5 tabular-nums">
+                {{ stats.expiredMedicines }}
+              </p>
             </div>
           </div>
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-red-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          <div
+            class="absolute bottom-0 left-0 right-0 h-1 bg-red-500 rounded-b-xl scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+          ></div>
         </div>
       </div>
     </div>
@@ -133,7 +208,7 @@
               activeTab === 'activities'
                 ? 'border-[#11764B] text-[#11764B]'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-              'whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-all duration-150 cursor-pointer'
+              'whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-all duration-150 cursor-pointer',
             ]"
           >
             Employee Activities
@@ -144,7 +219,7 @@
               activeTab === 'inventory'
                 ? 'border-[#11764B] text-[#11764B]'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-              'whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-all duration-150 cursor-pointer'
+              'whitespace-nowrap py-4 px-1 border-b-2 font-semibold text-sm transition-all duration-150 cursor-pointer',
             ]"
           >
             Medicine Inventory Status
@@ -159,9 +234,16 @@
           <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
               <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
+                <span
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none"
+                >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
                   </svg>
                 </span>
                 <input
@@ -190,21 +272,61 @@
             <table class="w-full text-sm text-left">
               <thead>
                 <tr class="border-b border-gray-100 bg-gray-50/80">
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Timestamp</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Module</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    #
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Timestamp
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    User
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Action
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Module
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Description
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-50">
                 <tr v-if="loading">
                   <td colspan="6" class="px-6 py-12 text-center">
                     <div class="flex items-center justify-center gap-3">
-                      <svg class="animate-spin h-5 w-5 text-[#11764B]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                      <svg
+                        class="animate-spin h-5 w-5 text-[#11764B]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        ></path>
                       </svg>
                       <span class="text-gray-400 text-sm">Loading activities...</span>
                     </div>
@@ -221,13 +343,17 @@
                   :key="log.id"
                   class="hover:bg-gray-50/60 transition-colors duration-150"
                 >
-                  <td class="px-6 py-4 text-sm text-gray-400 font-mono">{{ activitiesShowingStart + index }}</td>
+                  <td class="px-6 py-4 text-sm text-gray-400 font-mono">
+                    {{ activitiesShowingStart + index }}
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <span class="text-sm text-gray-600">{{ log.timestamp }}</span>
                   </td>
                   <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-full bg-[#11764B]/10 text-[#11764B] flex items-center justify-center text-xs font-bold shrink-0">
+                      <div
+                        class="w-8 h-8 rounded-full bg-[#11764B]/10 text-[#11764B] flex items-center justify-center text-xs font-bold shrink-0"
+                      >
                         {{ getUserInitials(log.user) }}
                       </div>
                       <div>
@@ -241,13 +367,22 @@
                       class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border"
                       :class="getActionBadgeClass(log.action)"
                     >
-                      <span class="w-1.5 h-1.5 rounded-full" :class="getActionDotClass(log.action)"></span>
+                      <span
+                        class="w-1.5 h-1.5 rounded-full"
+                        :class="getActionDotClass(log.action)"
+                      ></span>
                       {{ log.action }}
                     </span>
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-600">{{ log.module }}</td>
                   <td class="px-6 py-4">
-                    <p class="text-sm text-gray-700 max-w-xs truncate" :title="log.description">{{ log.description }}</p>
+                    <span :class="getModuleBadgeClass(log.module)">
+                      {{ log.module }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4">
+                    <p class="text-sm text-gray-700 max-w-xs truncate" :title="log.description">
+                      {{ log.description }}
+                    </p>
                   </td>
                 </tr>
               </tbody>
@@ -257,7 +392,8 @@
           <!-- Activities Pagination -->
           <div class="flex items-center justify-between mt-4">
             <span class="text-sm text-gray-500">
-              Showing {{ activitiesShowingStart }} to {{ activitiesShowingEnd }} of {{ filteredLogs.length }} results
+              Showing {{ activitiesShowingStart }} to {{ activitiesShowingEnd }} of
+              {{ filteredLogs.length }} results
             </span>
             <div class="flex items-center gap-1.5">
               <button
@@ -275,13 +411,15 @@
                   'px-3 py-1.5 border rounded-lg text-sm',
                   activitiesCurrentPage === page
                     ? 'bg-[#11764B] text-white border-[#11764B]'
-                    : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    : 'border-gray-200 text-gray-600 hover:bg-gray-50',
                 ]"
               >
                 {{ page }}
               </button>
               <button
-                @click="activitiesCurrentPage = Math.min(activitiesTotalPages, activitiesCurrentPage + 1)"
+                @click="
+                  activitiesCurrentPage = Math.min(activitiesTotalPages, activitiesCurrentPage + 1)
+                "
                 :disabled="activitiesCurrentPage >= activitiesTotalPages"
                 class="px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               >
@@ -295,9 +433,16 @@
           <!-- Inventory Filters -->
           <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
+              <span
+                class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none"
+              >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
                 </svg>
               </span>
               <input
@@ -314,22 +459,66 @@
             <table class="w-full text-sm text-left">
               <thead>
                 <tr class="border-b border-gray-100 bg-gray-50/80">
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Medicine Name</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Stock</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Unit</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    #
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Medicine Name
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Category
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Stock
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Unit
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Expiry Date
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-50">
                 <tr v-if="loading">
                   <td colspan="7" class="px-6 py-12 text-center">
                     <div class="flex items-center justify-center gap-3">
-                      <svg class="animate-spin h-5 w-5 text-[#11764B]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                      <svg
+                        class="animate-spin h-5 w-5 text-[#11764B]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          class="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          class="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        ></path>
                       </svg>
                       <span class="text-gray-400 text-sm">Loading inventory...</span>
                     </div>
@@ -346,15 +535,21 @@
                   :key="item.id"
                   class="hover:bg-gray-50/60 transition-all duration-200"
                 >
-                  <td class="px-6 py-4 text-sm font-mono text-gray-400">{{ medicineShowingStart + index }}</td>
+                  <td class="px-6 py-4 text-sm font-mono text-gray-400">
+                    {{ medicineShowingStart + index }}
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex flex-col">
-                      <span class="text-sm font-semibold text-gray-900">{{ item.medicineName }}</span>
+                      <span class="text-sm font-semibold text-gray-900">{{
+                        item.medicineName
+                      }}</span>
                       <span class="text-xs text-gray-400 mt-0.5">{{ item.sku }}</span>
                     </div>
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500">{{ item.category }}</td>
-                  <td class="px-6 py-4 text-sm text-gray-900 font-medium tabular-nums">{{ item.stock }}</td>
+                  <td class="px-6 py-4 text-sm text-gray-900 font-medium tabular-nums">
+                    {{ item.stock }}
+                  </td>
                   <td class="px-6 py-4 text-sm text-gray-600">{{ item.unit }}</td>
                   <td class="px-6 py-4">
                     <span
@@ -399,7 +594,8 @@
           <!-- Inventory Pagination -->
           <div class="flex items-center justify-between mt-4">
             <span class="text-sm text-gray-500">
-              Showing {{ medicineShowingStart }} to {{ medicineShowingEnd }} of {{ filteredMedicines.length }} results
+              Showing {{ medicineShowingStart }} to {{ medicineShowingEnd }} of
+              {{ filteredMedicines.length }} results
             </span>
             <div class="flex items-center gap-1.5">
               <button
@@ -417,7 +613,7 @@
                   'px-3 py-1.5 border rounded-lg text-sm',
                   medicineCurrentPage === page
                     ? 'bg-[#11764B] text-white border-[#11764B]'
-                    : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    : 'border-gray-200 text-gray-600 hover:bg-gray-50',
                 ]"
               >
                 {{ page }}
@@ -497,9 +693,22 @@ const medicineSearchQuery = ref('')
 const medicineCurrentPage = ref(1)
 
 // --- FORMAT HELPERS ---
-const formatTimestamp = (isoDate: string): string => {
-  const date = new Date(isoDate)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const formatTimestamp = (dateInput: string | Date): string => {
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   const d = date.getDate()
   const m = months[date.getMonth()]
   const y = date.getFullYear()
@@ -508,7 +717,10 @@ const formatTimestamp = (isoDate: string): string => {
   return `${d} ${m} ${y} ${h}:${min}`
 }
 
-const determineStatus = (stock: number, expiryDate: string | Date | undefined): MedicineReportItem['status'] => {
+const determineStatus = (
+  stock: number,
+  expiryDate: string | Date | undefined,
+): MedicineReportItem['status'] => {
   if (!expiryDate) return 'Good'
   const expiry = new Date(expiryDate)
   const today = new Date()
@@ -525,19 +737,22 @@ const fetchReportData = async () => {
   loading.value = true
   error.value = null
   try {
-    const result = await operationalReportApi.getData(startDate.value || undefined, endDate.value || undefined)
+    const result = await operationalReportApi.getData(
+      startDate.value || undefined,
+      endDate.value || undefined,
+    )
 
     // 1. Map Stats
     stats.value = {
-      totalMedicines: result.stats.totalMedicines || 0,
-      lowStockMedicines: result.stats.lowStockMedicines || 0,
-      outOfStockMedicines: result.stats.outOfStockMedicines || 0,
-      expiredMedicines: result.stats.expiredMedicines || 0,
-      totalActivityLogs: result.stats.totalActivityLogs || 0,
+      totalMedicines: result.data.stats.totalMedicines || 0,
+      lowStockMedicines: result.data.stats.lowStockMedicines || 0,
+      outOfStockMedicines: result.data.stats.outOfStockMedicines || 0,
+      expiredMedicines: result.data.stats.expiredMedicines || 0,
+      totalActivityLogs: result.data.stats.totalActivityLogs || 0,
     }
 
     // 2. Map Activity Logs
-    logs.value = result.activityLogs.map((item) => {
+    logs.value = result.data.activityLogs.map((item) => {
       const rawAction = item.action.toLowerCase()
       let displayAction = rawAction
       if (rawAction === 'create') displayAction = 'created'
@@ -552,15 +767,16 @@ const fetchReportData = async () => {
         action: displayAction,
         module: item.resourceType ?? '-',
         description: item.payloadData
-          ? (typeof item.payloadData === 'object' && item.payloadData !== null
-              ? (item.payloadData as Record<string, any>).message ?? JSON.stringify(item.payloadData)
-              : String(item.payloadData))
+          ? typeof item.payloadData === 'object' && item.payloadData !== null
+            ? ((item.payloadData as Record<string, any>).message ??
+              JSON.stringify(item.payloadData))
+            : String(item.payloadData)
           : '-',
       }
     })
 
     // 3. Map Medicines
-    medicines.value = result.medicines.map((item) => ({
+    medicines.value = result.data.medicines.map((item) => ({
       id: item.id,
       medicineName: item.medicineName || 'Unknown',
       sku: item.sku || '-',
@@ -568,9 +784,14 @@ const fetchReportData = async () => {
       stock: item.stock || 0,
       unit: 'Pcs',
       status: determineStatus(item.stock || 0, item.expiredDate),
-      expiryDate: item.expiredDate ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(item.expiredDate)) : '-'
+      expiryDate: item.expiredDate
+        ? new Intl.DateTimeFormat('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          }).format(new Date(item.expiredDate))
+        : '-',
     }))
-
   } catch (e: any) {
     error.value = e?.response?.data?.message || e?.message || 'Failed to fetch operational report'
     logs.value = []
@@ -597,7 +818,9 @@ const filteredLogs = computed(() => {
   })
 })
 
-const activitiesTotalPages = computed(() => Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage.value)))
+const activitiesTotalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage.value)),
+)
 
 const paginatedLogs = computed(() => {
   const start = (activitiesCurrentPage.value - 1) * itemsPerPage.value
@@ -622,11 +845,13 @@ const filteredMedicines = computed(() => {
     (m) =>
       m.medicineName.toLowerCase().includes(query) ||
       m.sku.toLowerCase().includes(query) ||
-      m.category.toLowerCase().includes(query)
+      m.category.toLowerCase().includes(query),
   )
 })
 
-const medicineTotalPages = computed(() => Math.max(1, Math.ceil(filteredMedicines.value.length / itemsPerPage.value)))
+const medicineTotalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredMedicines.value.length / itemsPerPage.value)),
+)
 
 const paginatedMedicines = computed(() => {
   const start = (medicineCurrentPage.value - 1) * itemsPerPage.value
@@ -646,15 +871,20 @@ const medicineShowingEnd = computed(() => {
 // --- EXPORT FUNCTION ---
 const handleExport = async (format: 'excel' | 'pdf' | 'csv') => {
   try {
-    const blob = await operationalReportApi.exportReport(format, startDate.value || undefined, endDate.value || undefined)
+    const blob = await operationalReportApi.exportReport(
+      format,
+      startDate.value || undefined,
+      endDate.value || undefined,
+    )
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
 
     const extension = format === 'excel' ? 'xlsx' : format === 'pdf' ? 'pdf' : 'csv'
-    const dateRangeStr = startDate.value || endDate.value
-      ? `_from_${startDate.value || 'start'}_to_${endDate.value || 'end'}`
-      : '_all_time'
+    const dateRangeStr =
+      startDate.value || endDate.value
+        ? `_from_${startDate.value || 'start'}_to_${endDate.value || 'end'}`
+        : '_all_time'
 
     link.setAttribute('download', `operational_report${dateRangeStr}.${extension}`)
     document.body.appendChild(link)
@@ -680,18 +910,54 @@ const getUserInitials = (name: string): string => {
 
 const getActionBadgeClass = (action: string) => {
   const lower = action.toLowerCase()
-  if (lower === 'created' || lower === 'create') return 'bg-green-50 text-green-700 border-green-200'
-  if (lower === 'deleted' || lower === 'delete') return 'bg-red-50 text-red-700 border-red-200'
-  if (lower === 'login') return 'bg-blue-50 text-blue-700 border-blue-200'
+  if (lower.includes('login') || lower.includes('sign-in')) {
+    return 'bg-emerald-50 text-emerald-700 border-emerald-250'
+  }
+  if (lower.includes('created') || lower.includes('create') || lower.includes('add') || lower.includes('post')) {
+    return 'bg-green-50 text-green-700 border-green-200'
+  }
+  if (lower.includes('updated') || lower.includes('update') || lower.includes('edit') || lower.includes('patch') || lower.includes('modify')) {
+    return 'bg-amber-50 text-amber-700 border-amber-200'
+  }
+  if (lower.includes('deleted') || lower.includes('delete') || lower.includes('remove')) {
+    return 'bg-red-50 text-red-700 border-red-200'
+  }
   return 'bg-orange-50 text-orange-700 border-orange-200'
 }
 
 const getActionDotClass = (action: string) => {
   const lower = action.toLowerCase()
-  if (lower === 'created' || lower === 'create') return 'bg-green-500'
-  if (lower === 'deleted' || lower === 'delete') return 'bg-red-500'
-  if (lower === 'login') return 'bg-blue-500'
+  if (lower.includes('login') || lower.includes('sign-in')) return 'bg-emerald-500'
+  if (lower.includes('created') || lower.includes('create') || lower.includes('add') || lower.includes('post')) return 'bg-green-500'
+  if (lower.includes('updated') || lower.includes('update') || lower.includes('edit') || lower.includes('patch')) return 'bg-amber-500'
+  if (lower.includes('deleted') || lower.includes('delete') || lower.includes('remove')) return 'bg-red-500'
   return 'bg-orange-500'
+}
+
+const getModuleBadgeClass = (moduleName: string) => {
+  const lower = moduleName.toLowerCase()
+  if (lower.includes('medicine') || lower.includes('inventory') || lower.includes('storage')) {
+    return 'bg-emerald-50 text-emerald-700 border border-emerald-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  if (lower.includes('category')) {
+    return 'bg-teal-50 text-teal-700 border border-teal-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  if (lower.includes('supplier')) {
+    return 'bg-cyan-50 text-cyan-700 border border-cyan-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  if (lower.includes('order')) {
+    return 'bg-purple-50 text-purple-700 border border-purple-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  if (lower.includes('transaction') || lower.includes('cashier') || lower.includes('sale')) {
+    return 'bg-rose-50 text-rose-700 border border-rose-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  if (lower.includes('user') || lower.includes('employee') || lower.includes('management')) {
+    return 'bg-orange-50 text-orange-700 border border-orange-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  if (lower.includes('auth') || lower.includes('authentication') || lower.includes('profile')) {
+    return 'bg-sky-50 text-sky-700 border border-sky-100 font-medium px-2 py-0.5 rounded-md text-xs'
+  }
+  return 'bg-gray-50 text-gray-600 border border-gray-100 font-medium px-2 py-0.5 rounded-md text-xs'
 }
 
 // --- WATCHERS ---
@@ -708,12 +974,14 @@ watch([startDate, endDate], () => {
   fetchReportData()
 })
 
-watch(() => route.query.tab, (newTab) => {
-  if (newTab === 'inventory' || newTab === 'activities') {
-    activeTab.value = newTab as string
-  }
-})
-
+watch(
+  () => route.query.tab,
+  (newTab) => {
+    if (newTab === 'inventory' || newTab === 'activities') {
+      activeTab.value = newTab as string
+    }
+  },
+)
 
 // --- LIFECYCLE ---
 onMounted(() => {

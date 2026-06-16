@@ -101,9 +101,9 @@ describe('LoginView.vue Unit Tests', () => {
     mockLogin.mockRejectedValueOnce({
       response: {
         data: {
-          message: errorMessage
-        }
-      }
+          message: errorMessage,
+        },
+      },
     })
 
     const wrapper = mount(LoginView)

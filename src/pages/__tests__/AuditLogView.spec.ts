@@ -2,10 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import AuditLogView from '../AuditLogView.vue'
 import { activityLogApi } from '@/api-services/repositories/activityLogApi'
+import { employeeApi } from '@/api-services/repositories/employeeApi'
 
 // Mock activityLogApi
 vi.mock('@/api-services/repositories/activityLogApi', () => ({
   activityLogApi: {
+    getAll: vi.fn(),
+  },
+}))
+
+// Mock employeeApi
+vi.mock('@/api-services/repositories/employeeApi', () => ({
+  employeeApi: {
     getAll: vi.fn(),
   },
 }))
@@ -17,12 +25,11 @@ describe('AuditLogView.vue Unit Tests', () => {
         id: 'log-1',
         action: 'UPDATE_MEDICINE',
         employeeId: 'emp-1',
-        employee: { id: 'emp-1', name: 'John Cashier', role: 'CASHIER' },
         resourceType: 'Medicine',
         resourceId: 'med-1',
         payloadData: { name: 'Paracetamol' },
-        createdAt: '2026-06-09T10:00:00.000Z'
-      }
+        createdAt: '2026-06-09T10:00:00.000Z',
+      },
     ],
     meta: {
       total: 1,
@@ -30,13 +37,20 @@ describe('AuditLogView.vue Unit Tests', () => {
       currentPage: 1,
       perPage: 10,
       prev: null,
-      next: null
-    }
+      next: null,
+    },
+  }
+
+  const mockEmployeesResponse = {
+    data: [
+      { id: 'emp-1', name: 'John Cashier', role: 'CASHIER' }
+    ]
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(activityLogApi.getAll).mockResolvedValue(mockLogsResponse as any)
+    vi.mocked(employeeApi.getAll).mockResolvedValue(mockEmployeesResponse as any)
   })
 
   it('renders log records correctly on mount', async () => {
@@ -62,7 +76,7 @@ describe('AuditLogView.vue Unit Tests', () => {
     await searchInput.setValue('non-existent')
 
     // Expect search query state changes
-    expect(wrapper.vm.searchQuery).toBe('non-existent')
+    expect((wrapper.vm as any).searchQuery).toBe('non-existent')
   })
 
   it('filters log list by action dropdown select', async () => {
@@ -75,7 +89,7 @@ describe('AuditLogView.vue Unit Tests', () => {
     const actionSelect = wrapper.findAll('select')[0]
     await actionSelect.setValue('Updated')
 
-    expect(wrapper.vm.selectedAction).toBe('Updated')
+    expect((wrapper.vm as any).selectedAction).toBe('Updated')
   })
 
   it('filters log list by module dropdown select', async () => {
@@ -88,6 +102,6 @@ describe('AuditLogView.vue Unit Tests', () => {
     const moduleSelect = wrapper.findAll('select')[1]
     await moduleSelect.setValue('Medicine Inventory')
 
-    expect(wrapper.vm.selectedModule).toBe('Medicine Inventory')
+    expect((wrapper.vm as any).selectedModule).toBe('Medicine Inventory')
   })
 })
