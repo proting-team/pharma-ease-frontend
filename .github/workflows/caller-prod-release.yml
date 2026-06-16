@@ -1,0 +1,30 @@
+name: Production and Release CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'production'
+    tags:
+      - 'v*'
+
+jobs:
+  call-standard-ci:
+    uses: ./.github/workflows/ci-standard.yml
+
+  call-security-gateways:
+    needs: call-standard-ci
+    uses: ./.github/workflows/ci-security.yml
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+  call-docker-build-push:
+    needs: [call-standard-ci, call-security-gateways]
+    uses: ./.github/workflows/ci-docker-push.yml
+    with:
+      image_tag: early-v.1
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
